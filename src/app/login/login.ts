@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ApiService } from '../services/api.service';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +17,7 @@ export class LoginComponent {
   submitted = false;
   error: string | null = null;
 
-  constructor(private fb: FormBuilder, private router: Router) {
+  constructor(private fb: FormBuilder, private router: Router, private api: ApiService) {
     this.form = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
@@ -30,6 +31,17 @@ export class LoginComponent {
       return;
     }
     const { username, password } = this.form.value;
+    this.api.getServerTime().subscribe({
+      next: (res) => {
+        // compatibile con il JSON { serverTime: { now: ... } }
+        let pippo = (res.serverTime as any).now ?? JSON.stringify(res.serverTime);
+        console.log('Server time from API:', pippo);
+      },
+      error: (err) => {
+        this.error = err?.message ?? 'Errore sconosciuto';
+        console.error('API error', err);
+      }
+    });
     console.log('Login attempt', { username, password });
     // TODO: call AuthService to authenticate and handle errors
     // For now navigate to root on submit as a placeholder
