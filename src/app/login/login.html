@@ -1,0 +1,19 @@
+<div class="login-container" role="form" aria-labelledby="login-heading">
+  <h2 id="login-heading">Accedi</h2>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    <label for="username">Username</label>
+    <input id="username" type="text" formControlName="username" autocomplete="username" />
+    <div class="error" *ngIf="submitted && form.controls.username.invalid">Username è richiesto.</div>
+
+    <label for="password">Password</label>
+    <input id="password" type="password" formControlName="password" autocomplete="current-password" />
+    <div class="error" *ngIf="submitted && form.controls.password.invalid">Password è richiesta.</div>
+
+    <button type="submit">Login</button>
+  </form>
+
+  <p class="register-copy">Non sei registrato? <a href="/signup">Registrati</a></p>
+
+  <div class="submit-error" *ngIf="error">{{ error }}</div>
+</div>
