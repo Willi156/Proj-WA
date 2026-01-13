@@ -42,6 +42,18 @@ export class LoginComponent {
         console.error('API error', err);
       }
     });
+    this.api.getFirstUser().subscribe({
+      next: (user) => {
+        console.log('Primo utente:', user);
+        let usergetter = user;
+        console.log('Username del primo utente:', usergetter.username);
+      },
+      error: (err) => {
+        console.error('Errore API:', err);
+        this.error = err?.error?.message ?? 'Errore sconosciuto';
+      }
+    });
+
     console.log('Login attempt', { username, password });
     // TODO: call AuthService to authenticate and handle errors
     // For now navigate to root on submit as a placeholder

@@ -13,6 +13,10 @@ export class ApiService {
   getServerTime() {
     return this.http.get<{ serverTime: { now: string } }>(`${this.baseUrl}/api/test`);
   }
+  getFirstUser() {
+  return this.http.get<any>(`${this.baseUrl}/api/utente/first`);
+}
+
 
   // Esempio per futuri endpoint:
   // getItems() { return this.http.get<Item[]>(`${this.baseUrl}/api/items`); }
