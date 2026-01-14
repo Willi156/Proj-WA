@@ -13,9 +13,14 @@ export class ApiService {
   getServerTime() {
     return this.http.get<{ serverTime: { now: string } }>(`${this.baseUrl}/api/test`);
   }
+  
   getFirstUser() {
   return this.http.get<any>(`${this.baseUrl}/api/utente/first`);
 }
+
+ authenticate(username: string, password: string) {
+    return this.http.post<{ token: string }>(`${this.baseUrl}/api/auth/login`, { username, password });
+  }
 
 
   // Esempio per futuri endpoint:

@@ -31,32 +31,47 @@ export class LoginComponent {
       return;
     }
     const { username, password } = this.form.value;
-    this.api.getServerTime().subscribe({
+    if(!username || !password) {
+      this.error = 'Username e password sono obbligatori';
+      return;
+    }
+    this.api.authenticate(username, password).subscribe({
       next: (res) => {
-        // compatibile con il JSON { serverTime: { now: ... } }
-        let pippo = (res.serverTime as any).now ?? JSON.stringify(res.serverTime);
-        console.log('Server time from API:', pippo);
+        console.log('Login successful, token:', res.token);
+        // Navigate to the main page or dashboard after successful login
+        this.router.navigate(['/']);
       },
       error: (err) => {
-        this.error = err?.message ?? 'Errore sconosciuto';
-        console.error('API error', err);
-      }
-    });
-    this.api.getFirstUser().subscribe({
-      next: (user) => {
-        console.log('Primo utente:', user);
-        let usergetter = user;
-        console.log('Username del primo utente:', usergetter.username);
-      },
-      error: (err) => {
-        console.error('Errore API:', err);
+        console.error('Login error:', err);
         this.error = err?.error?.message ?? 'Errore sconosciuto';
       }
     });
+    // this.api.getServerTime().subscribe({
+    //   next: (res) => {
+    //     // compatibile con il JSON { serverTime: { now: ... } }
+    //     let pippo = (res.serverTime as any).now ?? JSON.stringify(res.serverTime);
+    //     console.log('Server time from API:', pippo);
+    //   },
+    //   error: (err) => {
+    //     this.error = err?.message ?? 'Errore sconosciuto';
+    //     console.error('API error', err);
+    //   }
+    // });
+    // this.api.getFirstUser().subscribe({
+    //   next: (user) => {
+    //     console.log('Primo utente:', user);
+    //     let usergetter = user;
+    //     console.log('Username del primo utente:', usergetter.username);
+    //   },
+    //   error: (err) => {
+    //     console.error('Errore API:', err);
+    //     this.error = err?.error?.message ?? 'Errore sconosciuto';
+    //   }
+    // });
 
-    console.log('Login attempt', { username, password });
-    // TODO: call AuthService to authenticate and handle errors
-    // For now navigate to root on submit as a placeholder
-    this.router.navigate(['/signup']);
+    // console.log('Login attempt', { username, password });
+    // // TODO: call AuthService to authenticate and handle errors
+    // // For now navigate to root on submit as a placeholder
+    // this.router.navigate(['/signup']);
   }
 }
