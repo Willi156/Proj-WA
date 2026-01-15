@@ -22,6 +22,15 @@ export class ApiService {
     return this.http.post<{ token: string }>(`${this.baseUrl}/api/auth/login`, { username, password });
   }
 
+  newContenuto(titolo: string, descrizione: string, genere: string, link: string, tipo: string, annoPubblicazione: number) {
+    return this.http.post<{ id: number }>(`${this.baseUrl}/api/newContenuto`, { titolo, descrizione, genere, link, tipo, annoPubblicazione });
+  }
+
+  getContenuti() {
+    return this.http.get<any[]>(`${this.baseUrl}/api/contenuti`);
+  }
+
+
 
   // Esempio per futuri endpoint:
   // getItems() { return this.http.get<Item[]>(`${this.baseUrl}/api/items`); }
