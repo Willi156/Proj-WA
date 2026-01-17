@@ -1,0 +1,53 @@
+.login-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* max-width: 360px; */
+
+  padding: 1.25rem;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+label {
+  display: block;
+  margin-top: 0.75rem;
+  font-weight: 600;
+}
+
+input {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.25rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+button {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 0.6rem;
+  border: 0;
+  background: linear-gradient(90deg,#ff416c,#7a00ff);
+  color: white;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.register-copy {
+  margin-top: 0.75rem;
+}
+
+.error {
+  color: #b00020;
+  font-size: 0.875rem;
+}
+
+.submit-error {
+  margin-top: 0.75rem;
+  color: #b00020;
+}
