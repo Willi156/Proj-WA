@@ -1,0 +1,27 @@
+<div class="section">
+
+  <div class="section-header">
+    <div class="section-title">
+      <h2>New Releases</h2>
+      <span class="see-all">SEE ALL</span>
+    </div>
+
+    <div class="section-actions">
+      <button (click)="scrollLeft()">←</button>
+      <button (click)="scrollRight()">→</button>
+    </div>
+  </div>
+
+
+
+  <div class="cards-container" #scrollContainer>
+    <app-game-card
+      *ngFor="let game of games"
+      [title]="game.title"
+      [image]="game.image"
+      [rating]="game.rating"
+      [platforms]="game.platforms">
+    </app-game-card>
+  </div>
+
+</div>

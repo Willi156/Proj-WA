@@ -1,0 +1,14 @@
+<div class="game-card">
+  <img [src]="image" alt="{{ title }}" />
+
+  <div class="game-info">
+    <h3>{{ title }}</h3>
+    <p class="rating">⭐ {{ rating }}</p>
+
+    <div class="platforms">
+      <span *ngFor="let platform of platforms">
+        {{ platform }}
+      </span>
+    </div>
+  </div>
+</div>
