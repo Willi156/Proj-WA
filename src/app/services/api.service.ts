@@ -22,8 +22,9 @@ export class ApiService {
     return this.http.post<{ token: string }>(`${this.baseUrl}/api/auth/login`, { username, password });
   }
 
-  newContenuto(titolo: string, descrizione: string, genere: string, link: string, tipo: string, annoPubblicazione: number) {
-    return this.http.post<{ id: number }>(`${this.baseUrl}/api/newContenuto`, { titolo, descrizione, genere, link, tipo, annoPubblicazione });
+  newContenuto(titolo: string, descrizione: string, genere: string, link: string, tipo: string, annoPubblicazione: number, casaProduzione?: string, casaEditrice?: string,inCorso?: boolean, stagioni?: number) {
+    console.log('Creating new contenuto with casa produzione:', { casaProduzione});
+    return this.http.post<{ id: number }>(`${this.baseUrl}/api/newContenuto`, { titolo, descrizione, genere, link, tipo, annoPubblicazione, casaProduzione, casaEditrice, inCorso, stagioni });
   }
 
   getContenuti() {
