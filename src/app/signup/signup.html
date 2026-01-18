@@ -1,1 +1,28 @@
-<p>signup works!</p>
+<div class="signup-container">
+	<h2>Registrazione utente</h2>
+	<form (submit)="onSubmit($event, first.value, last.value, username.value, email.value, password.value)" novalidate>
+		<label for="first">Nome</label>
+		<input id="first" #first type="text" placeholder="Nome" />
+		<div class="error">{{ errors['first'] }}</div>
+
+		<label for="last">Cognome</label>
+		<input id="last" #last type="text" placeholder="Cognome" />
+		<div class="error">{{ errors['last'] }}</div>
+
+		<label for="username">Username</label>
+		<input id="username" #username type="text" placeholder="Username" />
+		<div class="error">{{ errors['username'] }}</div>
+
+		<label for="email">Email</label>
+		<input id="email" #email type="email" placeholder="esempio@dominio.com" />
+		<div class="error">{{ errors['email'] }}</div>
+
+		<label for="password">Password</label>
+		<input id="password" #password type="password" placeholder="Almeno 6 caratteri, 1 carattere speciale" />
+		<div class="error">{{ errors['password'] }}</div>
+
+		<button type="submit">Registrati</button>
+	</form>
+
+	<div class="success" *ngIf="successMessage">{{ successMessage }}</div>
+</div>

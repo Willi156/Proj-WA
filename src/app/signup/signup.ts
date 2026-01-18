@@ -1,11 +1,86 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { ApiService } from '../services/api.service';
 
 @Component({
   selector: 'app-signup',
-  imports: [],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './signup.html',
-  styleUrl: './signup.css',
+  styleUrls: ['./signup.css'],
+  standalone: true,
 })
 export class Signup {
+  errors: { [key: string]: string } = { first: '', last: '', username: '', email: '', password: '' };
+  successMessage = '';
+  constructor(private api: ApiService) {}
+  
 
+  private resetErrors() {
+    this.errors = { first: '', last: '', username: '', email: '', password: '' };
+    this.successMessage = '';
+  }
+
+  private validateEmail(email: string) {
+    // simple email regex
+    const re = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+    return re.test(email);
+  }
+
+  private validatePassword(pw: string) {
+    if (!pw || pw.length < 6) return 'La password deve contenere almeno 6 caratteri.';
+    const specialRe = /[^A-Za-z0-9]/;
+    if (!specialRe.test(pw)) return 'La password deve contenere almeno un carattere speciale.';
+    return '';
+  }
+
+  private validateUsername(username: string) {
+
+    let available = false;
+    this.api.getCheckUsername(username).subscribe({
+      next: (response: any) => {
+        available = !response;
+        console.log('Username availability response:', !response);
+      },
+      error: (err: any) => {
+        console.error('Errore nel recupero dello username:', err);
+        return false;
+      }
+    });
+    return available;
+  }
+  
+  onSubmit(event: Event, first: string, last: string, username: string, email: string, password: string) {
+    event.preventDefault();
+    this.resetErrors();
+
+    let valid = true;
+    if (!first || first.trim().length === 0) {
+      this.errors['first'] = 'Il nome è obbligatorio.';
+      valid = false;
+    }
+    if (!last || last.trim().length === 0) {
+      this.errors['last'] = 'Il cognome è obbligatorio.';
+      valid = false;
+    }
+    if (!username || username.trim().length === 0 || !this.validateUsername(username)) {
+      this.errors['username'] = !username || username.trim().length === 0 ? "Lo username è obbligatorio." : "Lo username inserito è già in uso";
+      valid = false;
+    }
+    if (!email || !this.validateEmail(email)) {
+      this.errors['email'] = 'Inserisci un indirizzo email valido.';
+      valid = false;
+    }
+    const pwError = this.validatePassword(password);
+    if (pwError) {
+      this.errors['password'] = pwError;
+      valid = false;
+    }
+
+    if (!valid) return;
+
+    // Here you would call your API to register the user.
+    // For now we'll just show a success message.
+    this.successMessage = 'Registrazione completata con successo (simulata).';
+  }
 }

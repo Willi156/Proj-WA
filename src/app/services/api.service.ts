@@ -47,6 +47,10 @@ export class ApiService {
     return this.http.get<any[]>(`${this.baseUrl}/api/recensioni/contenuto`,{params: {contenutoId}});
   }
 
+  getCheckUsername(username: string) {
+    return this.http.get<{ available: boolean }>(`${this.baseUrl}/api/utente/checkUsernameExists`, { params: { username } });
+  }
+
 
 
   // Esempio per futuri endpoint:
