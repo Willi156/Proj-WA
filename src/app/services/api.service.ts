@@ -31,6 +31,30 @@ export class ApiService {
     return this.http.get<any[]>(`${this.baseUrl}/api/contenuti`);
   }
 
+  getGiochi() {
+    return this.http.get<any[]>(`${this.baseUrl}/api/contenuti/giochi`);
+  }
+
+  getFilm() {
+    return this.http.get<any[]>(`${this.baseUrl}/api/contenuti/film`);
+  }
+
+  getSerieTv() {
+    return this.http.get<any[]>(`${this.baseUrl}/api/contenuti/serie_tv`);
+  }
+
+  getRecensioniByContenutoId(contenutoId: number) {
+    return this.http.get<any[]>(`${this.baseUrl}/api/recensioni/contenuto`,{params: {contenutoId}});
+  }
+
+  getCheckUsername(username: string) {
+    return this.http.get<{ available: boolean }>(`${this.baseUrl}/api/utente/checkUsernameExists`, { params: { username } });
+  }
+
+  createUser(nome: string, cognome: string, username: string, password: string, email: string) {
+    return this.http.post<{ id: number }>(`${this.baseUrl}/api/newUtente`, { nome, cognome, email, username, password });
+  }
+
 
 
   // Esempio per futuri endpoint:
