@@ -51,6 +51,10 @@ export class ApiService {
     return this.http.get<{ available: boolean }>(`${this.baseUrl}/api/utente/checkUsernameExists`, { params: { username } });
   }
 
+  createUser(nome: string, cognome: string, username: string, password: string, email: string) {
+    return this.http.post<{ id: number }>(`${this.baseUrl}/api/newUtente`, { nome, cognome, email, username, password });
+  }
+
 
 
   // Esempio per futuri endpoint:
