@@ -36,15 +36,15 @@ export class LoginComponent {
       return;
     }
 
-    this.api.getRecensioniByContenutoId(100).subscribe({
-      next: (recensioni) => {
-        console.log('Recensioni ricevute:', recensioni);
-      },
-      error: (err) => {
-        console.error('Errore nel recupero delle recensioni:', err);
-        this.error = err?.error?.message ?? 'Errore sconosciuto durante il recupero delle recensioni';
-      }
-    });
+    // this.api.getRecensioniByContenutoId(100).subscribe({
+    //   next: (recensioni) => {
+    //     console.log('Recensioni ricevute:', recensioni);
+    //   },
+    //   error: (err) => {
+    //     console.error('Errore nel recupero delle recensioni:', err);
+    //     this.error = err?.error?.message ?? 'Errore sconosciuto durante il recupero delle recensioni';
+    //   }
+    // });
 
     // this.api.getSerieTv().subscribe({
     //   next: (contenuti) => {
@@ -96,17 +96,17 @@ export class LoginComponent {
     //   }
     // });
 
-    // this.api.authenticate(username, password).subscribe({
-    //   next: (res) => {
-    //     console.log('Login successful, token:', res.token);
-    //     // Navigate to the main page or dashboard after successful login
-    //     this.router.navigate(['/']);
-    //   },
-    //   error: (err) => {
-    //     console.error('Login error:', err);
-    //     this.error = err?.error?.message ?? 'Errore sconosciuto';
-    //   }
-    // });
+    this.api.authenticate(username, password).subscribe({
+      next: (res) => {
+        console.log('Login successful, token:', res.token);
+        // Navigate to the main page or dashboard after successful login
+        this.router.navigate(['/']);
+      },
+      error: (err) => {
+        console.error('Login error:', err);
+        this.error = err?.error?.message ?? 'Errore sconosciuto';
+      }
+    });
     // this.api.getServerTime().subscribe({
     //   next: (res) => {
     //     // compatibile con il JSON { serverTime: { now: ... } }
