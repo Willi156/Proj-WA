@@ -36,15 +36,35 @@ export class LoginComponent {
       return;
     }
 
-    this.api.getContenuti().subscribe({
-      next: (contenuti) => {
-        console.log('Contenuti ricevuti:', contenuti);
+    this.api.getRecensioniByContenutoId(100).subscribe({
+      next: (recensioni) => {
+        console.log('Recensioni ricevute:', recensioni);
       },
       error: (err) => {
-        console.error('Errore nel recupero dei contenuti:', err);
-        this.error = err?.error?.message ?? 'Errore sconosciuto durante il recupero dei contenuti';
+        console.error('Errore nel recupero delle recensioni:', err);
+        this.error = err?.error?.message ?? 'Errore sconosciuto durante il recupero delle recensioni';
       }
     });
+
+    // this.api.getSerieTv().subscribe({
+    //   next: (contenuti) => {
+    //     console.log('Contenuti ricevuti:', contenuti);
+    //   },
+    //   error: (err) => {
+    //     console.error('Errore nel recupero dei contenuti:', err);
+    //     this.error = err?.error?.message ?? 'Errore sconosciuto durante il recupero dei contenuti';
+    //   }
+    // });
+
+    // this.api.getContenuti().subscribe({
+    //   next: (contenuti) => {
+    //     console.log('Contenuti ricevuti:', contenuti);
+    //   },
+    //   error: (err) => {
+    //     console.error('Errore nel recupero dei contenuti:', err);
+    //     this.error = err?.error?.message ?? 'Errore sconosciuto durante il recupero dei contenuti';
+    //   }
+    // });
 
     // this.api.newContenuto('Titolo di esempio', 'Descrizione di esempio', 'Genere di esempio', 'http://linkdi.esempio', 'GIOCO', 2024, undefined, "PIPPO").subscribe({
     //   next: (res) => {

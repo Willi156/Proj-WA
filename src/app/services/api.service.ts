@@ -31,6 +31,22 @@ export class ApiService {
     return this.http.get<any[]>(`${this.baseUrl}/api/contenuti`);
   }
 
+  getGiochi() {
+    return this.http.get<any[]>(`${this.baseUrl}/api/contenuti/giochi`);
+  }
+
+  getFilm() {
+    return this.http.get<any[]>(`${this.baseUrl}/api/contenuti/film`);
+  }
+
+  getSerieTv() {
+    return this.http.get<any[]>(`${this.baseUrl}/api/contenuti/serie_tv`);
+  }
+
+  getRecensioniByContenutoId(contenutoId: number) {
+    return this.http.get<any[]>(`${this.baseUrl}/api/recensioni/contenuto`,{params: {contenutoId}});
+  }
+
 
 
   // Esempio per futuri endpoint:
