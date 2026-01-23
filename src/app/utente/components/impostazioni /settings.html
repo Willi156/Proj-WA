@@ -1,0 +1,82 @@
+<div class="container mt-5 fade-in">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+          <h3 class="fw-bold text-secondary mb-0">Impostazioni</h3>
+          <a routerLink="/" class="btn-close" aria-label="Close"></a>
+        </div>
+
+        <div class="card-body p-4">
+          <form (ngSubmit)="salva()">
+
+            <h5 class="text-primary mb-3 fw-bold">Dati Personali</h5>
+            <div class="row g-3 mb-4">
+              <div class="col-md-6">
+                <label class="form-label fw-bold small text-muted">NOME</label>
+                <input type="text" class="form-control" [(ngModel)]="user.nome" name="nome">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold small text-muted">COGNOME</label>
+                <input type="text" class="form-control" [(ngModel)]="user.cognome" name="cognome">
+              </div>
+            </div>
+
+            <h5 class="text-primary mb-3 fw-bold">Account</h5>
+            <div class="mb-3">
+              <label class="form-label fw-bold small text-muted">USERNAME</label>
+              <div class="input-group">
+                <span class="input-group-text">&#64;</span>
+                <input type="text" class="form-control" [(ngModel)]="user.username" name="username">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-bold small text-muted">EMAIL</label>
+              <input type="email" class="form-control" [(ngModel)]="user.email" name="email">
+            </div>
+
+            <hr class="my-4 opacity-25">
+
+            <h5 class="text-danger mb-3 fw-bold">Sicurezza & Password</h5>
+
+            <div class="mb-3">
+              <label class="form-label fw-bold small text-muted">VECCHIA PASSWORD</label>
+              <input type="password" class="form-control"
+                     [(ngModel)]="vecchiaPassword" name="oldPass"
+                     placeholder="Inserisci la password attuale per modifiche">
+            </div>
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-bold small text-muted">NUOVA PASSWORD</label>
+                <input type="password" class="form-control"
+                       [(ngModel)]="nuovaPassword" name="newPass"
+                       placeholder="Nuova password">
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold small text-muted">CONFERMA PASSWORD</label>
+                <input type="password" class="form-control"
+                       [(ngModel)]="confermaPassword" name="confPass"
+                       placeholder="Ripeti nuova password">
+              </div>
+            </div>
+
+            <hr class="my-4 opacity-25">
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <a routerLink="/" class="btn btn-light me-md-2 rounded-pill px-4">Annulla</a>
+              <button type="submit" class="btn btn-primary px-4 rounded-pill fw-bold shadow-sm">
+                Salva Modifiche
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
