@@ -7,6 +7,11 @@ export const routes: Routes = [
   { path: '', redirectTo: 'games', pathMatch: 'full' },
   { path: 'games', component: GameHomeComponent },
   { path: 'film', component: FilmPageComponent },
-  { path: 'serie', component: SeriePageComponent }
-
+  {
+    path: 'home',
+    loadComponent: () =>
+      import('./features/home/pages/home-page/home-page').then(
+        (m) => m.HomePageComponent
+      ),
+  }
 ];

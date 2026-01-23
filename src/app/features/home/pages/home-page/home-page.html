@@ -1,0 +1,36 @@
+<div *ngIf="gamesLoading" class="section-state loading">
+  <span class="spinner"></span>
+  <span class="text">Caricamento contenuti in corso...</span>
+</div>
+
+<div *ngIf="gamesError" class="section-state error">
+  <span class="icon">⚠</span>
+  <span class="text">{{ gamesError }}</span>
+</div>
+
+<!-- GAMES -->
+<ng-container *ngIf="trendingGames$ | async as games">
+  <app-carousel-section
+    category="Games"
+    label="Trending"
+    [items]="games">
+  </app-carousel-section>
+</ng-container>
+
+<!-- MOVIES -->
+<ng-container *ngIf="trendingMovies$ | async as movies">
+  <app-carousel-section
+    category="Movies"
+    label="Most Popular"
+    [items]="movies">
+  </app-carousel-section>
+</ng-container>
+
+<!-- SERIES -->
+<ng-container *ngIf="trendingSeries$ | async as series">
+  <app-carousel-section
+    category="Series"
+    label="New Releases"
+    [items]="series">
+  </app-carousel-section>
+</ng-container>

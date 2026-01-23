@@ -23,4 +23,9 @@ export class ApiService {
   getSerieTv() {
     return this.http.get<SerieTv[]>(`${this.baseUrl}/api/contenuti/serie_tv`);
   }
+
+  getAllContenuti() {
+    return this.http.get<any>(`${this.baseUrl}/api/contenuti`);
+  }
+
 }

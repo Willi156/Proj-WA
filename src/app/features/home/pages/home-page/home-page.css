@@ -1,0 +1,58 @@
+/* =========================
+  SECTION STATE (loading / error)
+========================= */
+.section-state {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 14px 18px;
+  margin: 12px 0 24px;
+
+  font-family: 'Spline Sans Mono', monospace;
+  font-size: 14px;
+
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.03);
+  color: #222;
+}
+
+/* LOADING */
+.section-state.loading {
+  border-left: 4px solid #06A77D;
+}
+
+/* Spinner */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(6, 167, 125, 0.25);
+  border-top-color: #06A77D;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ERROR */
+.section-state.error {
+  border-left: 4px solid #c0392b;
+  background: rgba(192, 57, 43, 0.06);
+  color: #8e2a1f;
+}
+
+.section-state.error .icon {
+  font-size: 16px;
+}
+
+/* Responsive (mobile) */
+@media (max-width: 768px) {
+  .section-state {
+    font-size: 13px;
+    padding: 12px 14px;
+  }
+}

@@ -1,0 +1,38 @@
+<section class="section" *ngIf="items.length">
+  <div class="header">
+    <h2 class="h2">
+      <span class="h2-cat">{{ category }}</span>
+      <span class="h2-sep">|</span>
+      <span class="h2-label">{{ label }}</span>
+    </h2>
+
+
+    <div class="arrows">
+      <button
+        class="arrow"
+        [class.is-active]="activeArrow === 'left'"
+        type="button"
+        (click)="setActive('left'); scrollLeft()"
+        aria-label="Scroll left"
+      >
+        <i class="bi bi-arrow-right arrow-left-icon"></i>
+      </button>
+
+      <button
+        class="arrow"
+        [class.is-active]="activeArrow === 'right'"
+        type="button"
+        (click)="setActive('right'); scrollRight()"
+        aria-label="Scroll right"
+      >
+        <i class="bi bi-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="underline"></div>
+
+  <div class="track" #track>
+    <app-media-card *ngFor="let item of items" [item]="item"></app-media-card>
+  </div>
+</section>
