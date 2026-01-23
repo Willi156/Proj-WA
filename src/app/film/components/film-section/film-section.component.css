@@ -1,10 +1,8 @@
-/* ===== SECTION ===== */
 .section {
   margin-bottom: 48px;
   background: transparent;
 }
 
-/* ===== HEADER ===== */
 .section-header {
   display: flex;
   justify-content: space-between;
@@ -26,9 +24,6 @@
   margin: 0;
 }
 
-
-
-/* ===== ARROWS ===== */
 .arrows {
   display: flex;
   gap: 8px;
@@ -53,19 +48,18 @@
   cursor: not-allowed;
 }
 
-/* ===== DIVIDER ===== */
 .section-line {
   height: 1px;
   background-color: #dcdcdc;
   margin: 8px 0 16px;
 }
 
-/* ===== CARDS ===== */
 .cards-row {
   display: flex;
   gap: 16px;
+  overflow: hidden;
+  scroll-behavior: smooth;
 }
-
 
 .section-line {
   height: 2px;
@@ -98,7 +92,6 @@
   transition: color 0.25s ease;
 }
 
-
 .see-all:hover {
   background: linear-gradient(
     90deg,
@@ -125,6 +118,7 @@
     background-position: 100% 50%;
   }
 }
+
 @media (prefers-reduced-motion: reduce) {
   .section-line {
     animation: none;

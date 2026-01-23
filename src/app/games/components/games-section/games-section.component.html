@@ -1,27 +1,34 @@
-<div class="section">
+<section class="section">
 
   <div class="section-header">
     <div class="section-title">
-      <h2>New Releases</h2>
+      <h2>{{ title }}</h2>
       <span class="see-all">SEE ALL</span>
     </div>
 
-    <div class="section-actions">
-      <button (click)="scrollLeft()">←</button>
-      <button (click)="scrollRight()">→</button>
+    <div class="arrows">
+      <button
+        (click)="prev()"
+        [disabled]="isPrevDisabled">
+        ←
+      </button>
+
+      <button
+        (click)="next()"
+        [disabled]="isNextDisabled">
+        →
+      </button>
     </div>
   </div>
 
+  <div class="section-line"></div>
 
-
-  <div class="cards-container" #scrollContainer>
+  <div class="cards-row">
     <app-game-card
-      *ngFor="let game of games"
-      [title]="game.title"
-      [image]="game.image"
-      [rating]="game.rating"
-      [platforms]="game.platforms">
+      *ngFor="let game of visibleGames; trackBy: trackById"
+      [game]="game">
     </app-game-card>
+
   </div>
 
-</div>
+</section>

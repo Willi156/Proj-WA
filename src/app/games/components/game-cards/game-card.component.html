@@ -1,0 +1,31 @@
+<div class="game-card">
+
+  <!-- IMMAGINE -->
+  <ng-container *ngIf="game.imageLink; else placeholder">
+    <img
+      class="poster"
+      [src]="game.imageLink"
+      alt="{{ game.titolo }}"
+    />
+  </ng-container>
+
+  <!-- PLACEHOLDER -->
+  <ng-template #placeholder>
+    <div class="poster placeholder"></div>
+  </ng-template>
+
+  <!-- INFO -->
+  <div class="info">
+    <div class="title">{{ game.titolo }}</div>
+
+    <div class="meta">
+      <span class="score" [ngClass]="scoreClass">
+        {{ game.mediaVoti }}
+      </span>
+      <span class="label">
+        {{ scoreLabel }}
+      </span>
+    </div>
+  </div>
+
+</div>

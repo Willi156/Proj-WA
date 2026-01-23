@@ -1,4 +1,3 @@
-/* RESET GLOBALE */
 * {
   box-sizing: border-box;
 }
@@ -15,3 +14,32 @@ app-root {
   width: 100%;
   min-height: 100vh;
 }
+
+/**
+body.dark-mode {
+  background-color: #0f0f14;
+  color: #e5e5e5;
+}
+
+body.dark-mode .games-subtitle {
+  color: #aaa;
+}
+body.dark-mode .section-title h2 {
+  color: #fff;
+}
+body.dark-mode .game-card {
+  background-color: #16161d;
+}
+
+body.dark-mode .label {
+  color: #aaa;
+}
+body.dark-mode .arrows button {
+  background-color: #1f1f2a;
+  color: #fff;
+}
+
+body.dark-mode .arrows button:hover {
+  background-color: #2a2a3a;
+}
+*/
