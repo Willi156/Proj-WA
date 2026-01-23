@@ -1,0 +1,23 @@
+<article class="card">
+  <div class="poster">
+    <img
+      *ngIf="(item.coverUrl || item.imageUrl) as imgUrl; else noImg"
+      [src]="imgUrl"
+      [alt]="item.title"
+      loading="lazy"
+      referrerpolicy="no-referrer"
+    />
+    <ng-template #noImg>
+      <div class="no-img">
+        <span>{{ item.title }}</span>
+      </div>
+    </ng-template>
+  </div>
+
+  <a class="title" href="javascript:void(0)">{{ item.title }}</a>
+
+  <div class="meta">
+    <span [class]="scoreClass">{{ score }}</span>
+    <span class="label">{{ scoreLabel }}</span>
+  </div>
+</article>
