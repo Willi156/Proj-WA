@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ApiService } from '../../../services/api.service';
+import { MediaCacheService } from '../../../services/media-cache.service';
 import { Film } from '../../model/film.model';
-import { FilmSectionComponent } from '../film-section/ film-section.component';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import {FilmSectionComponent} from '../film-section/ film-section.component';
 
 @Component({
   selector: 'app-film-page',
@@ -11,15 +13,16 @@ import { FilmSectionComponent } from '../film-section/ film-section.component';
   templateUrl: './film-page.component.html',
   styleUrls: ['./film-page.component.css']
 })
-export class FilmPageComponent implements OnInit {
+export class FilmPageComponent {
+  films$!: Observable<{ newReleases: Film[]; upcoming: Film[]; best: Film[] }>;
 
-  films: Film[] = [];
-
-  constructor(private api: ApiService) {}
-
-  ngOnInit(): void {
-    this.api.getFilm().subscribe(films => {
-      this.films = films;
-    });
+  constructor(private cache: MediaCacheService) {
+    this.films$ = this.cache.films$.pipe(
+      map((films: Film[]) => ({
+        newReleases: films.slice(0,5),
+        upcoming:    films.slice(5,10),
+        best:        films.slice(10,15),
+      }))
+    );
   }
 }

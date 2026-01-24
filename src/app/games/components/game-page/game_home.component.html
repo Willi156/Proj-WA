@@ -105,7 +105,13 @@
     </div>
   </header>
 
-  <app-games-section title="New Releases" [games]="newReleases"></app-games-section>
-  <app-games-section title="Upcoming Games" [games]="upcomingGames"></app-games-section>
-  <app-games-section title="Best Games" [games]="bestGames"></app-games-section>
+  <ng-container *ngIf="games$ | async as g">
+    <app-games-section title="New Releases" [games]="g.newReleases"></app-games-section>
+    <app-games-section title="Upcoming Games" [games]="g.upcoming"></app-games-section>
+    <app-games-section title="Best Games" [games]="g.best"></app-games-section>
+  </ng-container>
+
+
+
+
 </div>

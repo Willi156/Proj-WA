@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ApiService } from '../../../services/api.service';
+import { SerieSectionComponent } from '../serieTV-section/serieTV-section.component';
+import { MediaCacheService } from '../../../services/media-cache.service';
 import { SerieTv } from '../../model/serie-tv.model';
-import {SerieSectionComponent} from '../serieTV-section/serieTV-section.component';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-serie-page',
@@ -11,15 +13,16 @@ import {SerieSectionComponent} from '../serieTV-section/serieTV-section.componen
   templateUrl: './serieTV-page.component.html',
   styleUrls: ['./serieTV-page.component.css']
 })
-export class SeriePageComponent implements OnInit {
+export class SeriePageComponent {
+  series$!: Observable<{ newReleases: SerieTv[]; upcoming: SerieTv[]; best: SerieTv[] }>;
 
-  series: SerieTv[] = [];
-
-  constructor(private api: ApiService) {}
-
-  ngOnInit(): void {
-    this.api.getSerieTv().subscribe(series => {
-      this.series = series;
-    });
+  constructor(private cache: MediaCacheService) {
+    this.series$ = this.cache.series$.pipe(
+      map((series: SerieTv[]) => ({
+        newReleases: series.slice(0,5),
+        upcoming:    series.slice(5,10),
+        best:        series.slice(10,15),
+      }))
+    );
   }
 }

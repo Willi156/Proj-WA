@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GamesSectionComponent } from '../games-section/games-section.component';
-import { ApiService } from '../../../services/api.service';
-import {Game} from '../../models/game.model';
-
+import { MediaCacheService } from '../../../services/media-cache.service';
+import { Game } from '../../models/game.model';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-game-home',
@@ -12,43 +13,20 @@ import {Game} from '../../models/game.model';
   templateUrl: './game_home.component.html',
   styleUrl: './game_home.component.css'
 })
+export class GameHomeComponent {
+  games$!: Observable<{ newReleases: Game[]; upcoming: Game[]; best: Game[] }>;
 
-export class GameHomeComponent implements OnInit {
-
-  allGames: Game[] = [];
-
-  newReleases: Game[] = [];
-  upcomingGames: Game[] = [];
-  bestGames: Game[] = [];
-
-  loading = true;
-  error: string | null = null;
-
-  constructor(private api: ApiService) {}
-
-  ngOnInit(): void {
-    this.api.getGiochi().subscribe({
-      next: (games) => {
-        this.allGames = games;
-        this.buildSections();
-        this.loading = false;
-      },
-      error: () => {
-        this.loading = false;
-        this.error = 'Errore nel recupero dei giochi';
-      }
-    });
-  }
-
-  private buildSections(): void {
-    this.newReleases = [...this.allGames]
-      .sort((a, b) => b.id - a.id);
-
-    this.upcomingGames = [...this.allGames]
-      .sort((a, b) => (a.annoPubblicazione ?? 0) - (b.annoPubblicazione ?? 0));
-
-    this.bestGames = [...this.allGames]
-      .filter(g => g.mediaVoti !== null && g.mediaVoti !== undefined)
-      .sort((a, b) => (b.mediaVoti ?? 0) - (a.mediaVoti ?? 0));
+  constructor(private cache: MediaCacheService) {
+    this.games$ = this.cache.games$.pipe(
+      map(games => ({
+        newReleases: [...games].sort((a, b) => b.id - a.id),
+        upcoming: [...games].sort(
+          (a, b) => (a.annoPubblicazione ?? 0) - (b.annoPubblicazione ?? 0)
+        ),
+        best: [...games]
+          .filter(g => g.mediaVoti != null)
+          .sort((a, b) => (b.mediaVoti ?? 0) - (a.mediaVoti ?? 0)),
+      }))
+    );
   }
 }

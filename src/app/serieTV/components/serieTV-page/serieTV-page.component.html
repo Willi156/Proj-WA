@@ -98,19 +98,12 @@
     </div>
   </header>
 
-  <app-serie-section
-    title="New Releases"
-    [series]="series">
-  </app-serie-section>
+  <ng-container *ngIf="series$ | async as s">
+    <app-serie-section title="New Releases" [series]="s.newReleases"></app-serie-section>
+    <app-serie-section title="Upcoming" [series]="s.upcoming"></app-serie-section>
+    <app-serie-section title="Best Series" [series]="s.best"></app-serie-section>
+  </ng-container>
 
-  <app-serie-section
-    title="Upcoming"
-    [series]="series">
-  </app-serie-section>
 
-  <app-serie-section
-    title="Best Series"
-    [series]="series">
-  </app-serie-section>
 
 </div>
