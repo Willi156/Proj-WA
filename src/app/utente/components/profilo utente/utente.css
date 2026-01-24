@@ -6,7 +6,7 @@
 }
 
 .sidebar-custom {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #058e5d 0%, #084905 100%);
 }
 
 .profile-img {
@@ -74,4 +74,34 @@
   opacity: 1;
   transform: scale(1.1);
   box-shadow: 0 2px 8px rgba(220, 53, 69, 0.2);
+}
+/* Stile per le Tab di navigazione centrali */
+.nav-pills .nav-link {
+  color: #6c757d;
+  font-weight: 600;
+  border-radius: 30px;
+  padding: 10px 20px;
+  transition: all 0.2s;
+}
+
+.nav-pills .nav-link.active {
+  background-color: #007e51; /* Blu acceso */
+  color: white;
+  box-shadow: 0 4px 10px rgb(8, 73, 5);
+}
+
+.nav-pills .nav-link:hover:not(.active) {
+  background-color: #e9ecef;
+}
+
+/* Barra di ricerca stile "pillola" */
+.search-input {
+  border-radius: 20px;
+  background-color: #f8f9fa;
+  border: 1px solid transparent;
+}
+.search-input:focus {
+  background-color: white;
+  border-color: #dee2e6;
+  box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
 }

@@ -12,36 +12,73 @@ import { RouterLink } from '@angular/router';
 })
 export class UtenteComponent {
 
+  activeTab: string = 'games';
+  searchText: string = '';
+
   user = {
     nome: 'Alessia',
     cognome: 'Sica',
     username: 'alessia_dev',
     email: 'alessia@studenti.unical.it',
 
-    preferiti: [
-      { titolo: 'Stranger Things', tipo: 'Serie TV', cover: '📺' },
-      { titolo: 'Harry Potter', tipo: 'Film', cover: '⚡' },
-      { titolo: 'Interstellar', tipo: 'Film', cover: '🚀' },
-      { titolo: 'The Witcher', tipo: 'Serie TV', cover: '⚔️' }
+    // ORA LE RECENSIONI HANNO LA CATEGORIA!
+    recensioni: [
+      {
+        oggetto: 'Inception',
+        categoria: 'Film',
+        voto: 5,
+        testo: 'Un capolavoro assoluto, trama incredibile!'
+      },
+      {
+        oggetto: 'Barbie',
+        categoria: 'Film',
+        voto: 4,
+        testo: 'Molto colorato e divertente, ma finale strano.'
+      },
+      {
+        oggetto: 'The Last of Us',
+        categoria: 'Games',
+        voto: 5,
+        testo: 'Storia commovente, gameplay perfetto.'
+      },
+      {
+        oggetto: 'Stranger Things',
+        categoria: 'Serie TV',
+        voto: 4,
+        testo: 'Atmosfera anni 80 fantastica, ma troppe sottotrame.'
+      }
     ],
 
-    recensioni: [
-      { oggetto: 'Inception', voto: 5, testo: 'Un capolavoro assoluto, trama incredibile!' },
-      { oggetto: 'Barbie', voto: 4, testo: 'Molto colorato e divertente, ma finale strano.' }
+    // Lista preferiti (quella a destra)
+    preferiti: [
+      { titolo: 'Stranger Things', tipo: 'Serie TV' },
+      { titolo: 'Harry Potter', tipo: 'Film' },
+      { titolo: 'Interstellar', tipo: 'Film' },
+      { titolo: 'The Witcher', tipo: 'Serie TV' },
+      { titolo: 'Zelda', tipo: 'Game' }
     ]
   };
 
+  setActiveTab(tabName: string) {
+    this.activeTab = tabName;
+  }
 
-  rimuoviPreferito(index: number) {
-    if(confirm("Vuoi davvero rimuovere questo preferito?")) {
-      this.user.preferiti.splice(index, 1);
+  get filteredPreferiti() {
+    if (!this.searchText) {
+      return this.user.preferiti;
+    }
+    return this.user.preferiti.filter(item =>
+      item.titolo.toLowerCase().includes(this.searchText.toLowerCase())
+    );
+  }
+
+  rimuoviRecensione(index: number) {
+    if(confirm("Eliminare questa recensione?")) {
+      this.user.recensioni.splice(index, 1);
     }
   }
 
-
-  rimuoviRecensione(index: number) {
-    if(confirm("Vuoi cancellare questa recensione?")) {
-      this.user.recensioni.splice(index, 1);
-    }
+  rimuoviPreferito(itemDaRimuovere: any) {
+    this.user.preferiti = this.user.preferiti.filter(item => item !== itemDaRimuovere);
   }
 }
