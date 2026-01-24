@@ -75,7 +75,7 @@
   transform: scale(1.1);
   box-shadow: 0 2px 8px rgba(220, 53, 69, 0.2);
 }
-/* Stile per le Tab di navigazione centrali */
+
 .nav-pills .nav-link {
   color: #6c757d;
   font-weight: 600;
@@ -94,7 +94,7 @@
   background-color: #e9ecef;
 }
 
-/* Barra di ricerca stile "pillola" */
+
 .search-input {
   border-radius: 20px;
   background-color: #f8f9fa;
