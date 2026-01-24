@@ -3,19 +3,20 @@ import { Component } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ApiService } from '../services/api.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-signup',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [RouterLink,CommonModule, ReactiveFormsModule],
   templateUrl: './signup.html',
   styleUrls: ['./signup.css'],
   standalone: true,
 })
-export class Signup {
+export class SignupComponent  {
   errors: { [key: string]: string } = { first: '', last: '', username: '', email: '', password: '' };
   successMessage = '';
   constructor(private api: ApiService) {}
-  
+
 
   private resetErrors() {
     this.errors = { first: '', last: '', username: '', email: '', password: '' };
@@ -46,7 +47,7 @@ export class Signup {
       return false;
     }
   }
-  
+
   async onSubmit(event: Event, first: string, last: string, username: string, email: string, password: string) {
     event.preventDefault();
     this.resetErrors();

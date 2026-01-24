@@ -1,28 +1,107 @@
-<div class="signup-container">
-	<h2>Registrazione utente</h2>
-	<form (submit)="onSubmit($event, first.value, last.value, username.value, email.value, password.value)" novalidate>
-		<label for="first">Nome</label>
-		<input id="first" #first type="text" placeholder="Nome" />
-		<div class="error">{{ errors['first'] }}</div>
+<div class="all">
+<div class="auth">
+  <div class="shell-signup">
 
-		<label for="last">Cognome</label>
-		<input id="last" #last type="text" placeholder="Cognome" />
-		<div class="error">{{ errors['last'] }}</div>
 
-		<label for="username">Username</label>
-		<input id="username" #username type="text" placeholder="Username" />
-		<div class="error">{{ errors['username'] }}</div>
+  <!-- LEFT -->
+    <aside class="side">
+      <div class="side-logo" aria-label="CritiVerse logo">
+        <img src="assets/logoCritiverse.png" alt="CritiVerse" />
+      </div>
 
-		<label for="email">Email</label>
-		<input id="email" #email type="email" placeholder="esempio@dominio.com" />
-		<div class="error">{{ errors['email'] }}</div>
+      <div class="side-text" role="tablist" aria-orientation="vertical">
+        <a class="vtab" routerLink="/login">SIGN IN</a>
+        <a class="vtab is-active" routerLink="/signup">SIGN UP</a>
+      </div>
+    </aside>
 
-		<label for="password">Password</label>
-		<input id="password" #password type="password" placeholder="Almeno 6 caratteri, 1 carattere speciale" />
-		<div class="error">{{ errors['password'] }}</div>
+    <!-- RIGHT -->
+    <main class="panel">
+      <div class="panel-head">
+        <div class="avatar" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="34" height="34">
+            <path
+              d="M12 12c2.8 0 5-2.2 5-5s-2.2-5-5-5-5 2.2-5 5 2.2 5 5 5Zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5Z"
+              fill="currentColor"
+            />
+          </svg>
+        </div>
 
-		<button type="submit">Registrati</button>
-	</form>
+        <h1 class="title">REGISTER</h1>
+      </div>
 
-	<div class="success" *ngIf="successMessage">{{ successMessage }}</div>
+      <!-- SIGN UP -->
+      <form
+        class="form"
+        (submit)="onSubmit($event, first.value, last.value, usernameSU.value, email.value, passwordSU.value)"
+        novalidate
+      >
+        <div class="row"><span class="ico" aria-hidden="true">
+  <svg viewBox="0 0 24 24" width="18" height="18">
+    <path
+      d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4Zm0 2c-3.3 0-6 1.7-6 4v2h12v-2c0-2.3-2.7-4-6-4Z"
+      fill="currentColor"
+    />
+  </svg>
+</span><input #first type="text" placeholder="Name" /></div>
+        <div class="error">{{ errors['first'] }}</div>
+
+        <div class="row"><span class="ico" aria-hidden="true">
+  <svg viewBox="0 0 24 24" width="18" height="18">
+    <path
+      d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4Zm0 2c-3.3 0-6 1.7-6 4v2h12v-2c0-2.3-2.7-4-6-4Z"
+      fill="currentColor"
+    />
+  </svg>
+</span>
+          <input #last type="text" placeholder="Surname" /></div>
+        <div class="error">{{ errors['last'] }}</div>
+
+        <div class="row"><span class="ico" aria-hidden="true">
+  <svg viewBox="0 0 24 24" width="18" height="18">
+    <path
+      d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4Zm0 2c-3.3 0-6 1.7-6 4v2h12v-2c0-2.3-2.7-4-6-4Z"
+      fill="currentColor"
+    />
+  </svg>
+</span>
+          <input #usernameSU type="text" placeholder="Username" /></div>
+        <div class="error">{{ errors['username'] }}</div>
+
+        <div class="row">
+  <span class="ico" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="18" height="18">
+      <path
+        d="M4 6h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Zm0 2v.01L12 13l8-4.99V8H4Zm16 8V9.24l-8 5-8-5V16h16Z"
+        fill="currentColor"
+      />
+    </svg>
+  </span>
+          <input #email type="email" placeholder="Email" />
+        </div>
+        <div class="error">{{ errors['email'] }}</div>
+
+
+        <div class="row">
+  <span class="ico" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="18" height="18">
+      <path
+        d="M17 9h-1V7a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v9h14v-9a2 2 0 0 0-2-2Zm-6 0V7a2 2 0 0 1 4 0v2h-4Z"
+        fill="currentColor"
+      />
+    </svg>
+  </span>
+          <input #passwordSU type="password" placeholder="Password" />
+        </div>
+        <div class="error">{{ errors['password'] }}</div>
+
+
+        <button class="pill" type="submit">REGISTER</button>
+
+        <div class="success" *ngIf="successMessage">{{ successMessage }}</div>
+      </form>
+    </main>
+
+  </div>
+</div>
 </div>
