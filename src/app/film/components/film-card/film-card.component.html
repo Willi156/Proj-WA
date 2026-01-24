@@ -1,0 +1,28 @@
+<div class="film-card">
+
+  <ng-container *ngIf="film.imageLink; else placeholder">
+    <img
+      class="poster"
+      [src]="film.imageLink"
+      alt="{{ film.titolo }}"
+    />
+  </ng-container>
+
+  <ng-template #placeholder>
+    <div class="poster placeholder"></div>
+  </ng-template>
+
+  <div class="info">
+    <div class="title">{{ film.titolo }}</div>
+
+    <div class="meta">
+      <span class="score" [ngClass]="scoreClass">
+        {{ film.mediaVoti ?? '-' }}
+      </span>
+      <span class="label">
+        {{ scoreLabel }}
+      </span>
+    </div>
+  </div>
+
+</div>

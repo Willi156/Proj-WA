@@ -1,0 +1,28 @@
+<div class="serie-tv-card">
+
+  <ng-container *ngIf="serie.imageLink; else placeholder">
+    <img
+      class="poster"
+      [src]="serie.imageLink"
+      alt="{{ serie.titolo }}"
+    />
+  </ng-container>
+
+  <ng-template #placeholder>
+    <div class="poster placeholder"></div>
+  </ng-template>
+
+  <div class="info">
+    <div class="title">{{ serie.titolo }}</div>
+
+    <div class="meta">
+      <span class="score" [ngClass]="scoreClass">
+        {{ serie.mediaVoti ?? '-' }}
+      </span>
+      <span class="label">
+        {{ scoreLabel }}
+      </span>
+    </div>
+  </div>
+
+</div>

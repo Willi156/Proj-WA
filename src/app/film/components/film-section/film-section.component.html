@@ -1,0 +1,24 @@
+<section class="section">
+
+  <div class="section-header">
+    <div class="section-title">
+      <h2>{{ title }}</h2>
+      <span class="see-all">SEE ALL</span>
+    </div>
+
+    <div class="arrows">
+      <button (click)="prev()" [disabled]="isPrevDisabled">←</button>
+      <button (click)="next()" [disabled]="isNextDisabled">→</button>
+    </div>
+  </div>
+
+  <div class="section-line"></div>
+
+  <div class="cards-row">
+    <app-film-card
+      *ngFor="let film of visibleFilms; trackBy: trackById"
+      [film]="film">
+    </app-film-card>
+  </div>
+
+</section>

@@ -1,0 +1,132 @@
+/* ===== SECTION ===== */
+.section {
+  margin-bottom: 48px;
+  background: transparent;
+}
+
+/* ===== HEADER ===== */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-title {
+  font-family: 'Sora', system-ui, sans-serif;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.section-title h2 {
+  font-family: 'Sora', system-ui, sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  margin: 0;
+}
+
+
+
+/* ===== ARROWS ===== */
+.arrows {
+  display: flex;
+  gap: 8px;
+}
+
+.arrows button {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background-color: #f2f2f2;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.arrows button:hover:not(:disabled) {
+  background-color: #e0e0e0;
+}
+
+.arrows button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ===== DIVIDER ===== */
+.section-line {
+  height: 1px;
+  background-color: #dcdcdc;
+  margin: 8px 0 16px;
+}
+
+/* ===== CARDS ===== */
+.cards-row {
+  display: flex;
+  gap: 16px;
+}
+
+
+.section-line {
+  height: 2px;
+  margin: 8px 0 16px;
+
+  background: linear-gradient(
+    90deg,
+    #ff004c,
+    #ff7a00,
+    #ffe600,
+    #00ff9c,
+    #00c8ff,
+    #4f6dff,
+    #8b00ff,
+    #ff004c
+  );
+
+  background-size: 1000% 100%;
+  animation: rgbFlow 10s linear infinite alternate;
+}
+
+
+.see-all {
+  font-size: 12px;
+  font-weight: 500;
+  color: #777;
+  cursor: pointer;
+  position: relative;
+  letter-spacing: 0.3px;
+  transition: color 0.25s ease;
+}
+
+
+.see-all:hover {
+  background: linear-gradient(
+    90deg,
+    #ff004c,
+    #ff7a00,
+    #ffe600,
+    #00ff9c,
+    #00c8ff,
+    #8b00ff
+  );
+
+  background-size: 400% 400%;
+  animation: rgbShift 6s linear infinite;
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes rgbFlow {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 100% 50%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .section-line {
+    animation: none;
+  }
+}

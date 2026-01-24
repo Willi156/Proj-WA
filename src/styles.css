@@ -1,1 +1,45 @@
-/* You can add global styles to this file, and also import other style files */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+app-root {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/**
+body.dark-mode {
+  background-color: #0f0f14;
+  color: #e5e5e5;
+}
+
+body.dark-mode .games-subtitle {
+  color: #aaa;
+}
+body.dark-mode .section-title h2 {
+  color: #fff;
+}
+body.dark-mode .game-card {
+  background-color: #16161d;
+}
+
+body.dark-mode .label {
+  color: #aaa;
+}
+body.dark-mode .arrows button {
+  background-color: #1f1f2a;
+  color: #fff;
+}
+
+body.dark-mode .arrows button:hover {
+  background-color: #2a2a3a;
+}
+*/

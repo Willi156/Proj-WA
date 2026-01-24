@@ -1,0 +1,216 @@
+<nav class="navbar">
+  <div class="navbar-container">
+
+    <!-- LEFT -->
+    <div class="left">
+      <div class="logo-area">
+        <div class="logo-circle">
+          <img src="/logoCritiverse.png" alt="CritiVerse logo" />
+        </div>
+        <span class="logo-text" routerLink="../index.html">CritiVerse</span>
+      </div>
+    </div>
+
+    <!-- CENTER (DESKTOP) -->
+    <div class="center desktop-only">
+      <ul class="menu">
+
+        <!-- GAMES -->
+        <li class="menu-item has-dropdown">
+          <a class="menu-link" routerLink="/games">
+            Games <i class="bi bi-chevron-down"></i>
+          </a>
+
+          <div class="dropdown">
+            <a routerLink="/games/trending">Trending</a>
+            <a routerLink="/games/new">New Releases</a>
+            <a routerLink="/games/top">Top Rated</a>
+          </div>
+        </li>
+
+        <!-- MOVIES -->
+        <li class="menu-item has-dropdown">
+          <a class="menu-link" routerLink="/movies">
+            Movies <i class="bi bi-chevron-down"></i>
+          </a>
+
+          <div class="dropdown">
+            <a routerLink="/movies/trending">Trending</a>
+            <a routerLink="/movies/in-theaters">In Theaters</a>
+            <a routerLink="/movies/top">Top Rated</a>
+          </div>
+        </li>
+
+        <!-- TV SHOWS -->
+        <li class="menu-item has-dropdown">
+          <a class="menu-link" routerLink="/series">
+            TV Shows <i class="bi bi-chevron-down"></i>
+          </a>
+
+          <div class="dropdown">
+            <a routerLink="/series/trending">Trending</a>
+            <a routerLink="/series/most-watched">Most Watched</a>
+            <a routerLink="/series/top">Top Rated</a>
+          </div>
+        </li>
+
+      </ul>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right">
+
+      <!-- DESKTOP-->
+      <button class="search-pill desktop-only" type="button" (click)="openSearch()" aria-label="Open search">
+        <i class="bi bi-search"></i>
+        <span class="search-pill-text">Search Games, Movies or Series</span>
+      </button>
+
+      <div class="profile desktop-only">
+        <i class="bi bi-person"></i>
+      </div>
+
+      <button class="register desktop-only">Register</button>
+
+      <!-- MOBILE: solo elementi search + hamburger -->
+      <button
+        class="search-icon mobile-only"
+        type="button"
+        (click)="openSearch()"
+        aria-label="Search"
+      >
+        <i class="bi bi-search"></i>
+      </button>
+
+      <button
+        class="hamburger mobile-only"
+        type="button"
+        (click)="toggleMenu()"
+        aria-label="Open menu"
+      >
+        <i class="bi bi-list"></i>
+      </button>
+    </div>
+
+    <!-- MOBILE MENU -->
+    <div class="mobile-menu" *ngIf="isMenuOpen">
+
+      <!-- GAMES -->
+      <button class="mobile-accordion" type="button" (click)="toggleMobileSection('games')">
+        <span>Games</span>
+        <i class="bi" [ngClass]="mobileOpen === 'games' ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+      </button>
+      <div class="mobile-submenu" *ngIf="mobileOpen === 'games'">
+        <a routerLink="/games/trending" (click)="closeMenu()">Trending</a>
+        <a routerLink="/games/new" (click)="closeMenu()">New Releases</a>
+        <a routerLink="/games/top" (click)="closeMenu()">Top Rated</a>
+      </div>
+
+      <!-- MOVIES -->
+      <button class="mobile-accordion" type="button" (click)="toggleMobileSection('movies')">
+        <span>Movies</span>
+        <i class="bi" [ngClass]="mobileOpen === 'movies' ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+      </button>
+      <div class="mobile-submenu" *ngIf="mobileOpen === 'movies'">
+        <a routerLink="/movies/trending" (click)="closeMenu()">Trending</a>
+        <a routerLink="/movies/in-theaters" (click)="closeMenu()">In Theaters</a>
+        <a routerLink="/movies/top" (click)="closeMenu()">Top Rated</a>
+      </div>
+
+      <!-- TV SHOWS -->
+      <button class="mobile-accordion" type="button" (click)="toggleMobileSection('series')">
+        <span>TV Shows</span>
+        <i class="bi" [ngClass]="mobileOpen === 'series' ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+      </button>
+      <div class="mobile-submenu" *ngIf="mobileOpen === 'series'">
+        <a routerLink="/series/trending" (click)="closeMenu()">Trending</a>
+        <a routerLink="/series/most-watched" (click)="closeMenu()">Most Watched</a>
+        <a routerLink="/series/top" (click)="closeMenu()">Top Rated</a>
+      </div>
+
+      <!-- ACCOUNT-->
+      <div class="mobile-divider"></div>
+
+      <a class="mobile-link" routerLink="/profile" (click)="closeMenu()">
+        <i class="bi bi-person"></i>
+        <span>Profile</span>
+      </a>
+
+      <button
+        class="register desktop-only"
+        routerLink="/login">
+        Register
+      </button>
+
+
+    </div>
+  </div>
+</nav>
+
+<!-- SEARCH OVERLAY -->
+<div class="search-overlay" *ngIf="isSearchOpen" (click)="closeSearch()">
+  <div class="search-modal" (click)="$event.stopPropagation()">
+    <div class="search-modal-header">
+      <div class="search-title">
+        <i class="bi bi-search"></i>
+        <span>Search</span>
+      </div>
+
+      <button class="close-btn" type="button" (click)="closeSearch()" aria-label="Close search">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="search-input-wrap">
+      <i class="bi bi-search"></i>
+      <input
+        #overlaySearchInput
+        type="text"
+        [(ngModel)]="searchQuery"
+        placeholder="Search games, movies, TV shows..."
+      />
+      </div>
+
+    <!-- RESULTS -->
+
+    <div class="search-results" *ngIf="searchQuery.trim().length > 0">
+      <ng-container *ngIf="groupedResults.length > 0; else noResults">
+
+        <div class="search-list">
+          <ng-container *ngFor="let g of groupedResults">
+            <ng-container *ngFor="let item of g.items">
+
+              <button class="sr-row" type="button" (click)="goTo(item.route)">
+                <img class="sr-thumb" [src]="item.thumbUrl" alt="" />
+
+                <div class="sr-main">
+                  <div class="sr-title">{{ item.title }}</div>
+
+                  <div class="sr-meta">
+                <span class="sr-tag">
+                  {{ item.type === 'GAME' ? 'Games' : (item.type === 'MOVIE' ? 'Movies' : 'Series') }}
+                </span>
+
+                    <span class="sr-info">
+                  {{ item.type === 'GAME' ? 'PC, and more' : (item.type === 'MOVIE' ? '2024' : '2024') }}
+                </span>
+                  </div>
+                </div>
+
+                <div class="sr-score">{{ item.score }}</div>
+              </button>
+
+              <div class="sr-divider"></div>
+
+            </ng-container>
+          </ng-container>
+        </div>
+
+      </ng-container>
+
+      <ng-template #noResults>
+        <div class="no-results">No results for “{{ searchQuery }}”</div>
+      </ng-template>
+    </div>
+  </div>
+</div>

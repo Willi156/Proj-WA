@@ -1,0 +1,251 @@
+@import url('https://fonts.googleapis.com/css2?family=Spline+Sans+Mono:wght@300&display=swap');
+
+/* =========================
+   SECTION
+========================= */
+.section {
+  background: #fff;
+  color: #111;
+  font-family: 'Spline Sans Mono', monospace;
+  font-weight: 400;
+  padding-top: 30px;
+  padding-bottom: 60px;
+  padding-left: 150px;
+  padding-right: 150px;
+}
+
+/* =========================
+   HEADER
+========================= */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.h2 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 300;
+  color: #222;
+}
+
+/* underline sotto il titolo */
+.underline {
+  margin-top: 10px;
+  height: 1px;
+  background: #222;
+  opacity: 0.9;
+}
+/* ===== Title split: Category | Label ===== */
+.h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.h2-cat {
+  color: #06A77D;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+.h2-sep {
+  color: rgba(0,0,0,0.35);
+  font-weight: 600;
+}
+
+.h2-label {
+  color: #222;
+  font-weight: 400; /* coerente col tuo font-weight generale */
+}
+
+
+.track > * {
+  touch-action: pan-x;
+}
+
+/* =========================
+   ARROWS
+========================= */
+.arrows {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.arrow {
+  all: unset; /* reset totale, evita interferenze globali */
+
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  background: #fff;
+  cursor: pointer;
+
+  display: grid;
+  place-items: center;
+
+  color: #222;
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+/* icona centrata */
+.arrow i {
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* freccia sinistra = freccia destra ruotata */
+.arrow-left-icon {
+  transform: rotate(180deg);
+}
+
+/* hover */
+.arrow:hover {
+  transform: translateY(-1px);
+  border-color: rgba(6, 167, 125, 0.55);
+  background: rgba(6, 167, 125, 0.06);
+  box-shadow: 0 8px 18px rgba(6, 167, 125, 0.18);
+}
+
+/* stato attivo */
+.arrow.is-active {
+  background: #06A77D;
+  border-color: #06A77D;
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(6, 167, 125, 0.30);
+}
+
+.arrow.is-active:hover {
+  background: #06A77D;
+  border-color: #06A77D;
+}
+
+/* =========================
+   TRACK / CAROUSEL
+========================= */
+.track {
+  margin-top: 18px;
+  display: flex;
+  gap: 18px;
+  overflow-x: auto;
+
+  padding-bottom: 12px;
+  scroll-behavior: smooth;
+
+  -webkit-overflow-scrolling: touch; /* iOS momentum */
+  scroll-snap-type: x mandatory;     /* snap alle card */
+  touch-action: pan-x;
+
+  /* Firefox */
+  scrollbar-color: #06A77D transparent;
+  scrollbar-width: thin;
+}
+
+/* Webkit scrollbar */
+.track::-webkit-scrollbar {
+  height: 5px;
+}
+
+.track::-webkit-scrollbar-thumb {
+  background: #06A77D;
+  border-radius: 999px;
+}
+
+.track::-webkit-scrollbar-thumb:hover {
+  background: #05906a;
+}
+/* ✅ FIX: impedisce alle card di comprimersi a 0 nel flex */
+.track > * {
+  flex: 0 0 auto;
+}
+
+/* (opzionale ma utile) evita che qualche stile globale le renda inline */
+app-media-card {
+  display: block;
+}
+
+/* ✅ FIX MINIMO: evita che le card collassino nel flex */
+.track > * {
+  flex: 0 0 auto;
+}
+
+/* (sicurezza) */
+app-media-card {
+  display: block;
+}
+
+/* Tablet */
+@media (max-width: 1200px) {
+  .section {
+    padding: 20px 80px;
+  }
+
+  .h2 {
+    font-size: 22px;
+  }
+
+  .track {
+    gap: 14px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .section {
+    padding: 18px 20px;
+  }
+
+  .h2 {
+    font-size: 20px;
+  }
+
+  .underline {
+    margin-top: 8px;
+  }
+
+  .arrows {
+    gap: 10px;
+  }
+
+  .arrow {
+    width: 36px;
+    height: 36px;
+  }
+
+  .arrow i {
+    font-size: 16px;
+  }
+
+  .track {
+    margin-top: 14px;
+    gap: 12px;
+    padding-bottom: 10px;
+  }
+}
+
+/* Small phones */
+@media (max-width: 420px) {
+  .h2 {
+    font-size: 18px;
+  }
+
+  .arrow {
+    width: 34px;
+    height: 34px;
+  }
+
+  .arrow i {
+    font-size: 15px;
+  }
+}

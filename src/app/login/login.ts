@@ -1,118 +1,93 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { ApiService } from '../services/api.service';
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+
+type Tab = 'signin' | 'signup';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [RouterLink,CommonModule, ReactiveFormsModule],
   templateUrl: './login.html',
-  styleUrls: ['./login.css']
+  styleUrl: './login.css',
 })
 export class LoginComponent {
-  form;
+  tab: Tab = 'signin';
 
+  form: FormGroup;
   submitted = false;
-  error: string | null = null;
 
-  constructor(private fb: FormBuilder, private router: Router, private api: ApiService) {
+  error = '';
+
+  errors: Record<string, string> = {
+    first: '',
+    last: '',
+    username: '',
+    email: '',
+    password: '',
+  };
+
+  successMessage = '';
+
+  constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
     });
-    console.log('[LoginComponent] instance created');
   }
 
-  onSubmit() {
+  setTab(t: Tab) {
+    this.tab = t;
+    this.error = '';
+    this.successMessage = '';
+    this.clearSignupErrors();
+    this.submitted = false;
+  }
+
+  onSubmitLogin() {
     this.submitted = true;
-    if (this.form.invalid) {
-      return;
-    }
+    this.error = '';
+
+    if (this.form.invalid) return;
+
     const { username, password } = this.form.value;
-    if(!username || !password) {
-      this.error = 'Username e password sono obbligatori';
-      return;
-    }
+    console.log('LOGIN:', { username, password });
 
-    this.api.getContenuti().subscribe({
-      next: (contenuti) => {
-        console.log('Contenuti ricevuti:', contenuti);
-      },
-      error: (err) => {
-        console.error('Errore nel recupero dei contenuti:', err);
-        this.error = err?.error?.message ?? 'Errore sconosciuto durante il recupero dei contenuti';
-      }
-    });
+    // TODO: collega al backend
+  }
 
-    // this.api.newContenuto('Titolo di esempio', 'Descrizione di esempio', 'Genere di esempio', 'http://linkdi.esempio', 'GIOCO', 2024, undefined, "PIPPO").subscribe({
-    //   next: (res) => {
-    //     console.log('Contenuto creato con ID:', res.id);
-    //   },
-    //   error: (err) => {
-    //     console.error('Errore nella creazione del contenuto:', err);
-    //     this.error = err?.error?.message ?? 'Errore sconosciuto durante la creazione del contenuto';
-    //   }
-    // });
+  onSubmit(
+    event: Event,
+    first: string,
+    last: string,
+    username: string,
+    email: string,
+    password: string
+  ) {
+    event.preventDefault();
 
-    // this.api.newContenuto('Titolo di esempio', 'Descrizione di esempio', 'Genere di esempio', 'http://linkdi.esempio', 'FILM', 2024, "PIPPO" ).subscribe({
-    //   next: (res) => {
-    //     console.log('Contenuto creato con ID:', res.id);
-    //   },
-    //   error: (err) => {
-    //     console.error('Errore nella creazione del contenuto:', err);
-    //     this.error = err?.error?.message ?? 'Errore sconosciuto durante la creazione del contenuto';
-    //   }
-    // });
+    this.successMessage = '';
+    this.clearSignupErrors();
 
-    //  this.api.newContenuto('Titolo di esempio', 'Descrizione di esempio', 'Genere di esempio', 'http://linkdi.esempio', 'SERIE_TV', 2024, undefined, undefined, false, 3).subscribe({
-    //   next: (res) => {
-    //     console.log('Contenuto creato con ID:', res.id);
-    //   },
-    //   error: (err) => {
-    //     console.error('Errore nella creazione del contenuto:', err);
-    //     this.error = err?.error?.message ?? 'Errore sconosciuto durante la creazione del contenuto';
-    //   }
-    // });
+    let ok = true;
 
-    // this.api.authenticate(username, password).subscribe({
-    //   next: (res) => {
-    //     console.log('Login successful, token:', res.token);
-    //     // Navigate to the main page or dashboard after successful login
-    //     this.router.navigate(['/']);
-    //   },
-    //   error: (err) => {
-    //     console.error('Login error:', err);
-    //     this.error = err?.error?.message ?? 'Errore sconosciuto';
-    //   }
-    // });
-    // this.api.getServerTime().subscribe({
-    //   next: (res) => {
-    //     // compatibile con il JSON { serverTime: { now: ... } }
-    //     let pippo = (res.serverTime as any).now ?? JSON.stringify(res.serverTime);
-    //     console.log('Server time from API:', pippo);
-    //   },
-    //   error: (err) => {
-    //     this.error = err?.message ?? 'Errore sconosciuto';
-    //     console.error('API error', err);
-    //   }
-    // });
-    // this.api.getFirstUser().subscribe({
-    //   next: (user) => {
-    //     console.log('Primo utente:', user);
-    //     let usergetter = user;
-    //     console.log('Username del primo utente:', usergetter.username);
-    //   },
-    //   error: (err) => {
-    //     console.error('Errore API:', err);
-    //     this.error = err?.error?.message ?? 'Errore sconosciuto';
-    //   }
-    // });
+    if (!first?.trim()) { this.errors['first'] = 'Nome richiesto'; ok = false; }
+    if (!last?.trim()) { this.errors['last'] = 'Cognome richiesto'; ok = false; }
+    if (!username?.trim()) { this.errors['username'] = 'Username richiesto'; ok = false; }
+    if (!email?.trim() || !/^\S+@\S+\.\S+$/.test(email.trim())) { this.errors['email'] = 'Email non valida'; ok = false; }
+    if (!password || password.length < 6) { this.errors['password'] = 'Minimo 6 caratteri'; ok = false; }
 
-    // console.log('Login attempt', { username, password });
-    // // TODO: call AuthService to authenticate and handle errors
-    // // For now navigate to root on submit as a placeholder
-    // this.router.navigate(['/signup']);
+    if (!ok) return;
+
+    console.log('SIGNUP:', { first, last, username, email, password });
+
+    this.successMessage = 'Registrazione completata!';
+    // opzionale: torna al login
+    // this.setTab('signin');
+  }
+
+  private clearSignupErrors() {
+    this.errors = { first: '', last: '', username: '', email: '', password: '' };
   }
 }

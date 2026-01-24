@@ -1,7 +1,11 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environments/environment';
+import { environment } from '../../environment/environment';
+
+import { Game } from '../games/models/game.model';
+import { Film } from '../film/model/film.model';
+import {SerieTv} from '../serieTV/model/serie-tv.model';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
@@ -13,7 +17,7 @@ export class ApiService {
   getServerTime() {
     return this.http.get<{ serverTime: { now: string } }>(`${this.baseUrl}/api/test`);
   }
-  
+
   getFirstUser() {
   return this.http.get<any>(`${this.baseUrl}/api/utente/first`);
 }
@@ -30,6 +34,31 @@ export class ApiService {
   getContenuti() {
     return this.http.get<any[]>(`${this.baseUrl}/api/contenuti`);
   }
+
+  getGiochi() {
+    return this.http.get<Game[]>(`${this.baseUrl}/api/contenuti/giochi`);
+  }
+
+  getFilm() {
+    return this.http.get<Film[]>(`${this.baseUrl}/api/contenuti/film`);
+  }
+
+  getSerieTv() {
+    return this.http.get<any[]>(`${this.baseUrl}/api/contenuti/serie_tv`);
+  }
+
+  getRecensioniByContenutoId(contenutoId: number) {
+    return this.http.get<any[]>(`${this.baseUrl}/api/recensioni/contenuto`,{params: {contenutoId}});
+  }
+
+  getCheckUsername(username: string) {
+    return this.http.get<{ available: boolean }>(`${this.baseUrl}/api/utente/checkUsernameExists`, { params: { username } });
+  }
+  createUser(nome: string, cognome: string, username: string, password: string, email: string) {
+    return this.http.post<{ id: number }>(`${this.baseUrl}/api/newUtente`, { nome, cognome, email, username, password });
+  }
+
+
 
 
 

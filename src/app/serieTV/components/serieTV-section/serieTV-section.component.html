@@ -1,0 +1,24 @@
+<section class="section">
+
+  <div class="section-header">
+    <div class="section-title">
+      <h2>{{ title }}</h2>
+      <span class="see-all">SEE ALL</span>
+    </div>
+
+    <div class="arrows">
+      <button (click)="prev()" [disabled]="isPrevDisabled">←</button>
+      <button (click)="next()" [disabled]="isNextDisabled">→</button>
+    </div>
+  </div>
+
+  <div class="section-line"></div>
+
+  <div class="cards-row">
+    <app-serie-tv-card
+      *ngFor="let serie of visibleSeries; trackBy: trackById"
+      [serie]="serie">
+    </app-serie-tv-card>
+  </div>
+
+</section>
