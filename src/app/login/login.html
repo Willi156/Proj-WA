@@ -1,0 +1,105 @@
+
+
+<link rel="icon" type="image/png" href="assets/favicon.png?v=2">
+<div class="all">
+<div class="auth">
+  <div class="shell">
+
+    <!-- LEFT -->
+    <aside class="side">
+      <div class="side-logo" aria-label="CritiVerse logo">
+        <img src="assets/logoCritiverse.png" alt="CritiVerse" />
+      </div>
+
+      <div class="side-text" role="tablist" aria-orientation="vertical">
+        <a class="vtab is-active" routerLink="/login">SIGN IN</a>
+        <a class="vtab" routerLink="/signup">SIGN UP</a>
+      </div>
+    </aside>
+
+    <!-- RIGHT -->
+    <main class="panel">
+      <div class="panel-head">
+        <div class="avatar" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="34" height="34">
+            <path
+              d="M12 12c2.8 0 5-2.2 5-5s-2.2-5-5-5-5 2.2-5 5 2.2 5 5 5Zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5Z"
+              fill="currentColor"
+            />
+          </svg>
+        </div>
+
+        <h1 class="title">LOGIN</h1>
+      </div>
+
+      <!-- SIGN IN FORM -->
+      <form
+        class="form"
+        [formGroup]="form"
+        (ngSubmit)="onSubmitLogin()"
+        novalidate
+      >
+        <div class="row">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18">
+              <path
+                d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4Zm0 2c-3.3 0-6 1.7-6 4v2h12v-2c0-2.3-2.7-4-6-4Z"
+                fill="currentColor"
+              />
+            </svg>
+          </span>
+          <input
+            type="text"
+            placeholder="Email"
+            formControlName="username"
+            autocomplete="username"
+          />
+        </div>
+        <div class="error" *ngIf="submitted && form.controls['username'].invalid">
+          Email è richiesto.
+        </div>
+
+        <div class="row">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18">
+              <path
+                d="M17 9h-1V7a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v9h14v-9a2 2 0 0 0-2-2Zm-6 0V7a2 2 0 0 1 4 0v2h-4Z"
+                fill="currentColor"
+              />
+            </svg>
+          </span>
+          <input
+            type="password"
+            placeholder="Password"
+            formControlName="password"
+            autocomplete="current-password"
+          />
+        </div>
+        <div class="error" *ngIf="submitted && form.controls['password'].invalid">
+          Password è richiesta.
+        </div>
+
+        <a class="forgot" href="javascript:void(0)">Forgot Password?</a>
+
+        <button class="pill" type="submit">LOGIN</button>
+
+        <div class="orline">
+          <span>Or login With</span>
+        </div>
+
+        <div class="providers">
+          <div class="provider">
+            <span class="g">G</span>
+            <span>Google</span>
+          </div>
+          <div class="provider">
+            <span class="f">f</span>
+            <span>Facebook</span>
+          </div>
+        </div>
+      </form>
+    </main>
+
+  </div>
+</div>
+</div>
