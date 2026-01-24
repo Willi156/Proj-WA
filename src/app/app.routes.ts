@@ -19,7 +19,8 @@ export const routes: Routes = [
   { path: 'series', component: SeriePageComponent, runGuardsAndResolvers: 'always'},
   { path: '**', redirectTo: '' },
   { path: 'login', component: LoginComponent },
-  { path: 'signup', component: SignupComponent },
+  { path: 'signup', component: SignupComponent},
+
 
   // default
   { path: '', redirectTo: 'login', pathMatch: 'full' },
