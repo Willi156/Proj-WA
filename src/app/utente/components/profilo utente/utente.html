@@ -38,7 +38,7 @@
 
       <div class="d-flex justify-content-between align-items-center mb-5">
         <div>
-          <h2 class="fw-bold text-dark mb-1">Bentornata, {{user.nome}}!</h2>
+          <h2 class="fw-bold text-dark mb-1">Bentornat*, {{user.nome}}!</h2>
           <p class="text-muted small">Ecco il riepilogo delle tue recensioni.</p>
         </div>
       </div>
@@ -69,126 +69,60 @@
 
           <div class="fade-in mb-5">
 
-            @if (activeTab === 'games') {
-              <h6 class="fw-bold text-secondary mb-3 text-uppercase small ls-1">Recensioni Videogiochi</h6>
-              <div class="row g-3">
-                @for (rec of user.recensioni; track rec.oggetto) {
-                  @if (rec.categoria === 'Games') { <div class="col-12">
-                    <div class="card border-0 shadow-sm rounded-3 p-2">
-                      <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                          <h6 class="fw-bold mb-1">{{rec.oggetto}}</h6>
-                          <span class="badge bg-success-subtle text-success rounded-pill">{{rec.voto}}/5</span>
-                        </div>
-                        <p class="small text-muted mb-0 mt-2">"{{rec.testo}}"</p>
-                      </div>
-                    </div>
-                  </div>
-                  }
-                }
-              </div>
-            }
 
-            @if (activeTab === 'serie') {
-              <h6 class="fw-bold text-secondary mb-3 text-uppercase small ls-1">Recensioni Serie TV</h6>
-              <div class="row g-3">
-                @for (rec of user.recensioni; track rec.oggetto) {
-                  @if (rec.categoria === 'Serie TV') { <div class="col-12">
-                    <div class="card border-0 shadow-sm rounded-3 p-2">
-                      <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                          <h6 class="fw-bold mb-1">{{rec.oggetto}}</h6>
-                          <span class="badge bg-danger-subtle text-danger rounded-pill">{{rec.voto}}/5</span>
-                        </div>
-                        <p class="small text-muted mb-0 mt-2">"{{rec.testo}}"</p>
-                      </div>
-                    </div>
-                  </div>
-                  }
-                }
-              </div>
-            }
-
-            @if (activeTab === 'film') {
-              <h6 class="fw-bold text-secondary mb-3 text-uppercase small ls-1">Recensioni Film</h6>
-              <div class="row g-3">
-                @for (rec of user.recensioni; track rec.oggetto) {
-                  @if (rec.categoria === 'Film') { <div class="col-12">
-                    <div class="card border-0 shadow-sm rounded-3 p-2">
-                      <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                          <h6 class="fw-bold mb-1">{{rec.oggetto}}</h6>
-                          <span class="badge bg-primary-subtle text-primary rounded-pill">{{rec.voto}}/5</span>
-                        </div>
-                        <p class="small text-muted mb-0 mt-2">"{{rec.testo}}"</p>
-                      </div>
-                    </div>
-                  </div>
-                  }
-                }
-              </div>
-            }
           </div>
 
           <hr class="border-secondary opacity-10 my-5">
 
           <h5 class="fw-bold text-dark mb-4">Tutte le recensioni</h5>
 
-          @for (rec of user.recensioni; track rec.oggetto; let i = $index) {
-            <div class="card border-0 shadow-sm rounded-3 mb-3 bg-white">
-              <div class="card-body p-4">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                  <div class="d-flex align-items-center gap-3">
-                    <span class="badge bg-warning text-dark rounded-pill">★ {{rec.voto}}</span>
-                    <div>
-                      <h6 class="fw-bold mb-0 text-dark">{{rec.oggetto}}</h6>
-                      <small class="text-muted d-block" style="font-size: 0.7rem;">{{rec.categoria}}</small>
-                    </div>
-                  </div>
-                  <button class="btn btn-sm text-muted hover-danger" (click)="rimuoviRecensione(i)">✕</button>
-                </div>
-                <p class="text-muted mt-2 mb-0 small">"{{rec.testo}}"</p>
-              </div>
-            </div>
-          }
-
         </div>
 
-        <div class="col-lg-4">
-          <div class="card border-0 shadow-sm rounded-4 sticky-top bg-white" style="top: 20px;">
-            <div class="card-body p-4">
-              <h6 class="fw-bold mb-4 text-dark">Preferiti</h6>
+          <div class="col-lg-4">
+              <div class="card border-0 shadow-sm rounded-4 sticky-top bg-white" style="top: 20px;">
+                  <div class="card-body p-4">
+                      <h6 class="fw-bold mb-4 text-dark">Preferiti (ID)</h6>
 
-              <div class="input-group mb-4">
-                <input type="text" class="form-control bg-light border-0 py-2 small" placeholder="Cerca..." [(ngModel)]="searchText">
-              </div>
+                      <div class="input-group mb-4">
+                          <input type="text" class="form-control bg-light border-0 py-2 small" placeholder="Cerca ID..." [(ngModel)]="searchText">
+                      </div>
 
-              <div class="d-flex flex-column gap-2">
-                @for (item of filteredPreferiti; track item.titolo) {
-                  <div class="d-flex align-items-center justify-content-between p-2 rounded-3 border-bottom border-light">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="rounded-circle d-flex align-items-center justify-content-center"
-                           [class.bg-danger]="item.tipo === 'Serie TV'"
-                           [class.bg-primary]="item.tipo === 'Film'"
-                           [class.bg-success]="item.tipo === 'Game'"
-                           style="width: 8px; height: 8px;">
+                      <div class="d-flex flex-column gap-2">
+
+                          @for (id of preferitiIds; track id) {
+                              <div class="d-flex align-items-center justify-content-between p-2 rounded-3 border-bottom border-light">
+                                  <div class="d-flex align-items-center gap-3">
+                                      <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center"
+                                           style="width: 8px; height: 8px;">
+                                      </div>
+
+                                      <div class="d-flex flex-column">
+                                          <span class="fw-bold text-dark small">Media ID: {{id}}</span>
+                                          <span class="text-muted" style="font-size: 0.7rem;">Preferito</span>
+                                      </div>
+                                  </div>
+
+                                  <button class="btn btn-sm text-secondary p-0 ms-1 small">✕</button>
+                              </div>
+                          }
+
+                          @if (preferitiIds.length === 0) {
+
+                              <p class="text-muted small text-center">Nessun preferito trovato.</p>
+                          }
+                          <ul *ngIf="preferitiIds.length>0; else empty">
+                              <li *ngFor="let id of preferitiIds">
+                                  contenutoId : {{id}}
+                              </li>
+                          </ul>
+                          <ng-template #empty>
+                              <p> nessun contenuto nei preferiti </p>
+                          </ng-template>
                       </div>
-                      <div class="d-flex flex-column">
-                        <span class="fw-bold text-dark small">{{item.titolo}}</span>
-                        <span class="text-muted" style="font-size: 0.7rem;">{{item.tipo}}</span>
-                      </div>
-                    </div>
-                    <button class="btn btn-sm text-secondary p-0 ms-1 small" (click)="rimuoviPreferito(item)">✕</button>
                   </div>
-                }
               </div>
-
-            </div>
           </div>
-        </div>
-
       </div>
     </div>
-
   </div>
 </div>

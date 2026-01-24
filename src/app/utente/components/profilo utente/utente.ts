@@ -1,7 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { ApiService } from '../../../services/api.service';
+import {empty} from 'rxjs';
+
+
 
 @Component({
   selector: 'app-utente',
@@ -10,7 +14,16 @@ import { RouterLink } from '@angular/router';
   templateUrl: './utente.html',
   styleUrl: './utente.css'
 })
-export class UtenteComponent {
+export class UtenteComponent implements OnInit{
+  userId=2;
+  preferitiIds:number []=[];
+  constructor(private api:ApiService) {
+
+  }
+
+  ngOnInit():void{this.api.getFavouritesMediaByUserId(this.userId).subscribe(ids=>{
+    this.preferitiIds=ids;
+  })}
 
   activeTab: string = 'games';
   searchText: string = '';
@@ -20,50 +33,15 @@ export class UtenteComponent {
     cognome: 'Sica',
     username: 'alessia_dev',
     email: 'alessia@studenti.unical.it',
+  }
 
-    // ORA LE RECENSIONI HANNO LA CATEGORIA!
-    recensioni: [
-      {
-        oggetto: 'Inception',
-        categoria: 'Film',
-        voto: 5,
-        testo: 'Un capolavoro assoluto, trama incredibile!'
-      },
-      {
-        oggetto: 'Barbie',
-        categoria: 'Film',
-        voto: 4,
-        testo: 'Molto colorato e divertente, ma finale strano.'
-      },
-      {
-        oggetto: 'The Last of Us',
-        categoria: 'Games',
-        voto: 5,
-        testo: 'Storia commovente, gameplay perfetto.'
-      },
-      {
-        oggetto: 'Stranger Things',
-        categoria: 'Serie TV',
-        voto: 4,
-        testo: 'Atmosfera anni 80 fantastica, ma troppe sottotrame.'
-      }
-    ],
 
-    // Lista preferiti (quella a destra)
-    preferiti: [
-      { titolo: 'Stranger Things', tipo: 'Serie TV' },
-      { titolo: 'Harry Potter', tipo: 'Film' },
-      { titolo: 'Interstellar', tipo: 'Film' },
-      { titolo: 'The Witcher', tipo: 'Serie TV' },
-      { titolo: 'Zelda', tipo: 'Game' }
-    ]
-  };
 
   setActiveTab(tabName: string) {
     this.activeTab = tabName;
   }
 
-  get filteredPreferiti() {
+  /**get filteredPreferiti() {
     if (!this.searchText) {
       return this.user.preferiti;
     }
@@ -80,5 +58,6 @@ export class UtenteComponent {
 
   rimuoviPreferito(itemDaRimuovere: any) {
     this.user.preferiti = this.user.preferiti.filter(item => item !== itemDaRimuovere);
-  }
+  }*/
+  protected readonly empty = empty;
 }
