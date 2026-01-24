@@ -5,11 +5,13 @@
 ========================= */
 .section {
   background: #fff;
-  padding: 22px 150px;
   color: #111;
-
   font-family: 'Spline Sans Mono', monospace;
   font-weight: 400;
+  padding-top: 30px;
+  padding-bottom: 60px;
+  padding-left: 150px;
+  padding-right: 150px;
 }
 
 /* =========================
