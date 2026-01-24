@@ -9,18 +9,13 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./features/home/pages/home-page/home-page').then(
-        (m) => m.HomePageComponent
-      ),
+      import('./features/home/pages/home-page/home-page')
+        .then(m => m.HomePageComponent),
   },
-
-  { path: 'games', component: GameHomeComponent, runGuardsAndResolvers: 'always'},
-  { path: 'movies', component: FilmPageComponent, runGuardsAndResolvers: 'always'},
-  { path: 'series', component: SeriePageComponent, runGuardsAndResolvers: 'always'},
-  { path: '**', redirectTo: '' },
+  { path: 'games', component: GameHomeComponent },
+  { path: 'movies', component: FilmPageComponent },
+  { path: 'series', component: SeriePageComponent },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
-
-  // default
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '**', redirectTo: '' },
 ];
