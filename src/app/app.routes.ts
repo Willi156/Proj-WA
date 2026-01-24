@@ -5,7 +5,7 @@ import { SeriePageComponent } from './serieTV/components/serieTV-page/serieTV-pa
 import { LoginComponent } from './login/login';
 import { SignupComponent } from './signup/signup';
 import { UtenteComponent } from './utente/components/profilo utente/utente';
-import { SettingsComponent } from './utente/components/impostazioni /settings';
+import { SettingsComponent } from './utente/components/impostazioni/settings';
 
 export const routes: Routes = [
   {
