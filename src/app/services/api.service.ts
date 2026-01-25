@@ -57,6 +57,21 @@ export class ApiService {
   createUser(nome: string, cognome: string, username: string, password: string, email: string) {
     return this.http.post<{ id: number }>(`${this.baseUrl}/api/newUtente`, { nome, cognome, email, username, password });
   }
+  getFavouritesMediaByUserId(userId: number) {
+    return this.http.get<any[]>(`${this.baseUrl}/api/utente/${userId}/preferiti`);
+  }
+  getFavouriteMediaByUserIdComplete(userId: number) {
+    return this.http.get<any[]>(`${this.baseUrl}/api/utente/${userId}/preferitiCompleti`);
+  }
+
+  getRecensioniByUserId(userId: number) {
+    return this.http.get<any[]>(`${this.baseUrl}/api/recensioni/utente/${userId}`);
+  }
+
+
+
+
+
 
 
 
