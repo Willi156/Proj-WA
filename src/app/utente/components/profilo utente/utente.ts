@@ -4,9 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ApiService } from '../../../services/api.service';
 import {empty} from 'rxjs';
-
-
-
 @Component({
   selector: 'app-utente',
   standalone: true,
@@ -16,14 +13,42 @@ import {empty} from 'rxjs';
 })
 export class UtenteComponent implements OnInit{
   userId=2;
-  preferitiIds:number []=[];
-  constructor(private api:ApiService) {
+  preferitiIds:any []=[];
+  recensioniIds:any []=[];
 
+  constructor(private api:ApiService) {
   }
 
-  ngOnInit():void{this.api.getFavouritesMediaByUserId(this.userId).subscribe(ids=>{
-    this.preferitiIds=ids;
-  })}
+
+  ngOnInit():void {
+    //chiamata per il recupero dei preferiti
+    this.api.getFavouriteMediaByUserIdComplete(this.userId).subscribe({
+      next: (result: any[]) => {
+        console.log('Preferiti ricevuti:', result);
+        this.preferitiIds = result;
+      },
+      error: (err) => {
+        console.error('Errore nel recupero dei contenuti:', err);
+      }
+    })
+
+    //chiamata per il recupero delle recensioni, (lato html va aggiunto)
+    this.api.getRecensioniByUserId(this.userId).subscribe({
+      next: (result: any[]) => {
+        console.log('Preferiti ricevuti:', result);
+        this.recensioniIds = result;
+      },
+      error: (err) => {
+        console.error('Errore nel recupero dei contenuti:', err);
+      }
+    })
+  }
+
+
+
+
+
+
 
   activeTab: string = 'games';
   searchText: string = '';
