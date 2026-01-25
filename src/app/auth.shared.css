@@ -50,10 +50,7 @@
 /* ===== LEFT SIDE ===== */
 .side{
   position:relative;
-  background:
-    linear-gradient(135deg, rgba(255,255,255,.18) 0 14%, transparent 14% 100%),
-    linear-gradient(135deg, rgba(0,0,0,.50) 0 16%, transparent 16% 100%),
-    linear-gradient(135deg, var(--pDark), var(--pMid));
+   background: black;
   overflow:hidden;
 }
 
@@ -64,11 +61,13 @@
   inset:-40%;
   transform: rotate(45deg);
   background:
-    linear-gradient(90deg,
-    rgba(255,255,255,0.18) 0 18%,
-    transparent 18% 55%,
-    rgba(0,0,0,0.10) 55% 74%,
-    transparent 74% 100%);
+    linear-gradient(
+      90deg,
+      rgba(0,0,0,0.18) 0%,
+      transparent 40%,
+      rgba(0,0,0,0.22) 60%,
+      transparent 100%
+    );
   opacity: .9;
   z-index: 0;
   pointer-events: none;
@@ -103,7 +102,7 @@
 
 /* ===== SIGN IN / SIGN UP container ===== */
 .side-text{
-  margin-top: 200px;
+  margin-top: 100px;
   margin-inline: auto;
   width: 100%;
 
@@ -510,3 +509,162 @@
   }
 }
 
+/* === FORCE LOGO SIZE=== */
+.side .side-logo{
+  height: 200px !important;
+  margin-top: 100px !important;
+  padding: 0 70px !important;
+
+  display: flex !important;
+  justify-content: flex-start; 
+  align-items: center !important;
+
+  padding-left: 150px;        
+  margin-top: 70px;
+}
+
+.side .side-logo img{
+  width: 230px !important;     /* forza ingrandimento */
+  height: auto !important;      /* mantiene proporzioni */
+  max-width: none !important;  /* evita limiti */
+  max-height: none !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+@media (max-width: 768px){
+
+  .auth{
+    width: 100%;
+    height: auto;
+    min-height: 100vh;
+    padding: 16px;
+    overflow-x: hidden;
+    display: grid;
+    place-items: center;
+  }
+
+  .shell,
+  .shell-signup{
+    width: 100%;
+    max-width: 520px;
+    height: auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    box-sizing: border-box;
+  }
+
+  .side{
+    padding: 5px 5px 14px;
+    min-height: unset;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    overflow: hidden;
+  }
+
+  .side::before{
+    inset: -55%;
+    opacity: .55;
+  }
+
+  .side-logo{
+    width: 100%;
+    height: 140px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 28px;
+    margin-top: -20px;
+    margin-bottom:15px;
+  }
+
+  .side-logo img{
+    margin-top: -10px;
+    margin-bottom: 10px;
+    width: 220px;
+    height: auto;
+    max-width: none;
+    max-height: none;
+    object-fit: contain;
+  }
+
+  .side-text{
+    margin: 0;
+    width: 100%;
+    max-width: 340px;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 14px;
+  }
+
+  .vtab{
+    width: 100%;
+    height: 48px;
+    font-size: 14px;
+    flex: 1;
+    text-align: center;
+  }
+
+  .panel{
+    padding: 18px 16px 18px;
+    align-content: start;
+    justify-items: stretch;
+  }
+
+  .auth--login .panel{
+    padding: 18px 16px 18px;
+  }
+
+  .auth--signup .panel{
+    padding: 18px 16px 18px;
+  }
+
+  .panel-head{
+    margin-bottom: 14px;
+  }
+
+  .avatar{
+    width: 62px;
+    height: 62px;
+  }
+
+  .title{
+    font-size: 30px;
+    text-align: center;
+  }
+
+  .form{
+    width: 100%;
+    max-width: 420px;
+    margin-inline: auto;
+    gap: 10px;
+  }
+
+  .ico{
+    width: 42px;
+    height: 42px;
+  }
+
+  .row{
+    padding: 10px 4px;
+  }
+
+  .pill{
+    align-self: center;
+    margin-top: 16px;
+    width: min(320px, 100%);
+  }
+
+  .all,
+  .shell,
+  .shell-signup,
+  .side,
+  .panel{
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+}

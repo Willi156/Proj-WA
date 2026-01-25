@@ -12,7 +12,7 @@ type SearchItem = {
   type: SearchType;
   route: string;
   thumbUrl: string;
-  score: number; // 1–10 (come stai usando ora)
+  score: number; 
 };
 
 type SearchGroup = {
@@ -39,11 +39,11 @@ export class NavbarComponent {
   @ViewChild('overlaySearchInput')
   overlaySearchInput!: ElementRef<HTMLInputElement>;
 
-  // ✅ ora è popolato dal DB
+
   private searchData: SearchItem[] = [];
 
   constructor(private router: Router, private api: ApiService) {
-    // Carichiamo da DB: 15 per categoria (come in home)
+  
     forkJoin({
       games: this.api.getGiochi().pipe(catchError(() => of([]))),
       movies: this.api.getFilm().pipe(catchError(() => of([]))),
