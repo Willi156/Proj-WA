@@ -665,3 +665,6 @@
     overflow-x: hidden;
   }
 }
+
+.side-logo { pointer-events: none; }
+
