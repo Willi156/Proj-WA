@@ -1,11 +1,8 @@
-
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environment/environment';
-
 import { Game } from '../games/models/game.model';
 import { Film } from '../film/model/film.model';
-import {SerieTv} from '../serieTV/model/serie-tv.model';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
@@ -13,22 +10,42 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
-  // Endpoint di test che abbiamo nel backend: /api/test
+  authenticate(username: string, password: string) {
+    return this.http.post<any>(
+      `${this.baseUrl}/api/auth/login`,
+      { username, password },
+      { withCredentials: true }
+    );
+  }
+
+  getCurrentUserInfo() {
+    return this.http.get<any>(`${this.baseUrl}/api/auth/me`, { withCredentials: true });
+  }
+
+
+  getFavouritesMediaByUserId(userId: number) {
+    return this.http.get<any[]>(`${this.baseUrl}/api/utente/${userId}/preferiti`, { withCredentials: true });
+  }
+
+  getFavouriteMediaByUserIdComplete(userId: number) {
+    return this.http.get<any[]>(`${this.baseUrl}/api/utente/${userId}/preferitiCompleti`, { withCredentials: true });
+  }
+
+  getRecensioniByUserId(userId: number) {
+    return this.http.get<any[]>(`${this.baseUrl}/api/recensioni/utente/${userId}`, { withCredentials: true });
+  }
+
+
   getServerTime() {
     return this.http.get<{ serverTime: { now: string } }>(`${this.baseUrl}/api/test`);
   }
 
   getFirstUser() {
-  return this.http.get<any>(`${this.baseUrl}/api/utente/first`);
-}
-
- authenticate(username: string, password: string) {
-    return this.http.post<{ token: string }>(`${this.baseUrl}/api/auth/login`, { username, password });
+    return this.http.get<any>(`${this.baseUrl}/api/utente/first`);
   }
 
-  newContenuto(titolo: string, descrizione: string, genere: string, link: string, tipo: string, annoPubblicazione: number, casaProduzione?: string, casaEditrice?: string,inCorso?: boolean, stagioni?: number) {
-    console.log('Creating new contenuto with casa produzione:', { casaProduzione});
-    return this.http.post<{ id: number }>(`${this.baseUrl}/api/newContenuto`, { titolo, descrizione, genere, link, tipo, annoPubblicazione, casaProduzione, casaEditrice, inCorso, stagioni });
+  newContenuto(titolo: string, descrizione: string, genere: string, link: string, tipo: string, annoPubblicazione: number, casaProduzione?: string, casaEditrice?: string, inCorso?: boolean, stagioni?: number) {
+    return this.http.post<{ id: number }>(`${this.baseUrl}/api/newContenuto`, { titolo, descrizione, genere, link, tipo, annoPubblicazione, casaProduzione, casaEditrice, inCorso, stagioni }, { withCredentials: true });
   }
 
   getContenuti() {
@@ -48,34 +65,16 @@ export class ApiService {
   }
 
   getRecensioniByContenutoId(contenutoId: number) {
-    return this.http.get<any[]>(`${this.baseUrl}/api/recensioni/contenuto`,{params: {contenutoId}});
+    return this.http.get<any[]>(`${this.baseUrl}/api/recensioni/contenuto`, { params: { contenutoId } });
   }
 
   getCheckUsername(username: string) {
     return this.http.get<{ available: boolean }>(`${this.baseUrl}/api/utente/checkUsernameExists`, { params: { username } });
   }
+
   createUser(nome: string, cognome: string, username: string, password: string, email: string) {
     return this.http.post<{ id: number }>(`${this.baseUrl}/api/newUtente`, { nome, cognome, email, username, password });
   }
-  getFavouritesMediaByUserId(userId: number) {
-    return this.http.get<any[]>(`${this.baseUrl}/api/utente/${userId}/preferiti`);
-  }
-  getFavouriteMediaByUserIdComplete(userId: number) {
-    return this.http.get<any[]>(`${this.baseUrl}/api/utente/${userId}/preferitiCompleti`);
-  }
-
-  getRecensioniByUserId(userId: number) {
-    return this.http.get<any[]>(`${this.baseUrl}/api/recensioni/utente/${userId}`);
-  }
-
-
-
-
-
-
-
-
-
 
   // Esempio per futuri endpoint:
   // getItems() { return this.http.get<Item[]>(`${this.baseUrl}/api/items`); }
