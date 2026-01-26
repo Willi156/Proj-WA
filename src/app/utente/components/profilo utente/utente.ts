@@ -1,5 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, ChangeDetectorRef, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ApiService } from '../../../services/api.service';
@@ -27,10 +27,22 @@ export class UtenteComponent implements OnInit {
 
   activeTab: string = 'games';
   searchText: string = '';
+  saluto: string = 'Bentornat*';
 
-  constructor(private api: ApiService, private cd: ChangeDetectorRef) {}
+  constructor(
+    private api: ApiService,
+    private cd: ChangeDetectorRef,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
   ngOnInit(): void {
+    const ora = new Date().getHours();
+    if (ora >= 6 && ora < 18) {
+      this.saluto = 'Buongiorno';
+    } else {
+      this.saluto = 'Buonasera';
+    }
+
     this.api.authenticate('WIMAn', '123456!').subscribe({
       next: (response) => {
         if (response) {
@@ -46,18 +58,19 @@ export class UtenteComponent implements OnInit {
             immagineProfilo: datiReali.immagineProfilo || ''
           };
 
+          if (isPlatformBrowser(this.platformId)) {
+            localStorage.setItem('datiUtente', JSON.stringify(this.user));
+            localStorage.setItem('userId', this.userId.toString());
+          }
+
           if (datiReali.recensioni) {
             this.recensioniIds = datiReali.recensioni;
           }
-
           this.cd.detectChanges();
         }
-
         this.caricaDati();
       },
-      error: (error) => {
-        console.error(error);
-      }
+      error: (error) => { console.error(error); }
     });
   }
 
@@ -83,6 +96,34 @@ export class UtenteComponent implements OnInit {
 
   setActiveTab(tabName: string) {
     this.activeTab = tabName;
+  }
+
+  rimuoviRecensione(rec: any) {
+    if (!rec.inEliminazione) {
+      rec.inEliminazione = true;
+      setTimeout(() => {
+        rec.inEliminazione = false;
+        this.cd.detectChanges();
+      }, 3000);
+      return;
+    }
+
+    this.recensioniIds = this.recensioniIds.filter(r => r !== rec);
+    this.cd.detectChanges();
+  }
+
+  rimuoviPreferito(item: any) {
+    if (!item.inEliminazione) {
+      item.inEliminazione = true;
+      setTimeout(() => {
+        item.inEliminazione = false;
+        this.cd.detectChanges();
+      }, 3000);
+      return;
+    }
+
+    this.preferitiIds = this.preferitiIds.filter(p => p !== item);
+    this.cd.detectChanges();
   }
 
   protected readonly empty = empty;
