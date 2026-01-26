@@ -29,6 +29,39 @@
           </div>
         }
 
+        <h6 class="fw-bold text-primary mb-3 mt-2">Immagine Profilo</h6>
+        <div class="d-flex align-items-center gap-4 mb-4">
+          <div class="position-relative">
+            <img [src]="user.immagineProfilo || 'https://api.dicebear.com/9.x/adventurer-neutral/svg?seed=default'"
+                 class="rounded-circle border border-3 border-light shadow-sm bg-white"
+                 width="100" height="100" style="object-fit: cover;">
+          </div>
+
+          <button class="btn btn-primary rounded-pill btn-sm px-3" (click)="mostraSelettoreAvatar = !mostraSelettoreAvatar">
+            {{ mostraSelettoreAvatar ? 'Chiudi Lista' : 'Cambia Avatar' }}
+          </button>
+        </div>
+
+        @if (mostraSelettoreAvatar) {
+          <div class="card card-body bg-light border-0 mb-4 animate__animated animate__fadeIn">
+            <p class="small text-muted mb-2 fw-bold">Scegli il tuo avatar:</p>
+            <div class="d-flex flex-wrap gap-2 justify-content-center" style="max-height: 250px; overflow-y: auto;">
+              @for (avatar of listaAvatar; track avatar) {
+                <img [src]="avatar"
+                     (click)="selezionaAvatar(avatar)"
+                     class="rounded-circle cursor-pointer bg-white border shadow-sm"
+                     [class.border-primary]="user.immagineProfilo === avatar"
+                     [class.border-3]="user.immagineProfilo === avatar"
+                     width="60" height="60"
+                     style="cursor: pointer; transition: transform 0.2s;"
+                     onmouseover="this.style.transform='scale(1.1)'"
+                     onmouseout="this.style.transform='scale(1.0)'">
+              }
+            </div>
+          </div>
+        }
+
+        <hr class="border-secondary opacity-10">
         <h6 class="fw-bold text-primary mb-3 mt-2">Dati Personali</h6>
         <div class="row g-3 mb-4">
           <div class="col-md-6">

@@ -35,6 +35,7 @@ export class UtenteComponent implements OnInit {
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
+
   ngOnInit(): void {
     const ora = new Date().getHours();
     if (ora >= 6 && ora < 18) {

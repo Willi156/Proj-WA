@@ -16,6 +16,7 @@ export class SettingsComponent implements OnInit {
     cognome: '',
     username: '',
     email: '',
+    immagineProfilo: '' // <--- AGGIUNTO: Serve per salvare l'avatar
   };
 
   vecchiaPassword: string = '';
@@ -25,9 +26,15 @@ export class SettingsComponent implements OnInit {
   messaggioSuccesso: string = '';
   messaggioErrore: string = '';
 
+
+  listaAvatar: string[] = [];
+  mostraSelettoreAvatar: boolean = false;
+
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
   ngOnInit(): void {
+    this.generaListaAvatar();
+
     if (isPlatformBrowser(this.platformId)) {
       const datiSalvati = localStorage.getItem('datiUtente');
       if (datiSalvati) {
@@ -36,15 +43,26 @@ export class SettingsComponent implements OnInit {
         this.user.cognome = datiObj.cognome || '';
         this.user.username = datiObj.username || '';
         this.user.email = datiObj.email || '';
+
+        this.user.immagineProfilo = datiObj.immagineProfilo || '';
       }
     }
   }
 
+  generaListaAvatar() {
+    for (let i = 1; i <= 50; i++) {
+      this.listaAvatar.push(`https://api.dicebear.com/7.x/bottts/svg?seed=${i}`);
+    }
+  }
+
+  selezionaAvatar(url: string) {
+    this.user.immagineProfilo = url;
+    this.mostraSelettoreAvatar = false;
+  }
+
   salva() {
-    // Reset messaggi precedenti
     this.messaggioErrore = '';
     this.messaggioSuccesso = '';
-
 
     if (this.nuovaPassword || this.confermaPassword) {
       if (!this.vecchiaPassword) {
@@ -57,21 +75,16 @@ export class SettingsComponent implements OnInit {
       }
     }
 
-
     if (isPlatformBrowser(this.platformId)) {
-
       localStorage.setItem('datiUtente', JSON.stringify(this.user));
     }
 
-
-    this.mostraSuccesso("Profilo aggiornato con successo!");
-
+    this.mostraSuccesso("Profilo e Avatar aggiornati con successo!");
 
     this.vecchiaPassword = '';
     this.nuovaPassword = '';
     this.confermaPassword = '';
   }
-
 
   mostraErrore(msg: string) {
     this.messaggioErrore = msg;
