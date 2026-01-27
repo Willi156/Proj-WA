@@ -274,6 +274,7 @@
   justify-content: space-between;
   padding: 14px 16px;
   font-weight: 600;
+  font-size:18px;
 
   transition: background .12s ease;
   background-color: #06A77D;
@@ -298,6 +299,7 @@
 .accBody{
   padding: 14px 16px 16px;
   border-top: 1px solid rgba(255,255,255,.12);
+
 }
 
 .videoWrap{
@@ -345,6 +347,8 @@
   gap: 6px;
   align-content: start;
   justify-items: stretch;
+  font-size: 16px;
+
 }
 
 
@@ -356,6 +360,20 @@
   white-space: nowrap;   /* non va a capo */
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.label-rev{
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-weight: 700;
+  color: #06A77D;
+
+  display: inline-block;
+  margin-left: 8px;
+  letter-spacing: .02em;
+  padding-right: 10px;
+  text-transform: uppercase;
+  font-size: 18px;
+
 }
 
 /* input/select/textarea: stessa base e box stabile */
@@ -371,6 +389,7 @@
   color: inherit;
   box-sizing: border-box;
   background-color: #cdd4d0;
+  font-size: 19px;
 
   line-height: 20px;  /* stabile tra input e select */
 }
@@ -378,7 +397,7 @@
 /* altezza uniforme per input/select (textarea resta a righe) */
 .field input,
 .field select{
-  height: 42px;       /* fissa => non si muovono */
+  height: 42px;
 }
 
 /* textarea: disabilita resize se ti “rompe” l’allineamento */
@@ -480,12 +499,89 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* card più "card" */
+.rev{
+  box-shadow: 0 9px 10px rgb(20, 111, 96);
+  backdrop-filter: blur(6px);
+}
+
+/* stella rating */
+.revScore.stars{
+  display: inline-flex;
+  gap: 2px;
+  align-items: center;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* stelle vuote */
+.revScore.stars .star{
+  font-size: 22px;
+  opacity: .25;
+  transform: translateY(0);
+  transition: opacity .12s ease, transform .12s ease;
+}
+
+/* stelle piene */
+.revScore.stars .star.filled{
+  opacity: 1.2;
+}
+
+/* micro-effetto hover sulla card */
+.rev:hover .revScore.stars .star{
+  opacity: .35;
+}
+
+.rev:hover .revScore.stars .star.filled{
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+
 .revText{
   margin: 8px 0 6px;
   opacity: .9;
   line-height: 1.55;
+  font-size: 18px;
+
 }
 
+.ratingPicker{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+
+}
+
+.pickStar{
+  border: 0;
+  background: transparent;
+  padding: 0;
+  line-height: 1;
+  font-size: 24px;
+  cursor: pointer;
+  opacity: .25;
+  transition: opacity .12s ease, transform .12s ease;
+
+}
+
+.pickStar.filled{
+  opacity: 1;
+}
+
+.pickStar:hover{
+  transform: translateY(-1px);
+  opacity: 1;
+}
+
+.ratingText{
+  opacity: .75;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  font-size: 18px;
+
+}
 .muted{
   opacity: .65;
 }
@@ -497,10 +593,9 @@
 }
 
 .err{
-  color: #ffb4b4;
+  color: rgba(255, 0, 0, 0.55);
 }
 
-/* scrollbar (solo estetica, non cambia layout) */
 *{
   scrollbar-width: thin;
   scrollbar-color: rgba(255,255,255,.22) rgba(255,255,255,.06);
@@ -534,4 +629,26 @@
   .seasonRow{
     grid-template-columns: 1fr;
   }
+
+
+  .ratingBadge{
+    position: static;
+    align-self: flex-end;
+    margin-top: 6px;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .whereBox{
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .whereButtons{
+    flex-wrap: nowrap;
+  }
 }
+
+

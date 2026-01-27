@@ -41,11 +41,12 @@ export class DetailsPageComponent {
   // Trailer (placeholder)
   trailerEmbed?: SafeResourceUrl;
 
-  // Form recensione
-  scores = [1,2,3,4,5,6,7,8,9,10];
-  reviewDraft: { user: string; rating: number; comment: string } = {
-    user: '',
-    rating: 8,
+  // 10 stelle fisse per ngFor (sia picker che display recensioni)
+  stars = Array.from({ length: 10 });
+
+  // Form recensione (NO nome)
+  reviewDraft: { rating: number; comment: string } = {
+    rating: 0,
     comment: '',
   };
 
@@ -83,12 +84,13 @@ export class DetailsPageComponent {
     this.content = found;
     this.reviews = [...found.reviews];
 
-    this.whereText = this.kind === 'GAME'
-      ? 'Acquistabile su: Steam / PlayStation Store / Amazon (placeholder)'
-      : 'Disponibile su: Netflix / Prime Video / Disney+ (placeholder)';
+    this.whereText =
+      this.kind === 'GAME'
+        ? 'Acquistabile su: Steam / PlayStation Store / Amazon (placeholder)'
+        : 'Disponibile su: Netflix / Prime Video / Disney+ (placeholder)';
+
     // Stagioni solo se SERIES (mock UI)
     if (this.kind === 'SERIES') {
-      // se vuoi, puoi basarti su id per avere numeri diversi
       this.seasons = [
         { id: 1, name: 'Stagione 1' },
         { id: 2, name: 'Stagione 2' },
@@ -99,7 +101,7 @@ export class DetailsPageComponent {
       this.seasons = [];
     }
 
-    // Trailer placeholder (poi lo colleghiamo ai mock)
+    // Trailer placeholder
     const yt = 'https://www.youtube.com/embed/QkkoHAzjnUs?si=L82vHthTHmd3MDka';
     this.trailerEmbed = this.sanitizer.bypassSecurityTrustResourceUrl(yt);
 
@@ -117,16 +119,27 @@ export class DetailsPageComponent {
     // qui in futuro puoi filtrare recensioni/episodi per stagione
   }
 
+  // set rating da click sulle stelle (1..10)
+  setRating(n: number) {
+    this.reviewDraft.rating = n;
+  }
+
   submitReview() {
-    const user = this.reviewDraft.user.trim();
     const comment = this.reviewDraft.comment.trim();
     const rating = Number(this.reviewDraft.rating);
 
-    if (!user || !comment || !(rating >= 1 && rating <= 10)) return;
+    if (!comment || !(rating >= 1 && rating <= 10)) return;
 
     const today = this.formatDateDDMMYYYY(new Date());
 
-    const newReview: MockReview = { user, rating, comment, date: today };
+    // MockReview richiede user: lo mettiamo fisso
+    const newReview: MockReview = {
+      user: 'Anonimo',
+      rating,
+      comment,
+      date: today,
+    };
+
     this.reviews = [newReview, ...this.reviews];
 
     // aggiorno anche il mock in memoria del dettaglio (solo runtime)
@@ -139,7 +152,7 @@ export class DetailsPageComponent {
   }
 
   resetDraft() {
-    this.reviewDraft = { user: '', rating: 8, comment: '' };
+    this.reviewDraft = { rating: 0, comment: '' };
   }
 
   private formatDateDDMMYYYY(d: Date) {
@@ -147,5 +160,10 @@ export class DetailsPageComponent {
     const mm = String(d.getMonth() + 1).padStart(2, '0');
     const yyyy = String(d.getFullYear());
     return `${dd}/${mm}/${yyyy}`;
+  }
+
+  // per arrotondare il voto senza usare Math nel template
+  roundedRating(rating: number): number {
+    return Math.round(rating);
   }
 }

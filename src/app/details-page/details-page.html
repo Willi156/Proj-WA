@@ -30,12 +30,11 @@
           </div>
         </div>
 
-
-        <!-- SOTTO la descrizione: DOVE vederlo / comprarlo -->
+        <!-- DOVE vederlo / comprarlo -->
         <div class="whereBox">
-        <span class="whereLabel">
-          {{ kind === 'GAME' ? 'Compra ora' : 'Guarda ora' }}
-        </span>
+          <span class="whereLabel">
+            {{ kind === 'GAME' ? 'Compra ora' : 'Guarda ora' }}
+          </span>
 
           <div class="whereButtons">
             <span class="whereBtn" *ngIf="kind === 'GAME'">PlayStation</span>
@@ -62,7 +61,7 @@
     </main>
   </div>
 
-  <!-- RIGA 2: ACCORDIONS FULL-WIDTH (sotto immagine + descrizione) -->
+  <!-- RIGA 2: ACCORDIONS FULL-WIDTH -->
   <div class="fullRow" *ngIf="content">
     <section class="accordions">
 
@@ -97,33 +96,38 @@
 
         <div class="accBody">
           <form class="reviewForm" (ngSubmit)="submitReview()" #f="ngForm">
-            <div class="grid2">
-              <div class="field">
-                <label>Nome</label>
-                <input
-                  name="user"
-                  [(ngModel)]="reviewDraft.user"
-                  required
-                  placeholder="Es. Mattia"
-                />
+
+            <!-- VOTO A STELLE (1..10) -->
+            <div class="field">
+              <div class="ratingPicker" role="radiogroup" aria-label="Seleziona un voto da 1 a 10">
+              <p class="label-rev">Add my score: </p>
+                <button
+                  type="button"
+                  class="pickStar"
+                  *ngFor="let _ of stars; let i = index"
+                  [class.filled]="i < reviewDraft.rating"
+                  (click)="setRating(i + 1)"
+                  [attr.aria-checked]="(i + 1) === reviewDraft.rating"
+                  role="radio"
+                >
+                  ★
+                </button>
+
+                <span class="ratingText">{{ reviewDraft.rating }}/10</span>
               </div>
 
-              <div class="field">
-                <label>Voto</label>
-                <select name="rating" [(ngModel)]="reviewDraft.rating" required>
-                  <option *ngFor="let n of scores" [value]="n">{{ n }}</option>
-                </select>
-              </div>
+              <!-- hidden required per form validity -->
+              <input type="hidden" name="rating" [(ngModel)]="reviewDraft.rating" required />
             </div>
 
+            <!-- TESTO RECENSIONE -->
             <div class="field">
-              <label>Recensione</label>
               <textarea
                 name="comment"
                 [(ngModel)]="reviewDraft.comment"
                 required
                 rows="4"
-                placeholder="Scrivi qui..."
+                placeholder="Write your review here..."
               ></textarea>
             </div>
 
@@ -148,8 +152,17 @@
               <article class="rev" *ngFor="let r of reviews">
                 <div class="revTop">
                   <strong class="revAuthor">{{ r.user }}</strong>
-                  <span class="revScore">{{ r.rating }}/10</span>
+
+                  <!-- STELLE SU 10 -->
+                  <span class="revScore stars" aria-label="Voto {{ r.rating }} su 10">
+                    <span
+                      class="star"
+                      *ngFor="let _ of stars; let i = index"
+                      [class.filled]="i < roundedRating(r.rating)"
+                    >★</span>
+                  </span>
                 </div>
+
                 <p class="revText">{{ r.comment }}</p>
                 <span class="revDate muted">{{ r.date }}</span>
               </article>
