@@ -1,4 +1,4 @@
-<article class="card">
+<article class="card" (click)="cardClick.emit()">
   <div class="poster">
     <img
       *ngIf="(item.coverUrl || item.imageUrl) as imgUrl; else noImg"

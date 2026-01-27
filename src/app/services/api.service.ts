@@ -67,7 +67,6 @@ export class ApiService {
     return this.http.get<SerieTv[]>(`${this.baseUrl}/api/contenuti/serie_tv`);
   }
 
-  // ✅ NUOVO: dettaglio contenuto by id (endpoint tipico)
   getContenutoById(id: number) {
     return this.http.get<any>(`${this.baseUrl}/api/contenuti/${id}`);
   }

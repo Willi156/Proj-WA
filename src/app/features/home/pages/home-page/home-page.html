@@ -4,7 +4,7 @@
     category="Games"
     label="Trending"
     [items]="games"
-    (itemClick)="openFromCarousel('GAME', $event.item, $event.index)">
+    (itemClick)="openFromCarousel('GAME', $event.item)">
   </app-carousel-section>
 </ng-container>
 
@@ -14,7 +14,7 @@
     category="Movies"
     label="Most Popular"
     [items]="movies"
-    (itemClick)="openFromCarousel('MOVIE', $event.item, $event.index)">
+    (itemClick)="openFromCarousel('MOVIE', $event.item)">
   </app-carousel-section>
 </ng-container>
 
@@ -24,16 +24,8 @@
     category="Series"
     label="New Releases"
     [items]="series"
-    (itemClick)="openFromCarousel('SERIES', $event.item, $event.index)">
+    (itemClick)="openFromCarousel('SERIES', $event.item)">
   </app-carousel-section>
 </ng-container>
 
-<app-overlay-details
-  [open]="modalOpen"
-  [content]="selectedContent"
-  (closed)="modalOpen = false"
-  (prev)="goPrev()"
-  (next)="goNext()"
-  (submitReview)="sendReview($event)">
-</app-overlay-details>
 

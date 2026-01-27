@@ -1,0 +1,53 @@
+<section class="page">
+  <div *ngIf="loading" class="state">Caricamento...</div>
+  <div *ngIf="error" class="state error">{{ error }}</div>
+
+  <div *ngIf="!loading && content" class="shell">
+    <div class="card">
+      <div class="left">
+        <img class="cover" [src]="content.cover" [alt]="content.title" />
+      </div>
+
+      <div class="right">
+        <div class="top">
+          <h1 class="title">{{ content.title }}</h1>
+
+          <div class="meta">
+            <span class="badge">{{ content.kind }}</span>
+            <span class="dot">•</span>
+            <span>{{ content.year }}</span>
+            <span class="dot">•</span>
+            <span>{{ content.genre }}</span>
+          </div>
+
+          <div class="rating" *ngIf="content.rating != null">
+            {{ content.rating }}/10
+          </div>
+        </div>
+
+        <p class="desc">
+          {{ content.description }}
+        </p>
+
+        <div class="divider"></div>
+
+        <div class="reviews">
+          <h2 class="h2">Recensioni</h2>
+
+          <div *ngIf="!content.reviews.length" class="no-reviews">
+            Nessuna recensione.
+          </div>
+
+          <div *ngFor="let r of content.reviews | slice:0:5" class="review-item">
+            <div class="review-head">
+              <span class="review-user">{{ r.user }}</span>
+              <span class="review-score">{{ r.rating }}/10</span>
+            </div>
+            <div class="review-comment">{{ r.comment }}</div>
+            <div class="review-date">{{ r.date }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

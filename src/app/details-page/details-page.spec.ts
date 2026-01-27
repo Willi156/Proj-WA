@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { OverlayDetails } from './overlay-details';
+import { DetailsPage } from './details-page';
 
-describe('OverlayDetails', () => {
-  let component: OverlayDetails;
-  let fixture: ComponentFixture<OverlayDetails>;
+describe('DetailsPage', () => {
+  let component: DetailsPage;
+  let fixture: ComponentFixture<DetailsPage>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [OverlayDetails]
+      imports: [DetailsPage]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(OverlayDetails);
+    fixture = TestBed.createComponent(DetailsPage);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
