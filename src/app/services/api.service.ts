@@ -76,6 +76,26 @@ export class ApiService {
     return this.http.post<{ id: number }>(`${this.baseUrl}/api/newUtente`, { nome, cognome, email, username, password });
   }
 
+  updateUtente(userId: number, dati: any) {
+    return this.http.put<any>(`${this.baseUrl}/api/utente/${userId}`, dati);
+  }
+
+  //Aggiorna le informazioni dell'utente che non sia la password
+  updateUserInfo(userId: number, nome: string, cognome: string, email: string, immagineProfilo?: string) {
+    return this.http.put<{ success: boolean }>(`${this.baseUrl}/api/utente/update/${userId}`, { nome, cognome, email, immagineProfilo }, { withCredentials: true });
+  }
+
+//Chiamiamo questa API solo se effettivamente l'utente vuole cambiare la password, se le textfield rimangono vuote non la chiamiamo
+//Aggiorna la password dell'utente però va utilizzata dopo aver verificato che la password attuale sia corretta
+  updateUserPassword(userId: number, password: string) {
+    return this.http.put<{ success: boolean }>(`${this.baseUrl}/api/utente/update/${userId}/password`, { password }, { withCredentials: true });
+  }
+
+//Verifica se la password fornita corrisponde a quella dell'utente a seguito si può cambiare la password ma solo se questa funzione ritorna true
+  checkUserPassword(userId: number, password: string) {
+    return this.http.post<{ valid: boolean }>(`${this.baseUrl}/api/utente/${userId}/checkPassword`, { password }, { withCredentials: true });
+  }
+
   // Esempio per futuri endpoint:
   // getItems() { return this.http.get<Item[]>(`${this.baseUrl}/api/items`); }
   // createItem(payload: ItemCreateDto) { return this.http.post(`${this.baseUrl}/api/items`, payload); }
