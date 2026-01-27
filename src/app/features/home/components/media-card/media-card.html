@@ -6,15 +6,22 @@
       [alt]="item.title"
       loading="lazy"
       referrerpolicy="no-referrer"
+      (click)="cardClick.emit()"
     />
     <ng-template #noImg>
-      <div class="no-img">
+      <div class="no-img" (click)="cardClick.emit()">
         <span>{{ item.title }}</span>
       </div>
     </ng-template>
   </div>
 
-  <a class="title" href="javascript:void(0)">{{ item.title }}</a>
+  <a
+    class="title"
+    href="javascript:void(0)"
+    (click)="$event.preventDefault(); cardClick.emit()"
+  >
+    {{ item.title }}
+  </a>
 
   <div class="meta">
     <span [class]="scoreClass">{{ score }}</span>

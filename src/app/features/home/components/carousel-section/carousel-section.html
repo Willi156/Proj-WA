@@ -6,7 +6,6 @@
       <span class="h2-label">{{ label }}</span>
     </h2>
 
-
     <div class="arrows">
       <button
         class="arrow"
@@ -33,6 +32,10 @@
   <div class="underline"></div>
 
   <div class="track" #track>
-    <app-media-card *ngFor="let item of items" [item]="item"></app-media-card>
+    <app-media-card
+      *ngFor="let item of items; let i = index"
+      [item]="item"
+      (cardClick)="itemClick.emit({ item: item, index: i })"
+    ></app-media-card>
   </div>
 </section>

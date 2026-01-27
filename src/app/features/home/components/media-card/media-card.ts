@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MediaItem } from '../../../../shared/models/media-item';
 
@@ -12,20 +12,20 @@ import { MediaItem } from '../../../../shared/models/media-item';
 export class MediaCardComponent {
   @Input({ required: true }) item!: MediaItem;
 
+  @Output() cardClick = new EventEmitter<void>();
+
   get score(): number {
     return (this.item as any).criticScore ?? 0;
   }
 
   get scoreClass(): string {
     const s = this.score;
-
     if (s >= 7.5) return 'score score-green';
     if (s >= 6.0) return 'score score-blue';
     if (s >= 5.0) return 'score score-yellow';
     if (s >= 1.0) return 'score score-orange';
     return 'score score-orange';
   }
-
 
   get scoreLabel(): string {
     const s = this.score;

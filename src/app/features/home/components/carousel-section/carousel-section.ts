@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MediaItem } from '../../../../shared/models/media-item';
 import { MediaCardComponent } from '../media-card/media-card';
@@ -15,6 +15,9 @@ export class CarouselSectionComponent {
   @Input() category = '';
   @Input() label = '';
   @Input() items: MediaItem[] = [];
+
+  // ✅ nuovo: emette item + index quando clicchi una card
+  @Output() itemClick = new EventEmitter<{ item: MediaItem; index: number }>();
 
   @ViewChild('track') track?: ElementRef<HTMLDivElement>;
 
@@ -39,5 +42,4 @@ export class CarouselSectionComponent {
   setActive(dir: 'left' | 'right') {
     this.activeArrow = dir;
   }
-
 }
