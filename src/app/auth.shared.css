@@ -27,7 +27,7 @@
 /* ===== SHELLS (LOGIN / SIGNUP) ===== */
 .shell{
   width: min(900px, 90vw);
-  height: min(650px, 85vh);
+  height: min(750px, 85vh);
   background:#06A77D;
   border-radius:20px;
   overflow:hidden;
@@ -38,7 +38,7 @@
 
 .shell-signup{
   width: min(900px, 90vw);
-  height: min(820px, 88vh);
+  height: min(950px, 88vh);
   background:#06A77D;
   border-radius:20px;
   overflow:hidden;
@@ -206,6 +206,7 @@
   display:flex;
   flex-direction:column;
   gap: 1px;
+  margin-top: -30px;
 }
 
 .row{
@@ -257,7 +258,7 @@
 /* ===== BUTTON ===== */
 .pill{
   align-self: flex-end;
-  margin-top: 8px;
+  margin-top: -5px;
 
   border: 2px solid #000000;
   border-radius: 999px;
@@ -481,6 +482,7 @@
     width: 100%;
     max-width: 420px;
     margin-inline: auto;
+    margin-top: 2px;
   }
 
   .ico{
