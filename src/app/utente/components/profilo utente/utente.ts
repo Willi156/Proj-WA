@@ -84,11 +84,9 @@ export class UtenteComponent implements OnInit {
 
   setActiveTab(tabName: string) { this.activeTab = tabName; }
 
-  // --- RIMUOVI RECENSIONE (UFFICIALE) ---
   rimuoviRecensione(rec: any) {
-    // Dagli screenshot sappiamo che l'ID è dentro 'recensione.id'
     const idReale = rec.recensione?.id || rec.id;
-    if (!idReale) { console.error("ID MANCANTE"); return; }
+    if (!idReale) {  return; }
 
     if (!rec.inEliminazione) {
       this.recensioniIds.forEach(r => r.inEliminazione = false);
@@ -97,26 +95,20 @@ export class UtenteComponent implements OnInit {
       return;
     }
 
-    // Autenticazione + Cancellazione
     this.api.authenticate(this.USER, this.PASS).pipe(
       switchMap(() => this.api.deleteRecensione(idReale))
     ).subscribe({
       next: () => {
-        console.log("Recensione eliminata dal DB!");
         this.recensioniIds = this.recensioniIds.filter(r => (r.recensione?.id || r.id) !== idReale);
         this.cd.detectChanges();
       },
       error: (err) => {
-        console.error(err);
         alert(`Errore Server: ${err.status} - Impossibile eliminare.`);
       }
     });
   }
 
-  // --- RIMUOVI PREFERITO (UFFICIALE) ---
   rimuoviPreferito(item: any) {
-    // La chiamata del collega vuole 'contenutoId'.
-    // Dagli screenshot, 'item.id' (150) è l'ID del film, quindi è quello giusto.
     const idContenuto = item.id;
     if (!idContenuto) return;
 
@@ -127,17 +119,14 @@ export class UtenteComponent implements OnInit {
       return;
     }
 
-    // Autenticazione + Cancellazione (con BODY corretto ora gestito in api.service)
     this.api.authenticate(this.USER, this.PASS).pipe(
       switchMap(() => this.api.removeMediaFromFavourites(this.userId, idContenuto))
     ).subscribe({
       next: () => {
-        console.log("Preferito rimosso dal DB!");
         this.preferitiIds = this.preferitiIds.filter(p => p.id !== item.id);
         this.cd.detectChanges();
       },
       error: (err) => {
-        console.error(err);
         alert(`Errore Server: ${err.status} - Impossibile rimuovere.`);
       }
     });

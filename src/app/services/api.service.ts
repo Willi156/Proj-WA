@@ -85,13 +85,12 @@ export class ApiService {
 
 // AGGIORNAMENTO PASSWORD
   updateUserPassword(userId: number, password: string) {
-    // Inviamo la password SIA nel body SIA come parametro nell'URL.
-    // In questo modo, se il server la cerca in uno dei due posti, la trova sicuro.
+
     return this.http.put<{ success: boolean }>(
       `${this.baseUrl}/api/utente/update/${userId}/password`,
-      { password }, // Tentativo 1: Nel Body
+      { password },
       {
-        params: { password }, // Tentativo 2: Nell'URL (?password=...)
+        params: { password },
         withCredentials: true
       }
     );
@@ -104,14 +103,12 @@ export class ApiService {
       { withCredentials: true }
     );
   }
-  // --- DELETE RECENSIONI (UFFICIALE) ---
+
   deleteRecensione(id: number) {
     return this.http.delete<{ success: boolean }>(`${this.baseUrl}/api/recensioni/delete/${id}`, { withCredentials: true });
   }
 
-  // --- DELETE PREFERITI (UFFICIALE) ---
   removeMediaFromFavourites(userId: number, contenutoId: number) {
-    // Angular richiede che il body sia passato nelle opzioni per una DELETE
     return this.http.delete<{ success: boolean }>(
       `${this.baseUrl}/api/utente/${userId}/removePreferito`,
       {

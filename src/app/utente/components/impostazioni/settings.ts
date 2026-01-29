@@ -58,7 +58,6 @@ export class SettingsComponent implements OnInit {
   }
 
   salva() {
-    console.log("1. Inizio salvataggio...");
     this.messaggioErrore = '';
     this.messaggioSuccesso = '';
 
@@ -69,7 +68,6 @@ export class SettingsComponent implements OnInit {
 
     this.api.authenticate(this.USER, this.PASS).subscribe({
       next: () => {
-        console.log("2. Autenticazione OK");
         this.eseguiUpdate();
       },
       error: () => this.mostraErrore("Errore di connessione al server.")
@@ -88,7 +86,6 @@ export class SettingsComponent implements OnInit {
       }
     }
 
-    console.log("3. Aggiorno dati profilo...");
     this.api.updateUserInfo(
       this.userId,
       this.user.nome,
@@ -97,46 +94,36 @@ export class SettingsComponent implements OnInit {
       this.user.immagineProfilo
     ).subscribe({
       next: () => {
-        console.log("4. Profilo aggiornato.");
         if (isPlatformBrowser(this.platformId)) {
           localStorage.setItem('datiUtente', JSON.stringify(this.user));
         }
 
         if (this.nuovaPassword) {
-          console.log("5. C'è una nuova password, avvio cambio...");
           this.gestisciCambioPassword();
         } else {
           this.mostraSuccesso("Profilo aggiornato con successo!");
         }
       },
       error: (err) => {
-        console.error("Errore update info:", err);
         this.mostraErrore("Errore salvataggio dati anagrafici.");
       }
     });
   }
 
   gestisciCambioPassword() {
-    console.log("6. Verifico vecchia password...");
 
     this.api.checkUserPassword(this.userId, this.vecchiaPassword).subscribe({
       next: (res) => {
-        console.log("7. Risposta checkPassword:", res);
 
-        // CORREZIONE TYPE ERROR: Usiamo 'any' per evitare che TypeScript si blocchi
-        // Questo accetta sia {valid: true} che true semplice
         const isValid = (res as any) === true || (res as any).valid === true;
 
         if (isValid) {
-          console.log("8. Vecchia password OK. Aggiorno...");
           this.aggiornaPasswordFinale();
         } else {
-          console.warn("Vecchia password errata secondo il server.");
           this.mostraErrore("La vecchia password non è corretta.");
         }
       },
       error: (err) => {
-        console.error("Errore checkPassword:", err);
         this.mostraErrore("Errore verifica password.");
       }
     });
@@ -145,7 +132,6 @@ export class SettingsComponent implements OnInit {
   aggiornaPasswordFinale() {
     this.api.updateUserPassword(this.userId, this.nuovaPassword).subscribe({
       next: () => {
-        console.log("9. PASSWORD AGGIORNATA!");
         this.PASS = this.nuovaPassword;
         this.mostraSuccesso("Profilo e Password salvati!");
         this.vecchiaPassword = '';
@@ -153,8 +139,6 @@ export class SettingsComponent implements OnInit {
         this.confermaPassword = '';
       },
       error: (err) => {
-        console.error("Errore updatePassword:", err);
-        // Se riceviamo ancora 400, stampiamo un messaggio specifico
         if (err.status === 400) {
           this.mostraErrore("Errore Dati (400): Il server non accetta il formato della password.");
         } else {
