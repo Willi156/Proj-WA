@@ -22,7 +22,6 @@ export class ApiService {
     return this.http.get<any>(`${this.baseUrl}/api/auth/me`, { withCredentials: true });
   }
 
-
   getFavouritesMediaByUserId(userId: number) {
     return this.http.get<any[]>(`${this.baseUrl}/api/utente/${userId}/preferiti`, { withCredentials: true });
   }
@@ -34,7 +33,6 @@ export class ApiService {
   getRecensioniByUserId(userId: number) {
     return this.http.get<any[]>(`${this.baseUrl}/api/recensioni/utente/${userId}`, { withCredentials: true });
   }
-
 
   getServerTime() {
     return this.http.get<{ serverTime: { now: string } }>(`${this.baseUrl}/api/test`);
@@ -80,23 +78,37 @@ export class ApiService {
     return this.http.put<any>(`${this.baseUrl}/api/utente/${userId}`, dati);
   }
 
-  //Aggiorna le informazioni dell'utente che non sia la password
   updateUserInfo(userId: number, nome: string, cognome: string, email: string, immagineProfilo?: string) {
     return this.http.put<{ success: boolean }>(`${this.baseUrl}/api/utente/update/${userId}`, { nome, cognome, email, immagineProfilo }, { withCredentials: true });
   }
 
-//Chiamiamo questa API solo se effettivamente l'utente vuole cambiare la password, se le textfield rimangono vuote non la chiamiamo
-//Aggiorna la password dell'utente però va utilizzata dopo aver verificato che la password attuale sia corretta
   updateUserPassword(userId: number, password: string) {
     return this.http.put<{ success: boolean }>(`${this.baseUrl}/api/utente/update/${userId}/password`, { password }, { withCredentials: true });
   }
 
-//Verifica se la password fornita corrisponde a quella dell'utente a seguito si può cambiare la password ma solo se questa funzione ritorna true
   checkUserPassword(userId: number, password: string) {
     return this.http.post<{ valid: boolean }>(`${this.baseUrl}/api/utente/${userId}/checkPassword`, { password }, { withCredentials: true });
   }
 
+  // --- DELETE RECENSIONI (UFFICIALE) ---
+  deleteRecensione(id: number) {
+    return this.http.delete<{ success: boolean }>(`${this.baseUrl}/api/recensioni/delete/${id}`, { withCredentials: true });
+  }
+
+  // --- DELETE PREFERITI (UFFICIALE) ---
+  removeMediaFromFavourites(userId: number, contenutoId: number) {
+    // Angular richiede che il body sia passato nelle opzioni per una DELETE
+    return this.http.delete<{ success: boolean }>(
+      `${this.baseUrl}/api/utente/${userId}/removePreferito`,
+      {
+        body: { contenutoId },
+        withCredentials: true
+      }
+    );
+  }
   // Esempio per futuri endpoint:
   // getItems() { return this.http.get<Item[]>(`${this.baseUrl}/api/items`); }
   // createItem(payload: ItemCreateDto) { return this.http.post(`${this.baseUrl}/api/items`, payload); }
 }
+
+

@@ -62,6 +62,7 @@
         }
 
         <hr class="border-secondary opacity-10">
+
         <h6 class="fw-bold text-primary mb-3 mt-2">Dati Personali</h6>
         <div class="row g-3 mb-4">
           <div class="col-md-6">
@@ -78,10 +79,21 @@
         <div class="mb-3">
           <label class="small fw-bold text-muted mb-1">USERNAME</label>
           <div class="input-group">
-            <span class="input-group-text bg-light border-0 text-muted">&#64;</span>
-            <input type="text" class="form-control bg-light border-0 py-2" [(ngModel)]="user.username">
+            <span class="input-group-text bg-light border-0 text-muted">
+                <i class="bi bi-lock-fill me-1"></i> &#64;
+            </span>
+            <input type="text"
+                   class="form-control bg-light border-0 py-2 text-muted"
+                   [(ngModel)]="user.username"
+                   readonly
+                   disabled
+                   style="cursor: not-allowed; opacity: 0.7;">
+          </div>
+          <div class="form-text text-muted small mt-1 ms-1">
+            L'username è identificativo e non può essere modificato.
           </div>
         </div>
+
         <div class="mb-4">
           <label class="small fw-bold text-muted mb-1">EMAIL</label>
           <input type="email" class="form-control bg-light border-0 py-2" [(ngModel)]="user.email">

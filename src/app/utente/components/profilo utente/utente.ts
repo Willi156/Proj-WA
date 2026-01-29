@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ApiService } from '../../../services/api.service';
 import { empty } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-utente',
@@ -14,23 +15,14 @@ import { empty } from 'rxjs';
 })
 export class UtenteComponent implements OnInit {
 
-
   readonly USER = 'WIMAn';
   readonly PASS = '1234567!';
-
 
   userId = 0;
   preferitiIds: any[] = [];
   recensioniIds: any[] = [];
 
-  user = {
-    nome: '',
-    cognome: '',
-    username: '',
-    email: '',
-    immagineProfilo: ''
-  };
-
+  user: any = { nome: '', cognome: '', username: '', email: '', immagineProfilo: '' };
   activeTab: string = 'games';
   searchText: string = '';
   saluto: string = 'Bentornat*';
@@ -45,71 +37,111 @@ export class UtenteComponent implements OnInit {
     const ora = new Date().getHours();
     this.saluto = (ora >= 6 && ora < 18) ? 'Buongiorno' : 'Buonasera';
 
-    // Cache per caricamento istantaneo
     if (isPlatformBrowser(this.platformId)) {
-      const datiLocali = localStorage.getItem('datiUtente');
-      if (datiLocali) {
-        this.user = JSON.parse(datiLocali);
-        if (localStorage.getItem('userId')) this.userId = parseInt(localStorage.getItem('userId')!);
-      }
+      this.connettiAlDatabase();
     }
-
-    this.connettiAlDatabase();
   }
 
   connettiAlDatabase() {
     this.api.authenticate(this.USER, this.PASS).subscribe({
       next: (res) => {
-        this.impostaDati(res);
-      },
+        const dati = res.user || res;
+        if (dati.id) this.userId = dati.id;
+        this.user = dati;
 
+        localStorage.setItem('datiUtente', JSON.stringify(this.user));
+        localStorage.setItem('userId', this.userId.toString());
+
+        setTimeout(() => { this.impostaDati(); }, 1000);
+      },
+      error: (err) => console.error("Errore Login:", err)
     });
   }
 
-  impostaDati(data: any) {
-    if (!data) return;
-    const dati = data.user || data;
-
-    if (dati.id) this.userId = dati.id;
-
-    this.user = {
-      nome: dati.nome || this.user.nome || 'Utente',
-      cognome: dati.cognome || this.user.cognome || '',
-      username: dati.username || this.user.username || '',
-      email: dati.email || this.user.email || '',
-      immagineProfilo: dati.immagineProfilo || this.user.immagineProfilo
-    };
-
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem('datiUtente', JSON.stringify(this.user));
-      localStorage.setItem('userId', this.userId.toString());
-    }
-
-    if (dati.recensioni) this.recensioniIds = dati.recensioni;
-    else if (this.userId > 0) this.scaricaRecensioni();
-
-    if (dati.preferiti) this.preferitiIds = dati.preferiti;
-    else if (this.userId > 0) this.scaricaPreferiti();
-
+  impostaDati() {
+    this.scaricaRecensioni();
+    this.scaricaPreferiti();
     this.cd.detectChanges();
   }
 
   scaricaRecensioni() {
     this.api.getRecensioniByUserId(this.userId).subscribe({
-      next: (recs) => { this.recensioniIds = recs; this.cd.detectChanges(); },
-      error: () => {}
+      next: (recs) => {
+        this.recensioniIds = recs;
+        this.cd.detectChanges();
+      }
     });
   }
 
   scaricaPreferiti() {
     this.api.getFavouriteMediaByUserIdComplete(this.userId).subscribe({
-      next: (prefs) => { this.preferitiIds = prefs; this.cd.detectChanges(); },
-      error: () => {}
+      next: (prefs) => {
+        this.preferitiIds = prefs;
+        this.cd.detectChanges();
+      }
     });
   }
 
   setActiveTab(tabName: string) { this.activeTab = tabName; }
-  rimuoviRecensione(rec: any) { /* logica rimozione */ }
-  rimuoviPreferito(item: any) { /* logica rimozione */ }
+
+  // --- RIMUOVI RECENSIONE (UFFICIALE) ---
+  rimuoviRecensione(rec: any) {
+    // Dagli screenshot sappiamo che l'ID è dentro 'recensione.id'
+    const idReale = rec.recensione?.id || rec.id;
+    if (!idReale) { console.error("ID MANCANTE"); return; }
+
+    if (!rec.inEliminazione) {
+      this.recensioniIds.forEach(r => r.inEliminazione = false);
+      rec.inEliminazione = true;
+      setTimeout(() => { rec.inEliminazione = false; this.cd.detectChanges(); }, 3000);
+      return;
+    }
+
+    // Autenticazione + Cancellazione
+    this.api.authenticate(this.USER, this.PASS).pipe(
+      switchMap(() => this.api.deleteRecensione(idReale))
+    ).subscribe({
+      next: () => {
+        console.log("Recensione eliminata dal DB!");
+        this.recensioniIds = this.recensioniIds.filter(r => (r.recensione?.id || r.id) !== idReale);
+        this.cd.detectChanges();
+      },
+      error: (err) => {
+        console.error(err);
+        alert(`Errore Server: ${err.status} - Impossibile eliminare.`);
+      }
+    });
+  }
+
+  // --- RIMUOVI PREFERITO (UFFICIALE) ---
+  rimuoviPreferito(item: any) {
+    // La chiamata del collega vuole 'contenutoId'.
+    // Dagli screenshot, 'item.id' (150) è l'ID del film, quindi è quello giusto.
+    const idContenuto = item.id;
+    if (!idContenuto) return;
+
+    if (!item.inEliminazione) {
+      this.preferitiIds.forEach(p => p.inEliminazione = false);
+      item.inEliminazione = true;
+      setTimeout(() => { item.inEliminazione = false; this.cd.detectChanges(); }, 3000);
+      return;
+    }
+
+    // Autenticazione + Cancellazione (con BODY corretto ora gestito in api.service)
+    this.api.authenticate(this.USER, this.PASS).pipe(
+      switchMap(() => this.api.removeMediaFromFavourites(this.userId, idContenuto))
+    ).subscribe({
+      next: () => {
+        console.log("Preferito rimosso dal DB!");
+        this.preferitiIds = this.preferitiIds.filter(p => p.id !== item.id);
+        this.cd.detectChanges();
+      },
+      error: (err) => {
+        console.error(err);
+        alert(`Errore Server: ${err.status} - Impossibile rimuovere.`);
+      }
+    });
+  }
+
   protected readonly empty = empty;
 }
