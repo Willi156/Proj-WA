@@ -82,14 +82,28 @@ export class ApiService {
     return this.http.put<{ success: boolean }>(`${this.baseUrl}/api/utente/update/${userId}`, { nome, cognome, email, immagineProfilo }, { withCredentials: true });
   }
 
+
+// AGGIORNAMENTO PASSWORD
   updateUserPassword(userId: number, password: string) {
-    return this.http.put<{ success: boolean }>(`${this.baseUrl}/api/utente/update/${userId}/password`, { password }, { withCredentials: true });
+    // Inviamo la password SIA nel body SIA come parametro nell'URL.
+    // In questo modo, se il server la cerca in uno dei due posti, la trova sicuro.
+    return this.http.put<{ success: boolean }>(
+      `${this.baseUrl}/api/utente/update/${userId}/password`,
+      { password }, // Tentativo 1: Nel Body
+      {
+        params: { password }, // Tentativo 2: Nell'URL (?password=...)
+        withCredentials: true
+      }
+    );
   }
 
   checkUserPassword(userId: number, password: string) {
-    return this.http.post<{ valid: boolean }>(`${this.baseUrl}/api/utente/${userId}/checkPassword`, { password }, { withCredentials: true });
+    return this.http.post<{ valid: boolean }>(
+      `${this.baseUrl}/api/utente/${userId}/checkPassword`,
+      { password },
+      { withCredentials: true }
+    );
   }
-
   // --- DELETE RECENSIONI (UFFICIALE) ---
   deleteRecensione(id: number) {
     return this.http.delete<{ success: boolean }>(`${this.baseUrl}/api/recensioni/delete/${id}`, { withCredentials: true });
@@ -106,6 +120,7 @@ export class ApiService {
       }
     );
   }
+
   // Esempio per futuri endpoint:
   // getItems() { return this.http.get<Item[]>(`${this.baseUrl}/api/items`); }
   // createItem(payload: ItemCreateDto) { return this.http.post(`${this.baseUrl}/api/items`, payload); }

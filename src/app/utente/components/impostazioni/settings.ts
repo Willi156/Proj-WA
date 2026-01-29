@@ -12,18 +12,10 @@ import { ApiService } from '../../../services/api.service';
 })
 export class SettingsComponent implements OnInit {
 
-  // --- CREDENZIALI PER IL SALVATAGGIO ---
   readonly USER = 'WIMAn';
-  readonly PASS = '1234567!';
-  // --------------------------------------
+  PASS = '1234567!';
 
-  user = {
-    nome: '',
-    cognome: '',
-    username: '',
-    email: '',
-    immagineProfilo: ''
-  };
+  user = { nome: '', cognome: '', username: '', email: '', immagineProfilo: '' };
   userId: number = 0;
 
   vecchiaPassword: string = '';
@@ -32,7 +24,6 @@ export class SettingsComponent implements OnInit {
 
   messaggioSuccesso: string = '';
   messaggioErrore: string = '';
-
   listaAvatar: string[] = [];
   mostraSelettoreAvatar: boolean = false;
 
@@ -47,10 +38,10 @@ export class SettingsComponent implements OnInit {
     if (isPlatformBrowser(this.platformId)) {
       const idSalvato = localStorage.getItem('userId');
       if (idSalvato) this.userId = parseInt(idSalvato);
+
       const datiSalvati = localStorage.getItem('datiUtente');
       if (datiSalvati) {
-        const obj = JSON.parse(datiSalvati);
-        this.user = { ...this.user, ...obj };
+        this.user = { ...this.user, ...JSON.parse(datiSalvati) };
       }
     }
   }
@@ -67,33 +58,37 @@ export class SettingsComponent implements OnInit {
   }
 
   salva() {
+    console.log("1. Inizio salvataggio...");
     this.messaggioErrore = '';
     this.messaggioSuccesso = '';
-    this.cd.detectChanges();
 
     if (!this.userId) {
-      this.mostraErrore("Dati utente non caricati.");
+      this.mostraErrore("Errore: ID utente mancante.");
       return;
     }
 
-    // Refresh sessione per garantire il salvataggio
     this.api.authenticate(this.USER, this.PASS).subscribe({
       next: () => {
+        console.log("2. Autenticazione OK");
         this.eseguiUpdate();
       },
-      error: (err) => {
-        console.error(err);
-        this.mostraErrore("Errore connessione DB.");
-      }
+      error: () => this.mostraErrore("Errore di connessione al server.")
     });
   }
 
   eseguiUpdate() {
     if (this.nuovaPassword || this.confermaPassword) {
-      if (!this.vecchiaPassword) { this.mostraErrore("Inserisci la vecchia password."); return; }
-      if (this.nuovaPassword !== this.confermaPassword) { this.mostraErrore("Le password non coincidono."); return; }
+      if (!this.vecchiaPassword) {
+        this.mostraErrore("Devi inserire la vecchia password.");
+        return;
+      }
+      if (this.nuovaPassword !== this.confermaPassword) {
+        this.mostraErrore("Le nuove password non coincidono.");
+        return;
+      }
     }
 
+    console.log("3. Aggiorno dati profilo...");
     this.api.updateUserInfo(
       this.userId,
       this.user.nome,
@@ -101,57 +96,83 @@ export class SettingsComponent implements OnInit {
       this.user.email,
       this.user.immagineProfilo
     ).subscribe({
-      next: (res) => {
+      next: () => {
+        console.log("4. Profilo aggiornato.");
         if (isPlatformBrowser(this.platformId)) {
           localStorage.setItem('datiUtente', JSON.stringify(this.user));
         }
+
         if (this.nuovaPassword) {
-          this.gestisciPassword();
+          console.log("5. C'è una nuova password, avvio cambio...");
+          this.gestisciCambioPassword();
         } else {
           this.mostraSuccesso("Profilo aggiornato con successo!");
         }
       },
       error: (err) => {
-        console.error(err);
-        this.mostraErrore("Errore tecnico salvataggio.");
+        console.error("Errore update info:", err);
+        this.mostraErrore("Errore salvataggio dati anagrafici.");
       }
     });
   }
 
-  gestisciPassword() {
+  gestisciCambioPassword() {
+    console.log("6. Verifico vecchia password...");
+
     this.api.checkUserPassword(this.userId, this.vecchiaPassword).subscribe({
       next: (res) => {
-        if (res.valid) {
-          this.api.updateUserPassword(this.userId, this.nuovaPassword).subscribe({
-            next: () => {
-              this.mostraSuccesso("Password aggiornata!");
-              this.vecchiaPassword = ''; this.nuovaPassword = ''; this.confermaPassword = '';
-            },
-            error: () => this.mostraErrore("Errore cambio password.")
-          });
+        console.log("7. Risposta checkPassword:", res);
+
+        // CORREZIONE TYPE ERROR: Usiamo 'any' per evitare che TypeScript si blocchi
+        // Questo accetta sia {valid: true} che true semplice
+        const isValid = (res as any) === true || (res as any).valid === true;
+
+        if (isValid) {
+          console.log("8. Vecchia password OK. Aggiorno...");
+          this.aggiornaPasswordFinale();
         } else {
-          this.mostraErrore("Vecchia password errata.");
+          console.warn("Vecchia password errata secondo il server.");
+          this.mostraErrore("La vecchia password non è corretta.");
         }
       },
-      error: () => this.mostraErrore("Errore verifica password.")
+      error: (err) => {
+        console.error("Errore checkPassword:", err);
+        this.mostraErrore("Errore verifica password.");
+      }
+    });
+  }
+
+  aggiornaPasswordFinale() {
+    this.api.updateUserPassword(this.userId, this.nuovaPassword).subscribe({
+      next: () => {
+        console.log("9. PASSWORD AGGIORNATA!");
+        this.PASS = this.nuovaPassword;
+        this.mostraSuccesso("Profilo e Password salvati!");
+        this.vecchiaPassword = '';
+        this.nuovaPassword = '';
+        this.confermaPassword = '';
+      },
+      error: (err) => {
+        console.error("Errore updatePassword:", err);
+        // Se riceviamo ancora 400, stampiamo un messaggio specifico
+        if (err.status === 400) {
+          this.mostraErrore("Errore Dati (400): Il server non accetta il formato della password.");
+        } else {
+          this.mostraErrore("Errore tecnico cambio password (" + err.status + ")");
+        }
+      }
     });
   }
 
   mostraErrore(msg: string) {
     this.messaggioErrore = msg;
     this.cd.detectChanges();
-    setTimeout(() => {
-      this.messaggioErrore = '';
-      this.cd.detectChanges();
-    }, 4000);
+    setTimeout(() => { this.messaggioErrore = ''; this.cd.detectChanges(); }, 5000);
   }
 
   mostraSuccesso(msg: string) {
     this.messaggioSuccesso = msg;
     this.cd.detectChanges();
-    setTimeout(() => {
-      this.messaggioSuccesso = '';
-      this.cd.detectChanges();
-    }, 3000);
+    setTimeout(() => { this.messaggioSuccesso = ''; this.cd.detectChanges(); }, 3000);
   }
 }
