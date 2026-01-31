@@ -119,7 +119,7 @@ export class ApiService {
   }
 
   me(){
-    return this.http.get<{ user: any}>(`${this.baseUrl}/api/auth/me`);
+    return this.http.get<{ user: any}>(`${this.baseUrl}/api/auth/me`,{ withCredentials: true });
   }
 
   // Esempio per futuri endpoint:
