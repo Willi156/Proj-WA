@@ -1,14 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
+import { ApiService } from '../services/api.service';
+
 
 type Tab = 'signin' | 'signup';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [RouterLink,CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -30,7 +32,7 @@ export class LoginComponent {
 
   successMessage = '';
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private router: Router, private api:ApiService) {
     this.form = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
@@ -52,7 +54,12 @@ export class LoginComponent {
     if (this.form.invalid) return;
 
     const { username, password } = this.form.value;
+
+    this.api.authenticate(username, password ).subscribe({
+      next:(user:any)=>{this.router.navigate(["/user"],{state:{user}})}
+    })
     console.log('LOGIN:', { username, password });
+
 
     // TODO: collega al backend
   }

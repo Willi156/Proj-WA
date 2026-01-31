@@ -12,8 +12,6 @@ import { ApiService } from '../../../services/api.service';
 })
 export class SettingsComponent implements OnInit {
 
-  readonly USER = 'WIMAn';
-  PASS = '1234567!';
 
   user = { nome: '', cognome: '', username: '', email: '', immagineProfilo: '' };
   userId: number = 0;
@@ -66,13 +64,14 @@ export class SettingsComponent implements OnInit {
       return;
     }
 
-    this.api.authenticate(this.USER, this.PASS).subscribe({
+    this.api.me().subscribe({
       next: () => {
         this.eseguiUpdate();
       },
       error: () => this.mostraErrore("Errore di connessione al server.")
     });
   }
+
 
   eseguiUpdate() {
     if (this.nuovaPassword || this.confermaPassword) {
@@ -132,7 +131,6 @@ export class SettingsComponent implements OnInit {
   aggiornaPasswordFinale() {
     this.api.updateUserPassword(this.userId, this.nuovaPassword).subscribe({
       next: () => {
-        this.PASS = this.nuovaPassword;
         this.mostraSuccesso("Profilo e Password salvati!");
         this.vecchiaPassword = '';
         this.nuovaPassword = '';

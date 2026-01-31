@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { ApiService } from '../../../services/api.service';
 import { empty } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-utente',
@@ -14,9 +15,6 @@ import { switchMap } from 'rxjs/operators';
   styleUrl: './utente.css'
 })
 export class UtenteComponent implements OnInit {
-
-  readonly USER = 'WIMAn';
-  readonly PASS = '1234567!';
 
   userId = 0;
   preferitiIds: any[] = [];
@@ -30,6 +28,7 @@ export class UtenteComponent implements OnInit {
   constructor(
     private api: ApiService,
     private cd: ChangeDetectorRef,
+    private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
@@ -43,8 +42,8 @@ export class UtenteComponent implements OnInit {
   }
 
   connettiAlDatabase() {
-    this.api.authenticate(this.USER, this.PASS).subscribe({
-      next: (res) => {
+    this.api.me().subscribe({
+      next: (res:any) => {
         const dati = res.user || res;
         if (dati.id) this.userId = dati.id;
         this.user = dati;
@@ -54,9 +53,9 @@ export class UtenteComponent implements OnInit {
 
         setTimeout(() => { this.impostaDati(); }, 1000);
       },
-      error: (err) => console.error("Errore Login:", err)
+      error: () => this.router.navigate(["/login"])
     });
-  }
+      }
 
   impostaDati() {
     this.scaricaRecensioni();
@@ -95,7 +94,7 @@ export class UtenteComponent implements OnInit {
       return;
     }
 
-    this.api.authenticate(this.USER, this.PASS).pipe(
+    this.api.me().pipe(
       switchMap(() => this.api.deleteRecensione(idReale))
     ).subscribe({
       next: () => {
@@ -119,7 +118,7 @@ export class UtenteComponent implements OnInit {
       return;
     }
 
-    this.api.authenticate(this.USER, this.PASS).pipe(
+    this.api.me().pipe(
       switchMap(() => this.api.removeMediaFromFavourites(this.userId, idContenuto))
     ).subscribe({
       next: () => {
