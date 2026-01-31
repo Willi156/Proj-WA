@@ -118,6 +118,10 @@ export class ApiService {
     );
   }
 
+  me(){
+    return this.http.get<{ user: any}>(`${this.baseUrl}/api/auth/me`);
+  }
+
   // Esempio per futuri endpoint:
   // getItems() { return this.http.get<Item[]>(`${this.baseUrl}/api/items`); }
   // createItem(payload: ItemCreateDto) { return this.http.post(`${this.baseUrl}/api/items`, payload); }
