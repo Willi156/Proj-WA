@@ -9,7 +9,7 @@
         height="160"
       >
         <defs>
-          <!-- GRADIENTE RGB -->
+
           <linearGradient
             id="rgbGradient"
             x1="0"
@@ -28,7 +28,6 @@
             <stop offset="84%" stop-color="#8b00ff"/>
             <stop offset="100%" stop-color="#ff004c"/>
 
-            <!-- 🔥 ANIMAZIONE CONTINUA -->
             <animateTransform
               attributeName="gradientTransform"
               type="translate"
@@ -39,10 +38,6 @@
             />
           </linearGradient>
 
-
-
-
-          <!-- OMBRA DI CONTATTO -->
           <filter id="contactShadow" x="-20%" y="-20%" width="140%" height="140%">
             <feOffset dx="0" dy="4" result="off"/>
             <feGaussianBlur in="off" stdDeviation="2" result="blur"/>
@@ -60,7 +55,6 @@
             </feMerge>
           </filter>
 
-          <!-- OMBRA A TERRA -->
           <filter id="groundShadow" x="-50%" y="0%" width="200%" height="300%">
             <feOffset dx="0" dy="28"/>
             <feGaussianBlur stdDeviation="10"/>
@@ -74,7 +68,6 @@
           </filter>
         </defs>
 
-        <!-- OMBRA PROIETTATA (COPIA SOTTO) -->
         <g filter="url(#groundShadow)">
           <text x="0" y="120" class="extrude e5" fill="#1e3a5f">GAMES</text>
           <text x="0" y="120" class="extrude e4" fill="#1e3a5f">GAMES</text>
@@ -83,7 +76,6 @@
           <text x="0" y="120" class="extrude e1" fill="#1e3a5f">GAMES</text>
         </g>
 
-        <!-- TESTO REALE (SOPRA, NITIDO) -->
         <g>
           <text
             x="0"
@@ -97,7 +89,6 @@
 
       </svg>
 
-      <!-- SUBTITLE (HTML NORMALE) -->
       <p class="games-subtitle">
         Cerca la tua prossima AVVENTURA!
       </p>

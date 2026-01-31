@@ -4,6 +4,8 @@ import { FilmPageComponent } from './film/components/film-page/film-page.compone
 import { SeriePageComponent } from './serieTV/components/serieTV-page/serieTV-page.component';
 import { LoginComponent } from './login/login';
 import { SignupComponent } from './signup/signup';
+import { UtenteComponent } from './utente/components/profilo utente/utente';
+import { SettingsComponent } from './utente/components/impostazioni/settings';
 
 export const routes: Routes = [
   {
@@ -17,5 +19,8 @@ export const routes: Routes = [
   { path: 'series', component: SeriePageComponent },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
+  { path: 'user', component: UtenteComponent },
+  { path: 'settings', component: SettingsComponent },
   { path: '**', redirectTo: '' },
+
 ];

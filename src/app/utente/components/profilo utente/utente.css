@@ -1,0 +1,107 @@
+
+.page-background {
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  padding: 20px;
+}
+
+.sidebar-custom {
+  background: linear-gradient(135deg, #058e5d 0%, #084905 100%);
+}
+
+.profile-img {
+  width: 120px;
+  height: 120px;
+  border: 5px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease;
+}
+
+.profile-img:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.custom-input {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.custom-input:focus {
+  background-color: #fff;
+  border-color: #764ba2;
+  box-shadow: 0 0 0 4px rgba(118, 75, 162, 0.1);
+}
+
+.btn-save-custom {
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.btn-save-custom:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(118, 75, 162, 0.3);
+}
+
+
+.fade-in {
+  animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.btn-delete-elegant {
+  color: #adb5bd;
+  background-color: transparent;
+  border: none;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  opacity: 0.7;
+}
+
+
+.btn-delete-elegant:hover {
+  color: #dc3545;
+  background-color: #fff5f5;
+  opacity: 1;
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.2);
+}
+
+.nav-pills .nav-link {
+  color: #6c757d;
+  font-weight: 600;
+  border-radius: 30px;
+  padding: 10px 20px;
+  transition: all 0.2s;
+}
+
+.nav-pills .nav-link.active {
+  background-color: #007e51; /* Blu acceso */
+  color: white;
+  box-shadow: 0 4px 10px rgb(8, 73, 5);
+}
+
+.nav-pills .nav-link:hover:not(.active) {
+  background-color: #e9ecef;
+}
+
+
+.search-input {
+  border-radius: 20px;
+  background-color: #f8f9fa;
+  border: 1px solid transparent;
+}
+.search-input:focus {
+  background-color: white;
+  border-color: #dee2e6;
+  box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+}

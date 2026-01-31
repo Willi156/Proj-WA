@@ -1,10 +1,8 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GameCardComponent } from '../game-cards/game-card.component';
 import { Game } from '../../models/game.model';
-import {RawgService} from '../../../services/rawg.service';
-
-
+import { RawgService } from '../../../services/rawg.service';
 
 @Component({
   selector: 'app-games-section',
@@ -13,7 +11,7 @@ import {RawgService} from '../../../services/rawg.service';
   templateUrl: './games-section.component.html',
   styleUrl: './games-section.component.css'
 })
-export class GamesSectionComponent implements OnChanges {
+export class GamesSectionComponent implements OnInit {
 
   @Input() title!: string;
   @Input() games: Game[] = [];
@@ -24,13 +22,9 @@ export class GamesSectionComponent implements OnChanges {
 
   constructor(private rawgService: RawgService) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['games'] && this.games.length > 0) {
-      this.startIndex = 0;
-      this.updateVisibleGames();
-    }
+  ngOnInit(): void {
+    this.updateVisibleGames();
   }
-
 
   updateVisibleGames() {
     this.visibleGames = this.games.slice(
@@ -38,15 +32,12 @@ export class GamesSectionComponent implements OnChanges {
       this.startIndex + this.visibleCount
     );
 
-    // 🔥 RAWG SOLO PER LE CARD VISIBILI
+    // RAWG solo per visibili
     this.visibleGames.forEach(game => {
       if (!game.imageLink) {
-        this.rawgService.getImageByTitle(game.titolo).subscribe((img: string | null) => {
-          if (img) {
-            game.imageLink = img;
-          }
+        this.rawgService.getImageByTitle(game.titolo).subscribe(img => {
+          if (img) game.imageLink = img;
         });
-
       }
     });
   }
@@ -59,7 +50,7 @@ export class GamesSectionComponent implements OnChanges {
   }
 
   prev() {
-    if (this.startIndex - this.visibleCount >= 0) {
+    if (this.startIndex > 0) {
       this.startIndex -= this.visibleCount;
       this.updateVisibleGames();
     }
