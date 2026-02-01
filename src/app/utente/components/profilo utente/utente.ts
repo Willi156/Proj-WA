@@ -68,6 +68,9 @@ export class UtenteComponent implements OnInit {
       next: (recs) => {
         this.recensioniIds = recs;
         this.cd.detectChanges();
+      },
+      error: (err) => {
+        console.error("Errore ricaricamento recensioni:", err);
       }
     });
   }
@@ -127,6 +130,67 @@ export class UtenteComponent implements OnInit {
       },
       error: (err) => {
         alert(`Errore Server: ${err.status} - Impossibile rimuovere.`);
+      }
+    });
+  }
+
+  //modifica recensione
+
+  attivaModifica(rec: any) {
+    rec.editVoto = rec.voto;
+    rec.editTesto = rec.testo || rec.descrizione || '';
+    rec.isEditing = true;
+  }
+
+  annullaModifica(rec: any) {
+    rec.isEditing = false;
+  }
+
+  salvaModifica(rec: any) {
+    // 1. Recupero degli ID (Fondamentali per il backend)
+    const idRecensione = rec.id || (rec.recensione ? rec.recensione.id : null);
+    const idContenuto = rec.contenuto?.id || rec.idContenuto;
+    const idUtente = this.userId; // Preso dal login effettuato con me()
+
+    if (!idRecensione) {
+      alert("Errore: ID recensione mancante.");
+      return;
+    }
+
+    // 2. Mappatura nomi campi
+    const payload = {
+      voto: Number(rec.editVoto),
+      testo: rec.editTesto,
+      Titolo: rec.titolo || rec.oggetto || (rec.contenuto ? rec.contenuto.titolo : 'Recensione'),
+      data: new Date(),
+      idContenuto: idContenuto,
+      idUtente: idUtente
+    };
+
+    console.log("Inviando dati al server:", payload);
+
+    // 3. Chiamata API
+    this.api.updateRecensione(
+      idRecensione,
+      payload.voto,
+      payload.testo,
+      payload.Titolo,
+      payload.data
+    ).subscribe({
+      next: (res) => {
+        console.log("Server ha risposto OK:", res);
+
+        rec.voto = rec.editVoto;
+        rec.testo = rec.editTesto;
+        rec.isEditing = false;
+
+        // Ricarichiamo per confermare il salvataggio nel DB
+        this.scaricaRecensioni();
+        this.cd.detectChanges();
+      },
+      error: (err) => {
+        console.error("Errore 400 - Probabile mismatch campi:", err);
+        alert("Il server non ha accettato i dati. Verifica i nomi dei campi con il collega.");
       }
     });
   }

@@ -17,7 +17,6 @@ export class ApiService {
       { withCredentials: true }
     );
   }
-
   getCurrentUserInfo() {
     return this.http.get<any>(`${this.baseUrl}/api/auth/me`, { withCredentials: true });
   }
@@ -82,8 +81,6 @@ export class ApiService {
     return this.http.put<{ success: boolean }>(`${this.baseUrl}/api/utente/update/${userId}`, { nome, cognome, email, immagineProfilo }, { withCredentials: true });
   }
 
-
-// AGGIORNAMENTO PASSWORD
   updateUserPassword(userId: number, password: string) {
 
     return this.http.put<{ success: boolean }>(
@@ -120,6 +117,18 @@ export class ApiService {
 
   me(){
     return this.http.get<{ user: any}>(`${this.baseUrl}/api/auth/me`,{ withCredentials: true });
+  }
+
+
+
+//Chiamata API per l'aggiunta di una recensione
+  addRecensione(idContenuto: number, idUtente: number, voto: number, testo: string, titolo: string, data?: Date) {
+    return this.http.post<{ id: number }>(`${this.baseUrl}/api/recensione/new`, { idContenuto, idUtente, voto, testo, titolo, data }, { withCredentials: true });
+  }
+
+//Chiamata API per l'aggiornamento di una recensione
+  updateRecensione(id: number, voto: number, testo: string, titolo: string, data?: Date) {
+    return this.http.put<{ success: boolean }>(`${this.baseUrl}/api/recensioni/update/${id}`, { voto, testo, titolo, data }, { withCredentials: true });
   }
 
   // Esempio per futuri endpoint:
