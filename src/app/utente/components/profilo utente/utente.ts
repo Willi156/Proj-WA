@@ -65,13 +65,28 @@ export class UtenteComponent implements OnInit {
 
   scaricaRecensioni() {
     this.api.getRecensioniByUserId(this.userId).subscribe({
-      next: (recs) => {
-        this.recensioniIds = recs;
+      next: (recs: any[]) => {
+
+        this.recensioniIds = recs.map(item => {
+
+          const r = item.recensione || {};
+          const c = item.contenuto || {};
+
+          return {
+            ...item,
+            id: r.id || item.id,
+            voto: r.voto || 0,
+            testo: r.testo || '',
+            // CERCHIAMO IL TITOLO: Prima in Titolo (maiuscolo), poi in titolo (minuscolo) dentro contenuto
+            titolo: c.Titolo || c.titolo || r.Titolo || r.titolo || ('Recensione ID: ' + r.id),
+            tipo: c.tipo || 'N/A',
+            isEditing: false
+          };
+        });
+
         this.cd.detectChanges();
       },
-      error: (err) => {
-        console.error("Errore ricaricamento recensioni:", err);
-      }
+      error: (err) => console.error("Errore recupero:", err)
     });
   }
 
@@ -147,50 +162,34 @@ export class UtenteComponent implements OnInit {
   }
 
   salvaModifica(rec: any) {
-    // 1. Recupero degli ID (Fondamentali per il backend)
-    const idRecensione = rec.id || (rec.recensione ? rec.recensione.id : null);
-    const idContenuto = rec.contenuto?.id || rec.idContenuto;
-    const idUtente = this.userId; // Preso dal login effettuato con me()
+    const idReale = rec.id || (rec.recensione ? rec.recensione.id : null) || rec.idRecensione;
 
-    if (!idRecensione) {
-      alert("Errore: ID recensione mancante.");
+    if (!idReale) {
+      alert("Errore: Impossibile identificare la recensione per il salvataggio.");
       return;
     }
 
-    // 2. Mappatura nomi campi
-    const payload = {
-      voto: Number(rec.editVoto),
-      testo: rec.editTesto,
-      Titolo: rec.titolo || rec.oggetto || (rec.contenuto ? rec.contenuto.titolo : 'Recensione'),
-      data: new Date(),
-      idContenuto: idContenuto,
-      idUtente: idUtente
-    };
+    const titoloInviato = rec.titolo || 'Recensione';
 
-    console.log("Inviando dati al server:", payload);
-
-    // 3. Chiamata API
     this.api.updateRecensione(
-      idRecensione,
-      payload.voto,
-      payload.testo,
-      payload.Titolo,
-      payload.data
+      idReale,
+      Number(rec.editVoto),
+      rec.editTesto,
+      titoloInviato,
+      new Date()
     ).subscribe({
       next: (res) => {
-        console.log("Server ha risposto OK:", res);
 
-        rec.voto = rec.editVoto;
+        // Aggiornamento locale immediato
+        rec.voto = Number(rec.editVoto);
         rec.testo = rec.editTesto;
         rec.isEditing = false;
-
-        // Ricarichiamo per confermare il salvataggio nel DB
-        this.scaricaRecensioni();
         this.cd.detectChanges();
+
+        setTimeout(() => this.scaricaRecensioni(), 500);
       },
       error: (err) => {
-        console.error("Errore 400 - Probabile mismatch campi:", err);
-        alert("Il server non ha accettato i dati. Verifica i nomi dei campi con il collega.");
+        alert("Il server non ha accettato la modifica per questa categoria.");
       }
     });
   }

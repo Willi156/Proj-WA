@@ -6,7 +6,7 @@
 }
 
 .sidebar-custom {
-  background: linear-gradient(135deg, #058e5d 0%, #084905 100%);
+  background: linear-gradient(135deg, #0c82e6 0%, #09457a 100%);
 }
 
 .profile-img {
@@ -85,9 +85,9 @@
 }
 
 .nav-pills .nav-link.active {
-  background-color: #007e51; /* Blu acceso */
+  background-color: #0c82e6; /* Blu acceso */
   color: white;
-  box-shadow: 0 4px 10px rgb(8, 73, 5);
+  box-shadow: 0 4px 10px rgb(7, 84, 149);
 }
 
 .nav-pills .nav-link:hover:not(.active) {
