@@ -59,6 +59,9 @@
                               <h6 class="fw-bold mb-1">{{rec.titolo}}</h6>
                               <div class="d-flex align-items-center gap-2">
                                 <button class="btn btn-sm text-primary p-0" (click)="attivaModifica(rec)">✎</button>
+                                <button class="btn btn-sm p-0 fw-bold" [class.text-danger]="rec.inEliminazione" [class.text-muted]="!rec.inEliminazione" (click)="rimuoviRecensione(rec)">
+                                  {{ rec.inEliminazione ? 'Elimina?' : '✕' }}
+                                </button>
                                 <span class="badge rounded-pill"
                                       [class.bg-success]="rec.voto >= 7"
                                       [class.bg-warning]="rec.voto >= 5 && rec.voto < 7"
@@ -106,6 +109,9 @@
                               <h6 class="fw-bold mb-1">{{rec.titolo}}</h6>
                               <div class="d-flex align-items-center gap-2">
                                 <button class="btn btn-sm text-primary p-0" (click)="attivaModifica(rec)">✎</button>
+                                <button class="btn btn-sm p-0 fw-bold" [class.text-danger]="rec.inEliminazione" [class.text-muted]="!rec.inEliminazione" (click)="rimuoviRecensione(rec)">
+                                  {{ rec.inEliminazione ? 'Elimina?' : '✕' }}
+                                </button>
                                 <span class="badge rounded-pill"
                                       [class.bg-success]="rec.voto >= 7"
                                       [class.bg-warning]="rec.voto >= 5 && rec.voto < 7"
@@ -147,6 +153,9 @@
                               <h6 class="fw-bold mb-1">{{rec.titolo}}</h6>
                               <div class="d-flex align-items-center gap-2">
                                 <button class="btn btn-sm text-primary p-0" (click)="attivaModifica(rec)">✎</button>
+                                <button class="btn btn-sm p-0 fw-bold" [class.text-danger]="rec.inEliminazione" [class.text-muted]="!rec.inEliminazione" (click)="rimuoviRecensione(rec)">
+                                  {{ rec.inEliminazione ? 'Elimina?' : '✕' }}
+                                </button>
                                 <span class="badge rounded-pill"
                                       [class.bg-success]="rec.voto >= 7"
                                       [class.bg-warning]="rec.voto >= 5 && rec.voto < 7"
