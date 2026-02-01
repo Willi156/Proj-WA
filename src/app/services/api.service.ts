@@ -113,4 +113,16 @@ export class ApiService {
       );
   }
 
+  createRecensione(contenutoId: number, titolo: string, commento: string, voto: number, user?: string) {
+    return this.http.post<any>(`${this.baseUrl}/api/recensioni/new`, {
+      contenutoId,
+      titolo,
+      commento,
+      voto,
+      user, // se il backend lo ignora non fa nulla
+    });
+  }
+
+
+
 }

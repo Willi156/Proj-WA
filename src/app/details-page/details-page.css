@@ -716,6 +716,206 @@
   }
 }
 
+/* =========================
+   RECENSIONI: NUOVA CARD GRID
+   ========================= */
+
+/* contenitore interno della card: 2 colonne (sx testo, dx rating/data) */
+.revGrid{
+  display: grid;
+  grid-template-columns: 1fr auto; /* sx prende spazio, dx si adatta al contenuto */
+  gap: 16px;
+  align-items: start;
+}
+
+/* colonna sinistra: nome + testo */
+.revLeft{
+  min-width: 0; /* evita overflow su testi lunghi */
+}
+
+/* nome utente (bold come richiesto) */
+.revAuthor{
+  display: block;
+  font-weight: 800;
+  font-size: 16px;
+  margin-bottom: 6px;
+}
+
+/* testo recensione: resta uguale al tuo stile, solo margin sistemato */
+.revText{
+  margin: 0;           /* evita spazi “strani” tra paragrafi */
+  opacity: .9;
+  line-height: 1.55;
+  font-size: 18px;
+}
+
+/* colonna destra: stelle sopra, data sotto */
+.revRight{
+  display: grid;
+  justify-items: end;  /* allinea tutto a destra */
+  gap: 8px;
+  white-space: nowrap; /* stelle e data non vanno a capo */
+}
+
+/* data: più piccola e “muted” */
+.revDate{
+  margin-top:10px;
+  font-size: 15px;
+  opacity: .70;
+}
+
+/* =========================
+   TOGGLE “MOSTRA ALTRE”
+   ========================= */
+
+.reviewsToggle{
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+/* =========================
+   REVIEW CARD: NUOVO LAYOUT
+   - sinistra: avatar + testi
+   - destra: stelle + data
+========================= */
+
+/* riga principale della card */
+.revRow{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px; /* spazio tra colonna sx e dx */
+}
+
+/* colonna sinistra: avatar + testo affiancati */
+.revLeft{
+  display: flex;
+  align-items: flex-start;
+  gap: 12px; /* spazio tra avatar e testo */
+  min-width: 0; /* evita overflow in flex */
+}
+
+/* avatar tondo piccolo */
+.revAvatar{
+  width: 38px;
+  height: 38px;
+  border-radius: 999px; /* cerchio */
+  object-fit: cover;
+  flex: 0 0 auto;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.06);
+}
+
+/* blocco testi (username/titolo/testo) */
+.revBody{
+  display: grid;
+  gap: 6px;
+  min-width: 0; /* permette di andare a capo senza rompere */
+}
+
+/* username in grassetto (già strong, ma qui gestiamo spazi) */
+.revAuthor{
+  display: block;
+}
+
+/* titolo recensione in grassetto, separato dal testo */
+.revTitle{
+  display: block;
+  font-size: 16px;
+  opacity: .95;
+}
+
+/* colonna destra: stelle sopra, data sotto */
+.revRight{
+  display: grid;
+  justify-items: end; /* allinea a destra */
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+/* su mobile: va tutto in colonna (sx sopra, dx sotto) */
+@media (max-width: 768px){
+  .revRow{
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .revRight{
+    justify-items: start; /* stelle + data a sinistra su mobile */
+  }
+}
+
+
+/* =========================
+   MOBILE: impila le colonne
+   ========================= */
+
+@media (max-width: 520px){
+  .revGrid{
+    grid-template-columns: 1fr;  /* una colonna */
+    gap: 10px;
+  }
+
+  .revRight{
+    justify-items: start;        /* su mobile a sinistra è più leggibile */
+  }
+}
+
+
+/* =========================
+   REVIEW CARD LAYOUT (NEW)
+   ========================= */
+
+/* griglia 2 colonne dentro la card */
+.revGrid{
+  display: grid;
+  grid-template-columns: 1fr auto; /* sinistra espande, destra compatta */
+  gap: 14px;
+  align-items: start;
+}
+
+/* colonna sinistra: testo */
+.revLeft{
+  min-width: 0; /* evita overflow */
+  display: grid;
+  gap: 6px;
+}
+
+/* colonna destra: stelle + data in colonna */
+.revRight{
+  display: grid;
+  gap: 8px;
+  justify-items: end;  /* allinea a destra */
+  text-align: right;
+  white-space: nowrap; /* evita che data/stelle vadano a capo */
+}
+
+/* autore sopra */
+.revAuthor{
+  font-size: 18px;
+  font-weight: 800;
+}
+
+/* titolo recensione sotto autore */
+.revTitle{
+  font-size: 16px;
+  font-weight: 800;
+  opacity: .95;
+}
+
+/* su mobile: metti destra sotto (layout stacked) */
+@media (max-width: 768px){
+  .revGrid{
+    grid-template-columns: 1fr;
+  }
+  .revRight{
+    justify-items: start;
+    text-align: left;
+    white-space: normal;
+  }
+}
+
 
 
 
