@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dist/Critiverse/browser",
+    "public": "dist/proj-wa/browser",
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -9,7 +9,7 @@
     "rewrites": [
       {
         "source": "**",
-        "destination": "/index.csr.html"
+        "destination": "/index.html"
       }
     ]
   }

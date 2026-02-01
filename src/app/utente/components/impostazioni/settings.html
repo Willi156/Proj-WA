@@ -1,0 +1,129 @@
+<div class="modal-backdrop fade show" style="background-color: rgba(0,0,0,0.5);"></div>
+
+<div class="modal d-block fade show" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+
+      <div class="modal-header border-0 pb-0">
+        <h3 class="modal-title fw-bold text-dark ps-2">Impostazioni</h3>
+        <a routerLink="/user" class="btn-close me-2"></a>
+      </div>
+
+      <div class="modal-body p-4 pt-2">
+
+        @if (messaggioSuccesso) {
+          <div class="alert alert-success d-flex align-items-center mb-3 rounded-3 shadow-sm animate__animated animate__fadeIn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-check-circle-fill me-2" viewBox="0 0 16 16">
+              <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+            </svg>
+            <div>{{ messaggioSuccesso }}</div>
+          </div>
+        }
+
+        @if (messaggioErrore) {
+          <div class="alert alert-danger d-flex align-items-center mb-3 rounded-3 shadow-sm animate__animated animate__shakeX">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-exclamation-triangle-fill me-2" viewBox="0 0 16 16">
+              <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+            </svg>
+            <div>{{ messaggioErrore }}</div>
+          </div>
+        }
+
+        <h6 class="fw-bold text-primary mb-3 mt-2">Immagine Profilo</h6>
+        <div class="d-flex align-items-center gap-4 mb-4">
+          <div class="position-relative">
+            <img [src]="user.immagineProfilo || 'https://api.dicebear.com/9.x/adventurer-neutral/svg?seed=default'"
+                 class="rounded-circle border border-3 border-light shadow-sm bg-white"
+                 width="100" height="100" style="object-fit: cover;">
+          </div>
+
+          <button class="btn btn-primary rounded-pill btn-sm px-3" (click)="mostraSelettoreAvatar = !mostraSelettoreAvatar">
+            {{ mostraSelettoreAvatar ? 'Chiudi Lista' : 'Cambia Avatar' }}
+          </button>
+        </div>
+
+        @if (mostraSelettoreAvatar) {
+          <div class="card card-body bg-light border-0 mb-4 animate__animated animate__fadeIn">
+            <p class="small text-muted mb-2 fw-bold">Scegli il tuo avatar:</p>
+            <div class="d-flex flex-wrap gap-2 justify-content-center" style="max-height: 250px; overflow-y: auto;">
+              @for (avatar of listaAvatar; track avatar) {
+                <img [src]="avatar"
+                     (click)="selezionaAvatar(avatar)"
+                     class="rounded-circle cursor-pointer bg-white border shadow-sm"
+                     [class.border-primary]="user.immagineProfilo === avatar"
+                     [class.border-3]="user.immagineProfilo === avatar"
+                     width="60" height="60"
+                     style="cursor: pointer; transition: transform 0.2s;"
+                     onmouseover="this.style.transform='scale(1.1)'"
+                     onmouseout="this.style.transform='scale(1.0)'">
+              }
+            </div>
+          </div>
+        }
+
+        <hr class="border-secondary opacity-10">
+
+        <h6 class="fw-bold text-primary mb-3 mt-2">Dati Personali</h6>
+        <div class="row g-3 mb-4">
+          <div class="col-md-6">
+            <label class="small fw-bold text-muted mb-1">NOME</label>
+            <input type="text" class="form-control bg-light border-0 py-2" [(ngModel)]="user.nome">
+          </div>
+          <div class="col-md-6">
+            <label class="small fw-bold text-muted mb-1">COGNOME</label>
+            <input type="text" class="form-control bg-light border-0 py-2" [(ngModel)]="user.cognome">
+          </div>
+        </div>
+
+        <h6 class="fw-bold text-primary mb-3">Account</h6>
+        <div class="mb-3">
+          <label class="small fw-bold text-muted mb-1">USERNAME</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light border-0 text-muted">
+                <i class="bi bi-lock-fill me-1"></i> &#64;
+            </span>
+            <input type="text"
+                   class="form-control bg-light border-0 py-2 text-muted"
+                   [(ngModel)]="user.username"
+                   readonly
+                   disabled
+                   style="cursor: not-allowed; opacity: 0.7;">
+          </div>
+          <div class="form-text text-muted small mt-1 ms-1">
+            L'username è identificativo e non può essere modificato.
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="small fw-bold text-muted mb-1">EMAIL</label>
+          <input type="email" class="form-control bg-light border-0 py-2" [(ngModel)]="user.email">
+        </div>
+
+        <hr class="border-secondary opacity-10 my-4">
+
+        <h6 class="fw-bold text-danger mb-3">Sicurezza & Password</h6>
+        <div class="mb-3">
+          <label class="small fw-bold text-muted mb-1">VECCHIA PASSWORD</label>
+          <input type="password" class="form-control bg-light border-0 py-2" placeholder="Inserisci la password attuale per modifiche" [(ngModel)]="vecchiaPassword">
+        </div>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="small fw-bold text-muted mb-1">NUOVA PASSWORD</label>
+            <input type="password" class="form-control bg-light border-0 py-2" placeholder="Nuova password" [(ngModel)]="nuovaPassword">
+          </div>
+          <div class="col-md-6">
+            <label class="small fw-bold text-muted mb-1">CONFERMA PASSWORD</label>
+            <input type="password" class="form-control bg-light border-0 py-2" placeholder="Ripeti nuova password" [(ngModel)]="confermaPassword">
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer border-0 p-4 pt-0">
+        <a routerLink="/user" class="btn btn-light rounded-pill px-4">Annulla</a>
+        <button (click)="salva()" class="btn btn-primary rounded-pill px-4 fw-bold">Salva Modifiche</button>
+      </div>
+
+    </div>
+  </div>
+</div>

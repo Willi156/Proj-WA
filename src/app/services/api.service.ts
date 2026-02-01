@@ -13,11 +13,37 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
+  authenticate(username: string, password: string) {
+    return this.http.post<any>(
+      `${this.baseUrl}/api/auth/login`,
+      { username, password },
+      { withCredentials: true }
+    );
+  }
+
+  getCurrentUserInfo() {
+    return this.http.get<any>(`${this.baseUrl}/api/auth/me`, { withCredentials: true });
+  }
+
+  getFavouritesMediaByUserId(userId: number) {
+    return this.http.get<any[]>(`${this.baseUrl}/api/utente/${userId}/preferiti`, { withCredentials: true });
+  }
+
+  getFavouriteMediaByUserIdComplete(userId: number) {
+    return this.http.get<any[]>(`${this.baseUrl}/api/utente/${userId}/preferitiCompleti`, { withCredentials: true });
+  }
+
+  getRecensioniByUserId(userId: number) {
+    return this.http.get<any[]>(`${this.baseUrl}/api/recensioni/utente/${userId}`, { withCredentials: true });
+  }
+
   getServerTime() {
     return this.http.get<{ serverTime: { now: string } }>(`${this.baseUrl}/api/test`);
   }
 
   getFirstUser() {
+    return this.http.get<any>(`${this.baseUrl}/api/utente/first`);
+  }
     return this.http.get<any>(`${this.baseUrl}/api/utente/first`);
   }
 
@@ -85,6 +111,7 @@ export class ApiService {
     });
   }
 
+
   createUser(nome: string, cognome: string, username: string, password: string, email: string) {
     return this.http.post<{ id: number }>(`${this.baseUrl}/api/newUtente`, {
       nome,
@@ -125,4 +152,57 @@ export class ApiService {
 
 
 
+  updateUtente(userId: number, dati: any) {
+    return this.http.put<any>(`${this.baseUrl}/api/utente/${userId}`, dati);
+  }
+
+  updateUserInfo(userId: number, nome: string, cognome: string, email: string, immagineProfilo?: string) {
+    return this.http.put<{ success: boolean }>(`${this.baseUrl}/api/utente/update/${userId}`, { nome, cognome, email, immagineProfilo }, { withCredentials: true });
+  }
+
+
+// AGGIORNAMENTO PASSWORD
+  updateUserPassword(userId: number, password: string) {
+
+    return this.http.put<{ success: boolean }>(
+      `${this.baseUrl}/api/utente/update/${userId}/password`,
+      { password },
+      {
+        params: { password },
+        withCredentials: true
+      }
+    );
+  }
+
+  checkUserPassword(userId: number, password: string) {
+    return this.http.post<{ valid: boolean }>(
+      `${this.baseUrl}/api/utente/${userId}/checkPassword`,
+      { password },
+      { withCredentials: true }
+    );
+  }
+
+  deleteRecensione(id: number) {
+    return this.http.delete<{ success: boolean }>(`${this.baseUrl}/api/recensioni/delete/${id}`, { withCredentials: true });
+  }
+
+  removeMediaFromFavourites(userId: number, contenutoId: number) {
+    return this.http.delete<{ success: boolean }>(
+      `${this.baseUrl}/api/utente/${userId}/removePreferito`,
+      {
+        body: { contenutoId },
+        withCredentials: true
+      }
+    );
+  }
+
+  me(){
+    return this.http.get<{ user: any}>(`${this.baseUrl}/api/auth/me`,{ withCredentials: true });
+  }
+
+  // Esempio per futuri endpoint:
+  // getItems() { return this.http.get<Item[]>(`${this.baseUrl}/api/items`); }
+  // createItem(payload: ItemCreateDto) { return this.http.post(`${this.baseUrl}/api/items`, payload); }
 }
+
+

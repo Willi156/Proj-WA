@@ -66,9 +66,9 @@
         <span class="search-pill-text">Search Games, Movies or Series</span>
       </button>
 
-      <div class="profile desktop-only">
+      <button style="background-color: transparent;" class="profile desktop-only" type="button" routerLink="/login" aria-label="Go to login">
         <i class="bi bi-person"></i>
-      </div>
+      </button>
 
       <button class="register desktop-only">Register</button>
 
@@ -131,7 +131,7 @@
       <!-- ACCOUNT-->
       <div class="mobile-divider"></div>
 
-      <a class="mobile-link" routerLink="/profile" (click)="closeMenu()">
+      <a class="mobile-link" routerLink="/login" (click)="closeMenu()">
         <i class="bi bi-person"></i>
         <span>Profile</span>
       </a>

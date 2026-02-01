@@ -6,6 +6,8 @@ import { LoginComponent } from './login/login';
 import { SignupComponent } from './signup/signup';
 import { DetailsPageComponent } from './details-page/details-page';
 
+import { UtenteComponent } from './utente/components/profilo utente/utente';
+import { SettingsComponent } from './utente/components/impostazioni/settings';
 
 export const routes: Routes = [
   {
@@ -19,6 +21,9 @@ export const routes: Routes = [
   { path: 'series', component: SeriePageComponent },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
+  { path: 'user', component: UtenteComponent },
+  { path: 'settings', component: SettingsComponent },
   { path: 'details/:kind/:id', component: DetailsPageComponent },
   { path: '**', redirectTo: '' },
+
 ];
