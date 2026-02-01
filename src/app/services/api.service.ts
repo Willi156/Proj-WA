@@ -11,30 +11,31 @@ import { map, catchError } from 'rxjs/operators';
 export class ApiService {
   private baseUrl = environment.apiBaseUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
   authenticate(username: string, password: string) {
     return this.http.post<any>(
       `${this.baseUrl}/api/auth/login`,
-      { username, password },
-      { withCredentials: true }
+      {username, password},
+      {withCredentials: true}
     );
   }
 
   getCurrentUserInfo() {
-    return this.http.get<any>(`${this.baseUrl}/api/auth/me`, { withCredentials: true });
+    return this.http.get<any>(`${this.baseUrl}/api/auth/me`, {withCredentials: true});
   }
 
   getFavouritesMediaByUserId(userId: number) {
-    return this.http.get<any[]>(`${this.baseUrl}/api/utente/${userId}/preferiti`, { withCredentials: true });
+    return this.http.get<any[]>(`${this.baseUrl}/api/utente/${userId}/preferiti`, {withCredentials: true});
   }
 
   getFavouriteMediaByUserIdComplete(userId: number) {
-    return this.http.get<any[]>(`${this.baseUrl}/api/utente/${userId}/preferitiCompleti`, { withCredentials: true });
+    return this.http.get<any[]>(`${this.baseUrl}/api/utente/${userId}/preferitiCompleti`, {withCredentials: true});
   }
 
   getRecensioniByUserId(userId: number) {
-    return this.http.get<any[]>(`${this.baseUrl}/api/recensioni/utente/${userId}`, { withCredentials: true });
+    return this.http.get<any[]>(`${this.baseUrl}/api/recensioni/utente/${userId}`, {withCredentials: true});
   }
 
   getServerTime() {
@@ -46,7 +47,18 @@ export class ApiService {
   }
 
   newContenuto(titolo: string, descrizione: string, genere: string, link: string, tipo: string, annoPubblicazione: number, casaProduzione?: string, casaEditrice?: string, inCorso?: boolean, stagioni?: number) {
-    return this.http.post<{ id: number }>(`${this.baseUrl}/api/newContenuto`, { titolo, descrizione, genere, link, tipo, annoPubblicazione, casaProduzione, casaEditrice, inCorso, stagioni }, { withCredentials: true });
+    return this.http.post<{ id: number }>(`${this.baseUrl}/api/newContenuto`, {
+      titolo,
+      descrizione,
+      genere,
+      link,
+      tipo,
+      annoPubblicazione,
+      casaProduzione,
+      casaEditrice,
+      inCorso,
+      stagioni
+    }, {withCredentials: true});
   }
 
   getContenuti() {
@@ -66,15 +78,17 @@ export class ApiService {
   }
 
   getRecensioniByContenutoId(contenutoId: number) {
-    return this.http.get<any[]>(`${this.baseUrl}/api/recensioni/contenuto`, { params: { contenutoId } });
+    return this.http.get<any[]>(`${this.baseUrl}/api/recensioni/contenuto`, {params: {contenutoId}});
   }
 
   getCheckUsername(username: string) {
-    return this.http.get<{ available: boolean }>(`${this.baseUrl}/api/utente/checkUsernameExists`, { params: { username } });
+    return this.http.get<{
+      available: boolean
+    }>(`${this.baseUrl}/api/utente/checkUsernameExists`, {params: {username}});
   }
 
   createUser(nome: string, cognome: string, username: string, password: string, email: string) {
-    return this.http.post<{ id: number }>(`${this.baseUrl}/api/newUtente`, { nome, cognome, email, username, password });
+    return this.http.post<{ id: number }>(`${this.baseUrl}/api/newUtente`, {nome, cognome, email, username, password});
   }
 
   updateUtente(userId: number, dati: any) {
@@ -82,7 +96,12 @@ export class ApiService {
   }
 
   updateUserInfo(userId: number, nome: string, cognome: string, email: string, immagineProfilo?: string) {
-    return this.http.put<{ success: boolean }>(`${this.baseUrl}/api/utente/update/${userId}`, { nome, cognome, email, immagineProfilo }, { withCredentials: true });
+    return this.http.put<{ success: boolean }>(`${this.baseUrl}/api/utente/update/${userId}`, {
+      nome,
+      cognome,
+      email,
+      immagineProfilo
+    }, {withCredentials: true});
   }
 
 
@@ -91,9 +110,9 @@ export class ApiService {
 
     return this.http.put<{ success: boolean }>(
       `${this.baseUrl}/api/utente/update/${userId}/password`,
-      { password },
+      {password},
       {
-        params: { password },
+        params: {password},
         withCredentials: true
       }
     );
@@ -102,40 +121,40 @@ export class ApiService {
   checkUserPassword(userId: number, password: string) {
     return this.http.post<{ valid: boolean }>(
       `${this.baseUrl}/api/utente/${userId}/checkPassword`,
-      { password },
-      { withCredentials: true }
+      {password},
+      {withCredentials: true}
     );
   }
 
   deleteRecensione(id: number) {
-    return this.http.delete<{ success: boolean }>(`${this.baseUrl}/api/recensioni/delete/${id}`, { withCredentials: true });
+    return this.http.delete<{
+      success: boolean
+    }>(`${this.baseUrl}/api/recensioni/delete/${id}`, {withCredentials: true});
   }
 
   removeMediaFromFavourites(userId: number, contenutoId: number) {
     return this.http.delete<{ success: boolean }>(
       `${this.baseUrl}/api/utente/${userId}/removePreferito`,
       {
-        body: { contenutoId },
+        body: {contenutoId},
         withCredentials: true
       }
     );
   }
 
-  me(){
-    return this.http.get<{ user: any}>(`${this.baseUrl}/api/auth/me`,{ withCredentials: true });
+  me() {
+    return this.http.get<{ user: any }>(`${this.baseUrl}/api/auth/me`, {withCredentials: true});
   }
 
   // Esempio per futuri endpoint:
   // getItems() { return this.http.get<Item[]>(`${this.baseUrl}/api/items`); }
   // createItem(payload: ItemCreateDto) { return this.http.post(`${this.baseUrl}/api/items`, payload); }
 
-  
 
   getContenutoById(id: number) {
     return this.http.get<any>(`${this.baseUrl}/api/contenuti/${id}`);
   }
 
-  
 
   getTrailerEmbed(
     kind: 'GAME' | 'MOVIE' | 'SERIES',
@@ -148,23 +167,43 @@ export class ApiService {
       .set('year', year ? String(year) : '');
 
     return this.http
-      .get<{ embedUrl: string | null }>(`${this.baseUrl}/trailers/embed`, { params })
+      .get<{ embedUrl: string | null }>(`${this.baseUrl}/trailers/embed`, {params})
       .pipe(
         map((res) => (res?.embedUrl ? String(res.embedUrl) : null)),
         catchError(() => of(null))
       );
   }
 
-  createRecensione(contenutoId: number, titolo: string, commento: string, voto: number, user?: string) {
-    return this.http.post<any>(`${this.baseUrl}/api/recensioni/new`, {
-      contenutoId,
-      titolo,
-      commento,
-      voto,
-      user, // se il backend lo ignora non fa nulla
-    });
+  // Chiamata API per l'aggiunta di una recensione
+  addRecensione(
+    idContenuto: number,
+    idUtente: number,
+    voto: number,
+    testo: string,
+    titolo: string,
+    data?: Date
+  ) {
+    return this.http.post<{ id: number }>(
+      `${this.baseUrl}/api/recensione/new`,
+      {
+        idContenuto,
+        idUtente,
+        voto,
+        testo,
+        titolo,
+        data,
+      },
+      {
+        withCredentials: true,
+      }
+    );
   }
 
-
+  // Ricerca globale su TUTTI i contenuti nel DB
+  searchContenuti(query: string) {
+    return this.http.get<any[]>(`${this.baseUrl}/api/contenuti/search`, {
+      params: { q: query }
+    });
+  }
 
 }

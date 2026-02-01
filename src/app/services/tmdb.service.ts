@@ -1,8 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../environment/environment';
-import { of } from 'rxjs';
+
+import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
+
 
 @Injectable({ providedIn: 'root' })
 export class TmdbService {
@@ -11,10 +13,79 @@ export class TmdbService {
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * ✅ Watch providers in IT per Movie/Series
-   * Ritorna array di {label, url}
-   */
+  // -----------------------------
+  // ✅ Helper: cerca ID serie TV
+  // -----------------------------
+  private searchTvId(title: string, language: string): Observable<number | null> {
+    const q = (title ?? '').trim();
+    if (!q) return of(null);
+
+    return this.http.get<any>(`${this.BASE}/search/tv`, {
+      params: {
+        api_key: this.API_KEY,
+        query: q,
+        language,
+        page: 1,
+      },
+    }).pipe(
+      map(res => Number(res?.results?.[0]?.id ?? 0) || null),
+      catchError(() => of(null))
+    );
+  }
+
+  // ---------------------------------------
+  // ✅ Metodo robusto: IT -> EN + varianti
+  // ---------------------------------------
+  getTvStatsSmart(title: string) {
+    const base = (title ?? '').trim();
+    if (!base) return of({ seasons: 0, episodes: 0 });
+
+    // Varianti utili (non aggressive: evitiamo di togliere troppo)
+    const variants = [
+      base,
+      base.replace(/\s+-\s+/g, ': '),  // trattino -> due punti
+      base.replace(/:\s+/g, ' - '),    // anche viceversa, per sicurezza
+    ];
+
+    // prova prima it-IT poi en-US, sulla prima variante che trova un id
+    const tryFindId = (i: number): Observable<number | null> => {
+      if (i >= variants.length) return of(null);
+
+      const t = variants[i];
+
+      return this.searchTvId(t, 'it-IT').pipe(
+        switchMap((idIt) => {
+          if (idIt) return of(idIt);
+          return this.searchTvId(t, 'en-US');
+        }),
+        switchMap((id) => {
+          if (id) return of(id);
+          return tryFindId(i + 1); // prova variante successiva
+        })
+      );
+    };
+
+    return tryFindId(0).pipe(
+      switchMap((id: number | null) => {
+        if (!id) return of({ seasons: 0, episodes: 0 });
+
+        return this.http.get<any>(`${this.BASE}/tv/${id}`, {
+          params: {
+            api_key: this.API_KEY,
+            language: 'it-IT',
+          },
+        }).pipe(
+          map(tv => ({
+            seasons: Number(tv?.number_of_seasons ?? 0),
+            episodes: Number(tv?.number_of_episodes ?? 0),
+          })),
+          catchError(() => of({ seasons: 0, episodes: 0 }))
+        );
+      }),
+      catchError(() => of({ seasons: 0, episodes: 0 }))
+    );
+  }
+
   getWatchProvidersIT(kind: 'MOVIE' | 'SERIES', title: string) {
     const q = (title ?? '').trim();
     if (!q) return of([] as { label: string; url: string }[]);

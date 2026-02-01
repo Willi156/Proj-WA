@@ -21,6 +21,9 @@ html, body {
   font-family: Helvetica, Arial, sans-serif;
 
   overflow-x: hidden; /* extra safety */
+  position: sticky;/* resta visibile durante lo scroll */
+  top: 0;
+  z-index: 4000;
 }
 
 .navbar-container {
@@ -86,6 +89,7 @@ html, body {
 .logo-text {
   font-size: 23px;
   font-weight: bold;
+  margin-left: 10px;
 }
 
 /* =========================
@@ -727,6 +731,6 @@ html, body {
   }
 
   .hamburger{
-    margin-right: -10px; 
+    margin-right: -10px;
   }
 }

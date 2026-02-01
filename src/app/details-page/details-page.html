@@ -15,7 +15,8 @@
       <main class="right">
         <header class="head">
 
-          <div class="ratingBadge" *ngIf="displayScore() !== null">
+          <!-- prima: <div class="ratingBadge" ...> -->
+          <div [ngClass]="scoreClass" *ngIf="displayScore() !== null">
             <span class="ratingValue">{{ displayScore() }}</span>
             <span class="ratingMax">/10</span>
           </div>
@@ -58,40 +59,42 @@
               </a>
 
               <span class="muted" *ngIf="!platformsLoading && !platforms.length">
-                {{ kind === 'GAME' ? 'Piattaforme non disponibili.' : 'Non disponibile in streaming.' }}
-              </span>
+      {{ kind === 'GAME' ? 'Piattaforme non disponibili.' : 'Non disponibile in streaming.' }}
+    </span>
             </div>
           </div>
 
-          <p class="desc">
-            {{ contenuto ? (contenuto.descrizione || '') : (content?.description || '') }}
-          </p>
-
-          <!-- STATS STAGIONI / EPISODI -->
+          <!-- ✅ STATS STAGIONI / EPISODI (QUI: tra whereBox e descrizione) -->
           <p class="muted" *ngIf="kind === 'SERIES' && seriesStatsLoading">
             Caricamento stagioni/episodi...
           </p>
 
-          <div class="seasonStats"
-               *ngIf="kind === 'SERIES' && !seriesStatsLoading && (seriesSeasons > 0 || seriesEpisodes > 0)">
-
+          <div
+            class="seasonStats"
+            *ngIf="kind === 'SERIES' && !seriesStatsLoading && (seriesSeasons > 0 || seriesEpisodes > 0)"
+          >
             <div class="seasonCol">
-              <span class="seasonLabel"><strong>Stagioni</strong></span>
-              <span class="seasonValue">{{ seriesSeasons | number:'2.0' }}</span>
+              <span class="statsLabel">Stagioni</span>
+              <span class="statsValue">{{ seriesSeasons }}</span>
             </div>
 
             <div class="seasonCol">
-              <span class="seasonLabel">Episodi</span>
-              <span class="seasonValue">{{ seriesEpisodes }}</span>
+              <span class="statsLabel">Episodi</span>
+              <span class="statsValue">{{ seriesEpisodes }}</span>
             </div>
-
           </div>
 
-          <p class="muted"
-             *ngIf="kind === 'SERIES' && !seriesStatsLoading && seriesSeasons === 0 && seriesEpisodes === 0">
+          <p
+            class="muted"
+            *ngIf="kind === 'SERIES' && !seriesStatsLoading && seriesSeasons === 0 && seriesEpisodes === 0"
+          >
             Dati stagioni/episodi non disponibili.
           </p>
 
+          <!-- DESCRIZIONE (ORA VA DOPO LE STATS) -->
+          <p class="desc">
+            {{ contenuto ? (contenuto.descrizione || '') : (content?.description || '') }}
+          </p>
         </header>
       </main>
     </div>
@@ -194,7 +197,6 @@
               <p class="muted" *ngIf="reviewsPostError">{{ reviewsPostError }}</p>
             </form>
           </div>
-
         </details>
 
         <!-- MOSTRA RECENSIONI -->
@@ -212,16 +214,11 @@
             <ng-container *ngIf="!reviewsLoading && !reviewsError && reviews.length; else noReviews">
 
               <div class="reviews">
-                <!-- ✅ solo 5 all'inizio: usa visibleReviews -->
-                <article class="rev" *ngFor="let r of reviews">
+                <!-- ✅ FIX: qui deve essere visibleReviews -->
+                <article class="rev" *ngFor="let r of visibleReviews">
 
-                  <!-- layout a 2 colonne: sinistra (avatar+testi) / destra (stelle+data) -->
                   <div class="revRow">
-
-                    <!-- SINISTRA -->
                     <div class="revLeft">
-
-                      <!-- avatar piccolo tondo -->
                       <img
                         class="revAvatar"
                         *ngIf="r.immagineProfilo"
@@ -229,7 +226,6 @@
                         [alt]="'Profilo ' + r.username"
                       />
 
-                      <!-- blocco testi spostato a destra -->
                       <div class="revBody">
                         <strong class="revAuthor">{{ r.username }}</strong>
 
@@ -241,38 +237,34 @@
                       </div>
                     </div>
 
-                    <!-- DESTRA -->
                     <div class="revRight">
-
-      <span class="revScore stars" aria-label="Voto {{ r.voto }} su 10">
-        <span
-          class="star"
-          *ngFor="let _ of stars; let i = index"
-          [class.filled]="i < roundedRating(r.voto)"
-        >★</span>
-      </span>
+                      <span class="revScore stars" aria-label="Voto {{ r.voto }} su 10">
+                        <span
+                          class="star"
+                          *ngFor="let _ of stars; let i = index"
+                          [class.filled]="i < roundedRating(r.voto)"
+                        >★</span>
+                      </span>
 
                       <span class="revDate muted">{{ r.data }}</span>
                     </div>
                   </div>
                 </article>
-
-
               </div>
 
-              <!-- ✅ Toggle: mostra altre / mostra meno -->
+              <!-- ✅ Toggle -->
               <div class="reviewsToggle" *ngIf="hasMoreReviews">
                 <button type="button" class="btn ghost" (click)="toggleMoreReviews()">
                   {{ showAllReviews ? 'Mostra meno recensioni' : 'Mostra altre recensioni' }}
                 </button>
               </div>
 
-
             </ng-container>
 
             <ng-template #noReviews>
               <p class="muted">Ancora nessuna recensione.</p>
             </ng-template>
+
           </div>
         </details>
 

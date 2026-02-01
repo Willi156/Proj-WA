@@ -28,9 +28,9 @@ export class MediaCardComponent<T extends MediaItem = MediaItem> {
 
   get scoreClass(): string {
     const s = this.score;
-    if (s >= 7.5) return 'score score-green';
-    if (s >= 6.0) return 'score score-blue';
-    if (s >= 5.0) return 'score score-yellow';
+    if (s >= 6.0) return 'score score-green';
+    if (s >= 5.0) return 'score score-blue';
+    if (s >= 4.0) return 'score score-yellow';
     if (s >= 1.0) return 'score score-orange';
     return 'score score-orange';
   }

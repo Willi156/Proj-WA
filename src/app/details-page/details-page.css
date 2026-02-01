@@ -55,6 +55,13 @@
   transform: translateZ(0);
 }
 
+/* ✅ colore badge come da logica */
+.score-green { background: #06A77D; }
+.score-yellow { background: #ffbd3f; }
+.score-orange { background: #fb7400; }
+.score-red { background: #ff4d4d; }
+.score-blue { background: #4d8bff; }
+
 .ratingValue{
   font-size: 23px;
   line-height: 1;
@@ -210,6 +217,14 @@
   gap: 8px;
 }
 
+/* ✅ fondamentale: permette al gruppo bottoni di restringersi e andare a capo */
+.whereButtons,
+.whereBox,
+.right,
+.head{
+  min-width: 0;
+}
+
 .whereBtn{
   padding: 10px 14px;
   border-radius: 999px;
@@ -349,14 +364,12 @@
   font-size: 14px;
 }
 
-
 .field-title{
   min-height: 30px;
   padding: 6px 8px;
   font-size: 12px;
   line-height: 1.25;
 }
-
 
 /* label con altezza fissa => niente "salti" */
 .field label{
@@ -426,7 +439,6 @@
   outline: none;
 }
 
-
 .field.field-title textarea{
   /* eredita tutto da .field textarea (font-size 19, padding 10/12, bg, border, ecc.) */
 
@@ -437,8 +449,6 @@
   overflow: hidden;   /* niente scrollbar */
   resize: none;       /* coerente con il resto */
 }
-
-
 
 /* bottoni allineati e stabili */
 .actions{
@@ -557,7 +567,6 @@
   transform: translateY(-1px);
 }
 
-
 .revText{
   margin: 8px 0 6px;
   opacity: .9;
@@ -602,6 +611,7 @@
   font-size: 18px;
 
 }
+
 .muted{
   opacity: .65;
 }
@@ -650,24 +660,49 @@
     grid-template-columns: 1fr;
   }
 
-
   .ratingBadge{
     position: static;
     align-self: flex-end;
     margin-top: 6px;
     justify-content: center;
     text-align: center;
+
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    flex-wrap: wrap;
   }
 
   .whereBox{
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     gap: 5px;
+
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-top: 1px;
+  }
+
+  .whereLabel{
+    flex: 0 0 auto;
   }
 
   .whereButtons{
-    flex-wrap: nowrap;
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    align-items: center;      /* ✅ allinea tutti i bottoni sulla riga */
+    align-content: flex-start; /* ✅ righe successive “ordinate” */
+    margin-top: 5px;
+  }
+
+  /* extra safety: evita che un bottone forzi la riga oltre lo schermo */
+  .whereBtn{
+    max-width: 100%;
   }
 }
 
@@ -676,33 +711,44 @@
 ========================= */
 
 .seasonStats{
-  margin-top: 22px;
+  margin-top: 1px;
   display: flex;
   gap: 40px;
   align-items: flex-start;
+
+  /* box simile alle altre "card" del sito */
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.03);
 }
 
+/* colonna (label sopra + valore sotto) */
 .seasonCol{
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-/* label */
-.seasonLabel{
+/* label: NON più bianca fissa -> eredita il tema del sito */
+.statsLabel{
   font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.85);
+
+  /* chiave: non forzo bianco, così si vede su sfondi chiari/scuri */
+  color: inherit;
+  opacity: .75;
 }
 
-/* numero grande */
-.seasonValue{
+/* valore grande: idem, non forzo bianco */
+.statsValue{
   font-size: 32px;
   font-weight: 900;
-  color: #ffffff;
   line-height: 1;
+
+  color: inherit;
 }
 
 /* mobile */
@@ -710,8 +756,7 @@
   .seasonStats{
     gap: 28px;
   }
-
-  .seasonValue{
+  .statsValue{
     font-size: 28px;
   }
 }
@@ -846,7 +891,6 @@
   }
 }
 
-
 /* =========================
    MOBILE: impila le colonne
    ========================= */
@@ -861,7 +905,6 @@
     justify-items: start;        /* su mobile a sinistra è più leggibile */
   }
 }
-
 
 /* =========================
    REVIEW CARD LAYOUT (NEW)
@@ -915,7 +958,3 @@
     white-space: normal;
   }
 }
-
-
-
-
