@@ -9,12 +9,20 @@ import { MediaItem } from '../../../../shared/models/media-item';
   templateUrl: './media-card.html',
   styleUrl: './media-card.css',
 })
-export class MediaCardComponent {
-  @Input({ required: true }) item!: MediaItem;
+export class MediaCardComponent<T extends MediaItem = MediaItem> {
+  // ✅ ora può ricevere anche MediaItemWithRaw
+  @Input({ required: true }) item!: T;
 
-  @Output() cardClick = new EventEmitter<void>();
+  // ✅ emetto l'item completo (quindi raw passa e non si perde)
+  @Output() cardClick = new EventEmitter<T>();
+
+  // chiamato dal template
+  onClick() {
+    this.cardClick.emit(this.item);
+  }
 
   get score(): number {
+    // compatibile con il tuo modello (criticScore)
     return (this.item as any).criticScore ?? 0;
   }
 

@@ -342,13 +342,19 @@
 }
 
 /* ogni field: label + controllo sempre uguali */
-.field{
+.field {
   display: grid;
   gap: 6px;
   align-content: start;
-  justify-items: stretch;
-  font-size: 16px;
+  font-size: 14px;
+}
 
+
+.field-title{
+  min-height: 30px;
+  padding: 6px 8px;
+  font-size: 12px;
+  line-height: 1.25;
 }
 
 
@@ -419,6 +425,20 @@
   box-shadow: 0 0 0 3px rgba(255,255,255,.08);
   outline: none;
 }
+
+
+.field.field-title textarea{
+  /* eredita tutto da .field textarea (font-size 19, padding 10/12, bg, border, ecc.) */
+
+  min-height: 52px;   /* più grande del solito */
+  height: 52px;       /* fisso per non "ballare" */
+  max-height: 52px;
+
+  overflow: hidden;   /* niente scrollbar */
+  resize: none;       /* coerente con il resto */
+}
+
+
 
 /* bottoni allineati e stabili */
 .actions{
@@ -650,5 +670,52 @@
     flex-wrap: nowrap;
   }
 }
+
+/* =========================
+   STAGIONI / EPISODI STATS
+========================= */
+
+.seasonStats{
+  margin-top: 22px;
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.seasonCol{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* label */
+.seasonLabel{
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.85);
+}
+
+/* numero grande */
+.seasonValue{
+  font-size: 32px;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1;
+}
+
+/* mobile */
+@media (max-width: 768px){
+  .seasonStats{
+    gap: 28px;
+  }
+
+  .seasonValue{
+    font-size: 28px;
+  }
+}
+
+
 
 

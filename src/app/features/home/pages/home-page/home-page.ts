@@ -4,7 +4,10 @@ import { Router } from '@angular/router';
 import { CarouselSectionComponent } from '../../components/carousel-section/carousel-section';
 import { ApiService } from '../../../../services/api.service';
 import { MediaItem } from '../../../../shared/models/media-item';
-import { Observable, catchError, map, of, shareReplay } from 'rxjs';
+import { Observable, catchError, finalize, map, of, shareReplay } from 'rxjs';
+import { IContenuto } from './IContenuto';
+
+type MediaItemWithRaw = MediaItem & { raw: IContenuto };
 
 @Component({
   selector: 'app-home-page',
@@ -22,69 +25,92 @@ export class HomePageComponent {
   moviesError = '';
   seriesError = '';
 
-  trendingGames$!: Observable<MediaItem[]>;
-  trendingMovies$!: Observable<MediaItem[]>;
-  trendingSeries$!: Observable<MediaItem[]>;
+  trendingGames$!: Observable<MediaItemWithRaw[]>;
+  trendingMovies$!: Observable<MediaItemWithRaw[]>;
+  trendingSeries$!: Observable<MediaItemWithRaw[]>;
 
   constructor(private api: ApiService, private router: Router) {
-    this.trendingGames$ = this.api.getGiochi().pipe(
-      map((res: any) => this.extractArray(res).slice(0, 15)),
-      map((arr) => this.removeDuplicateImages(arr, 'imageLink')),
-      map((arr) => arr.map((g) => this.gameToMediaItem(g))),
-      map((items) => {
-        this.gamesLoading = false;
-        return items;
-      }),
+    // ✅ 1) CHIAMATA UNICA
+    const contenuti$ = this.api.getContenuti().pipe(
+      map((res: any) => this.extractArray(res) as IContenuto[]),
       shareReplay(1),
       catchError((err) => {
-        console.error('Errore getGiochi()', err);
-        this.gamesLoading = false;
+        console.error('Errore getContenuti()', err);
+
+        this.gamesLoading = this.moviesLoading = this.seriesLoading = false;
+        this.gamesError = this.moviesError = this.seriesError = 'Errore nel caricamento contenuti';
+
+        return of([] as IContenuto[]);
+      })
+    );
+
+    // ✅ 2) STREAM DERIVATI (DA CONTENUTI GIA' RECUPERATI)
+
+    this.trendingGames$ = contenuti$.pipe(
+      map(arr => this.byTipo(arr, 'GIOCO').slice(0, 15)),
+      map(arr => this.removeDuplicateImages(arr, 'imageLink')),
+      map(arr => arr.map(g => this.gameToMediaItem(g))),
+      finalize(() => { this.gamesLoading = false; }),
+      catchError((err) => {
+        console.error('Errore mapping giochi', err);
         this.gamesError = 'Errore nel caricamento giochi';
-        return of([] as MediaItem[]);
+        return of([] as MediaItemWithRaw[]);
       })
     );
 
-    this.trendingMovies$ = this.api.getFilm().pipe(
-      map((res: any) => this.extractArray(res).slice(0, 15)),
-      map((arr) => arr.map((m) => this.movieToMediaItem(m))),
-      map((items) => {
-        this.moviesLoading = false;
-        return items;
-      }),
-      shareReplay(1),
+    this.trendingMovies$ = contenuti$.pipe(
+      map(arr => this.byTipo(arr, 'FILM').slice(0, 15)),
+      map(arr => this.removeDuplicateImages(arr, 'imageLink')),
+      map(arr => arr.map(m => this.movieToMediaItem(m))),
+      finalize(() => { this.moviesLoading = false; }),
       catchError((err) => {
-        console.error('Errore getFilm()', err);
-        this.moviesLoading = false;
+        console.error('Errore mapping film', err);
         this.moviesError = 'Errore nel caricamento film';
-        return of([] as MediaItem[]);
+        return of([] as MediaItemWithRaw[]);
       })
     );
 
-    this.trendingSeries$ = this.api.getSerieTv().pipe(
-      map((res: any) => this.extractArray(res).slice(0, 15)),
-      map((arr) => arr.map((s) => this.seriesToMediaItem(s))),
-      map((items) => {
-        this.seriesLoading = false;
-        return items;
-      }),
-      shareReplay(1),
+    this.trendingSeries$ = contenuti$.pipe(
+      map(arr => this.byTipo(arr, 'SERIETV').slice(0, 15)),
+      map(arr => this.removeDuplicateImages(arr, 'imageLink')),
+      map(arr => arr.map(s => this.seriesToMediaItem(s))),
+      finalize(() => { this.seriesLoading = false; }),
       catchError((err) => {
-        console.error('Errore getSerieTv()', err);
-        this.seriesLoading = false;
+        console.error('Errore mapping serie', err);
         this.seriesError = 'Errore nel caricamento serie TV';
-        return of([] as MediaItem[]);
+        return of([] as MediaItemWithRaw[]);
       })
     );
   }
 
-  // ✅ Pagina intera: vai alla route /details/:kind/:id
-  openFromCarousel(kind: 'GAME' | 'MOVIE' | 'SERIES', item: MediaItem) {
-    this.router.navigate(
-      ['/details', kind, item.id],
-      { state: { item } }
-    );
+  // ✅ CLICK CARD: PASSO L’OGGETTO COMPLETO (IContenuto) nello state
+  openFromCarousel(kind: 'GAME' | 'MOVIE' | 'SERIES', item: MediaItemWithRaw) {
+    this.router.navigate(['/details', kind, item.id], {
+      state: { contenuto: item.raw } // ✅ qui c’è TUTTO il contenuto
+    });
   }
 
+  // filtro robusto su tipo
+  private byTipo(arr: IContenuto[], tipo: 'GIOCO' | 'FILM' | 'SERIETV'): IContenuto[] {
+    const normalize = (v: string) =>
+      (v ?? '')
+        .trim()
+        .toUpperCase()
+        .replace(/\s+/g, '')   // toglie spazi
+        .replace(/_/g, '');    // toglie underscore
+
+    const t = normalize(tipo);
+
+    const aliases: Record<string, string[]> = {
+      GIOCO: ['GIOCO', 'GAME', 'VIDEOGAME'],
+      FILM: ['FILM', 'MOVIE'],
+      SERIETV: ['SERIETV', 'SERIE', 'SERIES', 'TVSERIES', 'SERIESTV', 'TV'],
+    };
+
+    const accepted = new Set((aliases[t] ?? [t]).map(normalize));
+
+    return (arr ?? []).filter(x => accepted.has(normalize(x.tipo ?? '')));
+  }
 
 
   /** Supporta backend che ritorna [] oppure {data:[..]} / {content:[..]} / ecc. */
@@ -93,9 +119,7 @@ export class HomePageComponent {
     return (
       res?.data ??
       res?.content ??
-      res?.giochi ??
-      res?.film ??
-      res?.serie ??
+      res?.contenuti ??
       res?.results ??
       res?.result ??
       []
@@ -105,29 +129,19 @@ export class HomePageComponent {
   /** Normalizza URL immagine: https, path relativi */
   private normalizeImageUrl(raw: any): string {
     if (!raw || typeof raw !== 'string') return '';
-
     let url = raw.trim();
 
-    // path relativo
     if (url.startsWith('/')) {
       url = `https://proj-wa-back-end-production.up.railway.app${url}`;
     }
-
-    // http -> https
     if (url.startsWith('http://')) {
       url = 'https://' + url.slice('http://'.length);
     }
-
-    // deve essere http(s)
     if (!url.startsWith('https://') && !url.startsWith('http://')) return '';
-
     return url;
   }
 
-  /**
-   * ✅ Rimuove immagini duplicate dentro una lista:
-   * se due elementi hanno lo stesso URL, il secondo perde l'immagine (imageLink = '')
-   */
+  /** Rimuove immagini duplicate dentro una lista */
   private removeDuplicateImages<T extends Record<string, any>>(arr: T[], key: string): T[] {
     const used = new Set<string>();
     return arr.map((obj) => {
@@ -139,45 +153,53 @@ export class HomePageComponent {
     });
   }
 
-  private gameToMediaItem(g: any): MediaItem {
-    const image = this.normalizeImageUrl(g?.imageLink);
-    const contenutoId = g?.contenutoId ?? g?.idContenuto ?? g?.contenuto?.id ?? g?.contenuto?.contenutoId;
+  // ✅ mappers: aggiungo raw = contenuto completo
 
+  private gameToMediaItem(g: IContenuto): MediaItemWithRaw {
+    const image = this.normalizeImageUrl(g.imageLink);
     return {
-      id: Number(contenutoId ?? g?.id ?? 0),
-      title: g?.titolo ?? 'Senza titolo',
+      id: Number(g.id ?? 0),
+      title: g.titolo ?? 'Senza titolo',
       type: 'GAME',
       coverUrl: image,
       imageUrl: image,
-      criticScore: Math.max(1, Math.min(10, Number(g?.mediaVoti ?? 0) + 2)),
-    } as MediaItem;
+      criticScore: Math.max(
+        1,
+        Math.min(10, Math.round(Number(g.mediaVoti ?? 0) * 10) / 10)
+      ),
+      raw: g,
+    } as MediaItemWithRaw;
   }
 
-  private movieToMediaItem(m: any): MediaItem {
-    const image = this.normalizeImageUrl(m?.imageLink);
-    const contenutoId = m?.contenutoId ?? m?.idContenuto ?? m?.contenuto?.id ?? m?.contenuto?.contenutoId;
-
+  private movieToMediaItem(m: IContenuto): MediaItemWithRaw {
+    const image = this.normalizeImageUrl(m.imageLink);
     return {
-      id: Number(contenutoId ?? m?.id ?? 0),
-      title: m?.titolo ?? 'Senza titolo',
+      id: Number(m.id ?? 0),
+      title: m.titolo ?? 'Senza titolo',
       type: 'MOVIE',
       coverUrl: image,
       imageUrl: image,
-      criticScore: Math.max(1, Math.min(10, Number(m?.mediaVoti ?? 0) + 2)),
-    } as MediaItem;
+      criticScore: Math.max(
+        1,
+        Math.min(10, Math.round(Number(m.mediaVoti ?? 0) * 10) / 10)
+      ),
+      raw: m,
+    } as MediaItemWithRaw;
   }
 
-  private seriesToMediaItem(s: any): MediaItem {
-    const image = this.normalizeImageUrl(s?.imageLink);
-    const contenutoId = s?.contenutoId ?? s?.idContenuto ?? s?.contenuto?.id ?? s?.contenuto?.contenutoId;
-
+  private seriesToMediaItem(s: IContenuto): MediaItemWithRaw {
+    const image = this.normalizeImageUrl(s.imageLink);
     return {
-      id: Number(contenutoId ?? s?.id ?? 0),
-      title: s?.titolo ?? 'Senza titolo',
+      id: Number(s.id ?? 0),
+      title: s.titolo ?? 'Senza titolo',
       type: 'SERIES',
       coverUrl: image,
       imageUrl: image,
-      criticScore: Math.max(1, Math.min(10, Number(s?.mediaVoti ?? 0) + 2)),
-    } as MediaItem;
+      criticScore: Math.max(
+        1,
+        Math.min(10, Math.round(Number(s.mediaVoti ?? 0) * 10) / 10)
+      ),
+      raw: s,
+    } as MediaItemWithRaw;
   }
 }

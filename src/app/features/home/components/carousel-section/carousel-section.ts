@@ -10,14 +10,16 @@ import { MediaCardComponent } from '../media-card/media-card';
   templateUrl: './carousel-section.html',
   styleUrl: './carousel-section.css',
 })
-export class CarouselSectionComponent {
+export class CarouselSectionComponent<T extends MediaItem = MediaItem> {
   @Input() title = '';
   @Input() category = '';
   @Input() label = '';
-  @Input() items: MediaItem[] = [];
 
-  // ✅ nuovo: emette item + index quando clicchi una card
-  @Output() itemClick = new EventEmitter<{ item: MediaItem; index: number }>();
+  // ✅ ora accetta anche MediaItemWithRaw[] (o qualsiasi estensione di MediaItem)
+  @Input() items: T[] = [];
+
+  // ✅ emette lo stesso tipo T (quindi raw NON si perde)
+  @Output() itemClick = new EventEmitter<{ item: T; index: number }>();
 
   @ViewChild('track') track?: ElementRef<HTMLDivElement>;
 
@@ -42,4 +44,12 @@ export class CarouselSectionComponent {
   setActive(dir: 'left' | 'right') {
     this.activeArrow = dir;
   }
+
+  // ✅ chiamalo dal template quando clicchi una card
+  onCardClick(item: T, index: number) {
+    this.itemClick.emit({ item, index });
+  }
+
+  // ✅ opzionale: trackBy per prestazioni
+  trackById = (_: number, it: T) => it.id;
 }

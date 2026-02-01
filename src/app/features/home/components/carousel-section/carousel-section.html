@@ -1,4 +1,6 @@
-<section class="section" *ngIf="items.length">
+<section class="section" *ngIf="items?.length">
+
+  <!-- HEADER -->
   <div class="header">
     <h2 class="h2">
       <span class="h2-cat">{{ category }}</span>
@@ -14,7 +16,7 @@
         (click)="setActive('left'); scrollLeft()"
         aria-label="Scroll left"
       >
-        <i class="bi bi-arrow-right arrow-left-icon"></i>
+        <i class="bi bi-arrow-left"></i>
       </button>
 
       <button
@@ -29,13 +31,14 @@
     </div>
   </div>
 
-  <div class="underline"></div>
-
+  <!-- TRACK -->
   <div class="track" #track>
-    <app-media-card
-      *ngFor="let item of items; let i = index"
-      [item]="item"
-      (cardClick)="itemClick.emit({ item: item, index: i })"
-    ></app-media-card>
+    <div class="cards">
+      <app-media-card
+        *ngFor="let item of items; let i = index; trackBy: trackById"
+        [item]="item"
+        (cardClick)="onCardClick($event, i)"
+      ></app-media-card>
+    </div>
   </div>
 </section>

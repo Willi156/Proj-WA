@@ -1,182 +1,235 @@
 <div class="page" *ngIf="!loading; else loadingTpl">
-  <div class="wrap" *ngIf="content; else errorTpl">
 
-    <!-- SX: COPERTINA -->
-    <aside class="left">
-      <img class="cover" [src]="content.cover" [alt]="content.title" />
-    </aside>
+  <ng-container *ngIf="(contenuto || content) as src; else errorTpl">
 
-    <!-- DX: INFO -->
-    <main class="right">
-      <header class="head">
+    <div class="wrap">
 
-        <!-- SCORE FLOATING -->
-        <div class="ratingBadge" *ngIf="content.rating !== undefined">
-          <span class="ratingValue">{{ content.rating }}</span>
-          <span class="ratingMax">/10</span>
-        </div>
+      <aside class="left">
+        <img
+          class="cover"
+          [src]="contenuto ? (contenuto.imageLink || '') : (content?.cover || '')"
+          [alt]="contenuto ? (contenuto.titolo || 'Copertina') : (content?.title || 'Copertina')"
+        />
+      </aside>
 
-        <h1 class="title">{{ content.title }}</h1>
+      <main class="right">
+        <header class="head">
 
-        <div class="meta">
-          <div class="chip">
-            <span class="label">Anno</span>
-            <span class="value">{{ content.year }}</span>
+          <div class="ratingBadge" *ngIf="displayScore() !== null">
+            <span class="ratingValue">{{ displayScore() }}</span>
+            <span class="ratingMax">/10</span>
           </div>
 
-          <div class="chip">
-            <span class="label">Genere</span>
-            <span class="value">{{ content.genre }}</span>
+          <h1 class="title">
+            {{ contenuto ? (contenuto.titolo || 'Senza titolo') : (content?.title || 'Senza titolo') }}
+          </h1>
+
+          <div class="meta">
+            <div class="chip">
+              <span class="label">Anno</span>
+              <span class="value">
+                {{ contenuto ? (contenuto.annoPubblicazione ?? '—') : (content?.year ?? '—') }}
+              </span>
+            </div>
+
+            <div class="chip">
+              <span class="label">Genere</span>
+              <span class="value">
+                {{ contenuto ? (contenuto.genere || '—') : (content?.genre || '—') }}
+              </span>
+            </div>
           </div>
-        </div>
 
-        <!-- DOVE vederlo / comprarlo -->
-        <div class="whereBox">
-          <span class="whereLabel">
-            {{ kind === 'GAME' ? 'Compra ora' : 'Guarda ora' }}
-          </span>
+          <!-- PIATTAFORME -->
+          <div class="whereBox">
+            <span class="whereLabel">{{ whereText }}</span>
 
-          <div class="whereButtons">
-            <span class="whereBtn" *ngIf="kind === 'GAME'">PlayStation</span>
-            <span class="whereBtn" *ngIf="kind === 'GAME'">Xbox</span>
-            <span class="whereBtn" *ngIf="kind === 'GAME'">Steam</span>
+            <div class="whereButtons">
+              <span class="muted" *ngIf="platformsLoading">Caricamento...</span>
+
+              <a
+                class="whereBtn"
+                *ngFor="let p of platforms"
+                [href]="p.url"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {{ p.label }}
+              </a>
+
+              <span class="muted" *ngIf="!platformsLoading && !platforms.length">
+                {{ kind === 'GAME' ? 'Piattaforme non disponibili.' : 'Non disponibile in streaming.' }}
+              </span>
+            </div>
           </div>
-        </div>
 
-        <p class="desc">{{ content.description }}</p>
+          <p class="desc">
+            {{ contenuto ? (contenuto.descrizione || '') : (content?.description || '') }}
+          </p>
 
-        <!-- SOLO SE SERIE -->
-        <div class="seasonRow" *ngIf="kind === 'SERIES'">
-          <label class="seasonLabel" for="seasonSelect">Stagione</label>
-          <select
-            id="seasonSelect"
-            class="seasonSelect"
-            [(ngModel)]="selectedSeasonId"
-            (change)="onSeasonChange()"
-          >
-            <option *ngFor="let s of seasons" [value]="s.id">{{ s.name }}</option>
-          </select>
-        </div>
-      </header>
-    </main>
-  </div>
+          <!-- STATS STAGIONI / EPISODI -->
+          <p class="muted" *ngIf="kind === 'SERIES' && seriesStatsLoading">
+            Caricamento stagioni/episodi...
+          </p>
 
-  <!-- RIGA 2: ACCORDIONS FULL-WIDTH -->
-  <div class="fullRow" *ngIf="content">
-    <section class="accordions">
+          <div class="seasonStats"
+               *ngIf="kind === 'SERIES' && !seriesStatsLoading && (seriesSeasons > 0 || seriesEpisodes > 0)">
 
-      <!-- TRAILER -->
-      <details class="acc" [open]="openSection === 'trailer'" (toggle)="onToggle('trailer', $event)">
-        <summary class="accSum">
-          <span>Trailer</span>
-          <span class="chev">▾</span>
-        </summary>
+            <div class="seasonCol">
+              <span class="seasonLabel"><strong>Stagioni</strong></span>
+              <span class="seasonValue">{{ seriesSeasons | number:'2.0' }}</span>
+            </div>
 
-        <div class="accBody">
-          <div class="videoWrap" *ngIf="trailerEmbed">
-            <iframe
-              class="video"
-              [src]="trailerEmbed"
-              title="Trailer"
-              frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen
-            ></iframe>
+            <div class="seasonCol">
+              <span class="seasonLabel">Episodi</span>
+              <span class="seasonValue">{{ seriesEpisodes }}</span>
+            </div>
+
           </div>
-          <p class="muted" *ngIf="!trailerEmbed">Trailer non disponibile.</p>
-        </div>
-      </details>
 
-      <!-- LASCIA RECENSIONE -->
-      <details class="acc" [open]="openSection === 'write'" (toggle)="onToggle('write', $event)">
-        <summary class="accSum">
-          <span>Lascia una recensione</span>
-          <span class="chev">▾</span>
-        </summary>
+          <p class="muted"
+             *ngIf="kind === 'SERIES' && !seriesStatsLoading && seriesSeasons === 0 && seriesEpisodes === 0">
+            Dati stagioni/episodi non disponibili.
+          </p>
 
-        <div class="accBody">
-          <form class="reviewForm" (ngSubmit)="submitReview()" #f="ngForm">
+        </header>
+      </main>
+    </div>
 
-            <!-- VOTO A STELLE (1..10) -->
-            <div class="field">
-              <div class="ratingPicker" role="radiogroup" aria-label="Seleziona un voto da 1 a 10">
-              <p class="label-rev">Add my score: </p>
-                <button
-                  type="button"
-                  class="pickStar"
-                  *ngFor="let _ of stars; let i = index"
-                  [class.filled]="i < reviewDraft.rating"
-                  (click)="setRating(i + 1)"
-                  [attr.aria-checked]="(i + 1) === reviewDraft.rating"
-                  role="radio"
-                >
-                  ★
-                </button>
+    <div class="fullRow">
+      <section class="accordions">
 
-                <span class="ratingText">{{ reviewDraft.rating }}/10</span>
+        <!-- TRAILER -->
+        <section class="trailer">
+          <div class="accBody">
+
+            <p class="muted" *ngIf="trailerLoading">Caricamento trailer...</p>
+
+            <div class="videoWrap" *ngIf="!trailerLoading && kind === 'GAME' && trailerMp4Url">
+              <video class="video" [src]="trailerMp4Url" controls playsinline></video>
+            </div>
+
+            <div class="videoWrap" *ngIf="!trailerLoading && kind !== 'GAME' && trailerEmbed">
+              <iframe
+                class="video"
+                [src]="trailerEmbed"
+                title="Trailer"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              ></iframe>
+            </div>
+
+            <p class="muted" *ngIf="!trailerLoading && !trailerMp4Url && !trailerEmbed">
+              {{ trailerError || 'Trailer non disponibile.' }}
+            </p>
+
+          </div>
+        </section>
+
+        <!-- LASCIA RECENSIONE -->
+        <details class="acc" [open]="openSection === 'write'" (toggle)="onToggle('write', $event)">
+          <summary class="accSum">
+            <span>Lascia una recensione</span>
+            <span class="chev">▾</span>
+          </summary>
+
+          <div class="accBody">
+            <form class="reviewForm" (ngSubmit)="submitReview()" #f="ngForm">
+
+              <!-- ✅ TITOLO RECENSIONE-->
+              <div class="field field-title">
+                <textarea
+                  name="reviewTitle"
+                  [(ngModel)]="reviewDraft.title"
+                  required
+                  rows="1"
+                  placeholder="Title of your review..."
+                ></textarea>
               </div>
 
-              <!-- hidden required per form validity -->
-              <input type="hidden" name="rating" [(ngModel)]="reviewDraft.rating" required />
-            </div>
+              <!-- ✅ VOTO -->
+              <div class="field">
+                <div class="ratingPicker" role="radiogroup" aria-label="Seleziona un voto da 1 a 10">
+                  <p class="label-rev">Add my score:</p>
 
-            <!-- TESTO RECENSIONE -->
-            <div class="field">
-              <textarea
-                name="comment"
-                [(ngModel)]="reviewDraft.comment"
-                required
-                rows="4"
-                placeholder="Write your review here..."
-              ></textarea>
-            </div>
+                  <button
+                    type="button"
+                    class="pickStar"
+                    *ngFor="let _ of stars; let i = index"
+                    [class.filled]="i < reviewDraft.rating"
+                    (click)="setRating(i + 1)"
+                    [attr.aria-checked]="(i + 1) === reviewDraft.rating"
+                    role="radio"
+                  >
+                    ★
+                  </button>
 
-            <div class="actions">
-              <button type="submit" class="btn" [disabled]="f.invalid">Pubblica</button>
-              <button type="button" class="btn ghost" (click)="resetDraft()">Annulla</button>
-            </div>
-          </form>
-        </div>
-      </details>
-
-      <!-- MOSTRA RECENSIONI -->
-      <details class="acc" [open]="openSection === 'list'" (toggle)="onToggle('list', $event)">
-        <summary class="accSum">
-          <span>Mostra recensioni ({{ reviews.length }})</span>
-          <span class="chev">▾</span>
-        </summary>
-
-        <div class="accBody">
-          <ng-container *ngIf="reviews.length; else noReviews">
-            <div class="reviews">
-              <article class="rev" *ngFor="let r of reviews">
-                <div class="revTop">
-                  <strong class="revAuthor">{{ r.user }}</strong>
-
-                  <!-- STELLE SU 10 -->
-                  <span class="revScore stars" aria-label="Voto {{ r.rating }} su 10">
-                    <span
-                      class="star"
-                      *ngFor="let _ of stars; let i = index"
-                      [class.filled]="i < roundedRating(r.rating)"
-                    >★</span>
-                  </span>
+                  <span class="ratingText">{{ reviewDraft.rating }}/10</span>
                 </div>
 
-                <p class="revText">{{ r.comment }}</p>
-                <span class="revDate muted">{{ r.date }}</span>
-              </article>
-            </div>
-          </ng-container>
+                <input type="hidden" name="rating" [(ngModel)]="reviewDraft.rating" required />
+              </div>
 
-          <ng-template #noReviews>
-            <p class="muted">Ancora nessuna recensione.</p>
-          </ng-template>
-        </div>
-      </details>
+              <!-- ✅ TESTO RECENSIONE -->
+              <div class="field">
+                <textarea
+                  name="reviewComment"
+                  [(ngModel)]="reviewDraft.comment"
+                  required
+                  rows="4"
+                  placeholder="Write your review here..."
+                ></textarea>
+              </div>
 
-    </section>
-  </div>
+              <!-- AZIONI -->
+              <div class="actions">
+                <button type="submit" class="btn" [disabled]="f.invalid">Pubblica</button>
+                <button type="button" class="btn ghost" (click)="resetDraft()">Annulla</button>
+              </div>
+
+            </form>
+          </div>
+
+        </details>
+
+        <!-- MOSTRA RECENSIONI -->
+        <details class="acc" [open]="openSection === 'list'" (toggle)="onToggle('list', $event)">
+          <summary class="accSum">
+            <span>Mostra recensioni ({{ reviews.length }})</span>
+            <span class="chev">▾</span>
+          </summary>
+
+          <div class="accBody">
+            <ng-container *ngIf="reviews.length; else noReviews">
+              <div class="reviews">
+                <article class="rev" *ngFor="let r of reviews">
+                  <div class="revTop">
+                    <strong class="revAuthor">{{ r.user }}</strong>
+                    ...
+                  </div>
+
+                  <strong class="revTitle" *ngIf="r.title">
+                    {{ r.title }}
+                  </strong>
+
+                  <p class="revText">{{ r.comment }}</p>
+                  <span class="revDate muted">{{ r.date }}</span>
+                </article>
+
+              </div>
+            </ng-container>
+
+            <ng-template #noReviews>
+              <p class="muted">Ancora nessuna recensione.</p>
+            </ng-template>
+          </div>
+        </details>
+
+      </section>
+    </div>
+
+  </ng-container>
 </div>
 
 <ng-template #loadingTpl>

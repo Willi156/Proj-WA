@@ -1,4 +1,4 @@
-<article class="card" (click)="cardClick.emit()">
+<article class="card" (click)="onClick()">
   <div class="poster">
     <img
       *ngIf="(item.coverUrl || item.imageUrl) as imgUrl; else noImg"
@@ -6,10 +6,9 @@
       [alt]="item.title"
       loading="lazy"
       referrerpolicy="no-referrer"
-      (click)="cardClick.emit()"
     />
     <ng-template #noImg>
-      <div class="no-img" (click)="cardClick.emit()">
+      <div class="no-img">
         <span>{{ item.title }}</span>
       </div>
     </ng-template>
@@ -18,7 +17,7 @@
   <a
     class="title"
     href="javascript:void(0)"
-    (click)="$event.preventDefault(); cardClick.emit()"
+    (click)="$event.preventDefault()"
   >
     {{ item.title }}
   </a>

@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient,HttpParams  } from '@angular/common/http';
 import { environment } from '../../environment/environment';
-
+import { Observable, of } from 'rxjs';
 import { Game } from '../games/models/game.model';
 import { Film } from '../film/model/film.model';
 import { SerieTv } from '../serieTV/model/serie-tv.model';
+import { map, catchError } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
@@ -64,7 +65,8 @@ export class ApiService {
   }
 
   getSerieTv() {
-    return this.http.get<SerieTv[]>(`${this.baseUrl}/api/contenuti/serie_tv`);
+
+    return this.http.get<SerieTv[]>(`${this.baseUrl}/api/contenuti/serie_tv`,{withCredentials:false});
   }
 
   getContenutoById(id: number) {
@@ -92,4 +94,23 @@ export class ApiService {
       password,
     });
   }
+
+  getTrailerEmbed(
+    kind: 'GAME' | 'MOVIE' | 'SERIES',
+    q: string,
+    year?: number
+  ): Observable<string | null> {
+    const params = new HttpParams()
+      .set('kind', kind)
+      .set('q', q)
+      .set('year', year ? String(year) : '');
+
+    return this.http
+      .get<{ embedUrl: string | null }>(`${this.baseUrl}/trailers/embed`, { params })
+      .pipe(
+        map((res) => (res?.embedUrl ? String(res.embedUrl) : null)),
+        catchError(() => of(null))
+      );
+  }
+
 }
