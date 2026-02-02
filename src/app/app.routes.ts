@@ -6,6 +6,7 @@ import { LoginComponent } from './login/login';
 import { SignupComponent } from './signup/signup';
 import { UtenteComponent } from './utente/components/profilo utente/utente';
 import { SettingsComponent } from './utente/components/impostazioni/settings';
+import {GamesNewReleasesComponent} from './games/components/pages/games-new-releases/games-new-releases.component';
 
 export const routes: Routes = [
   {
@@ -15,12 +16,13 @@ export const routes: Routes = [
         .then(m => m.HomePageComponent),
   },
   { path: 'games', component: GameHomeComponent },
+  { path: 'games/new-releases', component: GamesNewReleasesComponent },
   { path: 'movies', component: FilmPageComponent },
   { path: 'series', component: SeriePageComponent },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'user', component: UtenteComponent },
   { path: 'settings', component: SettingsComponent },
-  { path: '**', redirectTo: '' },
+  { path: '**', redirectTo: 'home' },
 
 ];

@@ -1,31 +1,35 @@
 <div class="game-card">
 
-  <!-- IMMAGINE -->
-  <ng-container *ngIf="game.imageLink; else placeholder">
-    <img
-      class="poster"
-      [src]="game.imageLink"
-      alt="{{ game.titolo }}"
-    />
-  </ng-container>
+  <img
+    class="poster"
+    [src]="game.imageLink || '/placeholder.png'"
+    alt="{{ game.titolo }}"
+  />
 
-  <!-- PLACEHOLDER -->
-  <ng-template #placeholder>
-    <div class="poster placeholder"></div>
-  </ng-template>
-
-  <!-- INFO -->
   <div class="info">
     <div class="title">{{ game.titolo }}</div>
 
     <div class="meta">
-      <span class="score" [ngClass]="scoreClass">
-        {{ game.mediaVoti }}
-      </span>
-      <span class="label">
-        {{ scoreLabel }}
-      </span>
+
+      <!-- RELEASE DATE -->
+      <ng-container *ngIf="mode === 'date'">
+    <span class="release-date">
+      {{ game.annoPubblicazione || 'TBA' }}
+    </span>
+      </ng-container>
+
+      <!-- METASCORE -->
+      <ng-container *ngIf="mode === 'score'">
+    <span class="score" [ngClass]="scoreClass">
+      {{ game.mediaVoti }}
+    </span>
+        <span class="label">
+      {{ scoreLabel }}
+    </span>
+      </ng-container>
+
     </div>
+
   </div>
 
 </div>

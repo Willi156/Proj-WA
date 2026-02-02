@@ -1,0 +1,142 @@
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 0 60px;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.page-content {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 32px;
+}
+
+.filters {
+  border-right: 1px solid #eee;
+  padding-right: 20px;
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+}
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* ===== YEAR SLIDER ===== */
+
+.year-slider {
+  position: relative;
+  margin-top: 14px;
+}
+
+.year-slider input[type="range"] {
+  width: 100%;
+  appearance: none;
+  height: 6px;
+  border-radius: 6px;
+  background: #444;
+  outline: none;
+}
+
+.year-slider input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #f5a000;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.year-tooltip {
+  position: absolute;
+  top: -28px;
+  transform: translateX(-50%);
+  background: #000;
+  color: #fff;
+  font-size: 11px;
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+
+.year-range {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #666;
+  margin-top: 6px;
+}
+
+/* ===== PAGINATION ===== */
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 32px;
+}
+
+.page-btn {
+  min-width: 32px;
+  height: 32px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+}
+
+.page-btn.active {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}
+
+.no-results {
+  margin-top: 20px;
+  color: #666;
+  text-align: center;
+}
+/* ===== FILTERS HEADER ===== */
+.filters-header {
+  font-weight: 700;
+  font-size: 14px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  margin-bottom: 16px;
+}
+
+.filter-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.filter-reset {
+  background: none;
+  border: none;
+  font-size: 12px;
+  color: #999;
+  cursor: pointer;
+}
+
+.filter-reset:hover {
+  text-decoration: underline;
+  color: #000;
+}
+.filter-disabled {
+   font-size: 12px;
+   color: #999;
+   font-style: italic;
+ }
+
+
+/* ===== RESULTS HEADER ===== */
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}

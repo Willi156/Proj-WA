@@ -1,10 +1,144 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
-<body>
+<div class="page-container">
+  <header class="page-header">
+    <h1 class="page-title">
+      <ng-container *ngIf="isDefaultView; else filteredTitle">
+        I tuoi nuovi giochi ti aspettano!
+      </ng-container>
 
-</body>
-</html>
+      <ng-template #filteredTitle>
+        Tutti i giochi del – {{ selectedYear }}
+      </ng-template>
+    </h1>
+
+    <p class="page-subtitle">
+      <ng-container *ngIf="isDefaultView; else filteredSubtitle">
+        Trova la tua nuova avventura!
+      </ng-container>
+
+      <ng-template #filteredSubtitle>
+        Giochi pubblicati nel {{ selectedYear }}.
+      </ng-template>
+    </p>
+  </header>
+
+  <div class="page-content">
+    <aside class="filters">
+      <div class="filters-header">Filtri</div>
+      <div class="filter-header-row">
+        <h4 class="filter-title">Anno di rilascio</h4>
+        <button
+          class="filter-reset"
+          *ngIf="isYearFilterActive"
+          (click)="resetYearFilter()">
+          RESET
+        </button>
+      </div>
+      <div class="year-slider">
+        <div
+          class="year-tooltip"
+          *ngIf="isDraggingYear"
+          [style.left.%]="((selectedYear - minYear) / (maxYear - minYear)) * 100">
+          {{ selectedYear }}
+        </div>
+        <input
+          type="range"
+          [min]="minYear"
+          [max]="maxYear"
+          [ngModel]="selectedYear"
+          (ngModelChange)="changeYear($event)"
+          (mousedown)="onYearDragStart()"
+          (mouseup)="onYearDragEnd()"
+          (mouseleave)="onYearDragEnd()"
+          (touchstart)="onYearDragStart()"
+          (touchend)="onYearDragEnd()"
+        />
+        <div class="year-range">
+          <span>{{ minYear }}</span>
+          <span>{{ maxYear }}</span>
+        </div>
+      </div>
+
+      <div class="filter-block">
+        <div class="filter-header-row">
+          <h4 class="filter-title">Platforms</h4>
+
+          <button
+            class="filter-reset"
+            *ngIf="(platformFilter$ | async)?.size"
+            (click)="resetPlatformFilter()">
+            RESET
+          </button>
+        </div>
+
+        <label *ngFor="let platform of availablePlatform">
+          <input
+            #cb
+            type="checkbox"
+            (change)="togglePlatform(platform, cb.checked)" />
+          {{ platform }}
+        </label>
+      </div>
+      <div class="filter-block">
+        <div class="filter-header-row">
+          <h4 class="filter-title">Genres</h4>
+
+          <button
+            class="filter-reset"
+            *ngIf="(genereFilter$ | async)?.size"
+            (click)="resetGenreFilter()">
+            RESET
+          </button>
+        </div>
+
+        <label *ngFor="let genre of availableGenres">
+          <input
+            #cb
+            type="checkbox"
+            (change)="toggleGenre(genre.key, cb.checked)" />
+          {{ genre.label }}
+        </label>
+
+      </div>
+
+    </aside>
+    <section class="results">
+
+      <ng-container *ngIf="games$ | async as games">
+
+        <div class="results-header">
+          <span class="results-count">{{ games.length }} results</span>
+
+          <select
+            class="sort-select"
+            [ngModel]="sortValue"
+            (ngModelChange)="changeSort($event)">
+            <option value="date">Anno di uscita</option>
+            <option value="score">Criti-Score</option>
+          </select>
+        </div>
+
+        <div class="games-grid" *ngIf="games.length > 0">
+          <app-game-card
+            *ngFor="let game of games"
+            [game]="game"
+            [mode]="sortValue">
+          </app-game-card>
+        </div>
+
+        <p *ngIf="games.length === 0" class="no-results">
+          Nessun gioco trovato.
+        </p>
+
+        <div class="pagination" *ngIf="pages.length > 1">
+          <button
+            *ngFor="let page of pages"
+            class="page-btn"
+            [class.active]="page === (currentPage$ | async)"
+            (click)="changePage(page)">
+            {{ page }}
+          </button>
+        </div>
+      </ng-container>
+    </section>
+  </div>
+</div>

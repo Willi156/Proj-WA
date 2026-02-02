@@ -29,7 +29,7 @@ export class HomePageComponent {
     this.trendingGames$ = this.api.getGiochi().pipe(
       map((res: any) => this.extractArray(res).slice(0, 15)),
 
-      
+
       map(arr => this.removeDuplicateImages(arr, 'imageLink')),
 
       map(arr => arr.map(g => this.gameToMediaItem(g))),
@@ -78,8 +78,6 @@ export class HomePageComponent {
       })
     );
   }
-
-  /** Supporta backend che ritorna [] oppure {data:[..]} / {content:[..]} / ecc. */
   private extractArray(res: any): any[] {
     if (Array.isArray(res)) return res;
     return (
@@ -93,51 +91,36 @@ export class HomePageComponent {
       []
     );
   }
-
-  /** Normalizza URL immagine: https, path relativi */
   private normalizeImageUrl(raw: any): string {
     if (!raw || typeof raw !== 'string') return '';
 
     let url = raw.trim();
-
-    // path relativo
     if (url.startsWith('/')) {
       url = `https://proj-wa-back-end-production.up.railway.app${url}`;
     }
-
-    // http -> https
-    if (url.startsWith('http://')) {
-      url = 'https://' + url.slice('http://'.length);
+    if (url.startsWith('https://')) {
+      url = 'https://' + url.slice('https://'.length);
     }
 
     // deve essere http(s)
-    if (!url.startsWith('https://') && !url.startsWith('http://')) return '';
+    if (!url.startsWith('https://') && !url.startsWith('https://')) return '';
 
     return url;
   }
-
-  /**
-   * ✅ Rimuove immagini duplicate dentro una lista:
-   * se due elementi hanno lo stesso URL, il secondo perde l'immagine (imageLink = '')
-   */
   private removeDuplicateImages<T extends Record<string, any>>(arr: T[], key: string): T[] {
     const used = new Set<string>();
     return arr.map((obj) => {
       const raw = obj?.[key];
       const url = typeof raw === 'string' ? raw.trim() : '';
       if (url && used.has(url)) {
-        // opzionale: log per debug
-        // console.warn('Cover duplicata rimossa:', url, 'per', obj?.titolo ?? obj?.title ?? obj?.name);
         return { ...obj, [key]: '' };
       }
       if (url) used.add(url);
       return obj;
     });
   }
-
   private gameToMediaItem(g: any): MediaItem {
     const image = this.normalizeImageUrl(g?.imageLink);
-
     return {
       id: g?.id ?? 0,
       title: g?.titolo ?? 'Senza titolo',
@@ -147,10 +130,8 @@ export class HomePageComponent {
       criticScore: Math.max(1, Math.min(10, Number(g?.mediaVoti ?? 0) + 2)),
     } as MediaItem;
   }
-
   private movieToMediaItem(m: any): MediaItem {
     const image = this.normalizeImageUrl(m?.imageLink);
-
     return {
       id: m?.id ?? 0,
       title: m?.titolo ?? 'Senza titolo',
@@ -160,10 +141,8 @@ export class HomePageComponent {
       criticScore: Math.max(1, Math.min(10, Number(m?.mediaVoti ?? 0) + 2)),
     } as MediaItem;
   }
-
   private seriesToMediaItem(s: any): MediaItem {
     const image = this.normalizeImageUrl(s?.imageLink);
-
     return {
       id: s?.id ?? 0,
       title: s?.titolo ?? 'Senza titolo',

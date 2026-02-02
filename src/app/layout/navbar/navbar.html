@@ -22,9 +22,9 @@
           </a>
 
           <div class="dropdown">
-            <a routerLink="/games/trending">Trending</a>
-            <a routerLink="/games/new">New Releases</a>
-            <a routerLink="/games/top">Top Rated</a>
+            <a routerLink="/games/new-releases">New Releases</a>
+            <a routerLink="/games/upcoming">Upcoming</a>
+            <a routerLink="/games/best">Best Games</a>
           </div>
         </li>
 
@@ -101,9 +101,9 @@
         <i class="bi" [ngClass]="mobileOpen === 'games' ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
       </button>
       <div class="mobile-submenu" *ngIf="mobileOpen === 'games'">
-        <a routerLink="/games/trending" (click)="closeMenu()">Trending</a>
-        <a routerLink="/games/new" (click)="closeMenu()">New Releases</a>
-        <a routerLink="/games/top" (click)="closeMenu()">Top Rated</a>
+        <a routerLink="/games/new-releases">New Releases</a>
+        <a routerLink="/games/trending" (click)="closeMenu()">Upcoming</a>
+        <a routerLink="/games/top" (click)="closeMenu()">Best Games</a>
       </div>
 
       <!-- MOVIES -->

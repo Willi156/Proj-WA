@@ -6,5 +6,6 @@ export interface Game {
   mediaVoti: number;
   descrizione: string;
   imageLink?: string;
+  platform?: string[];
 }
 

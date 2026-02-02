@@ -12,6 +12,7 @@ import { Game } from '../../models/game.model';
 
 export class GameCardComponent {
   @Input() game!: Game;
+  @Input() mode: 'date' | 'score' = 'date';
 
   get scoreClass(): string {
     if (this.game.mediaVoti >= 8) return 'score-green';
