@@ -1,9 +1,11 @@
 .card {
-  width: 200px;
+  width: 202px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   overflow: hidden;
+  background: transparent;
+  border-color: transparent;
 }
 
 .poster {
@@ -76,14 +78,14 @@ img {
 
 .label {
   font-size: 13px;
-  color: #666;
+  color: #474545;
   font-weight: 600;
 }
 
 .watch {
   margin-top: 2px;
   height: 38px;
-  border-radius: 6px;
+  border-radius:10px;
   border: 1px solid #cfcfcf;
   background: #fff;
 
