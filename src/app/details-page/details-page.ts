@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
-import { RawgService } from '../services/rawg.service';
+import { RawgService, TrailerPick } from '../services/rawg.service';
 import { ApiService } from '../services/api.service';
 import { TmdbService } from '../services/tmdb.service';
 
@@ -72,6 +72,19 @@ export class DetailsPageComponent {
 
   // Accordion aperto di default: recensioni
   openSection: OpenSection = 'list';
+
+  displayScore(): number | null {
+    const raw =
+      this.contenuto?.mediaVoti !== undefined
+        ? Number(this.contenuto.mediaVoti ?? 0)
+        : Number((this.content as any)?.rating ?? NaN);
+
+    if (!Number.isFinite(raw)) return null;
+
+    const clamped = Math.max(1, Math.min(10, raw));
+    return Math.round(clamped * 10) / 10;
+  }
+
 
   // ======================
   // TRAILER
@@ -581,8 +594,19 @@ export class DetailsPageComponent {
   }
 
   /**
+   * Crea una query YouTube "buona" per i giochi.
+   * (Evita casi dove YouTube ti propone roba non trailer.)
+   */
+  private buildYoutubeQueryForGame(title: string): string {
+    // Esempio: "The Witcher 3 Wild Hunt official trailer game"
+    const base = this.cleanTitleForSearch(title);
+    return `${base} official trailer game`;
+  }
+
+  /**
    * Carica trailer:
-   * - GAME: RAWG mp4 url
+   * - GAME: prova RAWG mp4 url
+   *   - se RAWG non ha trailer => fallback YouTube (backend getTrailerEmbed)
    * - MOVIE/SERIES: endpoint embedUrl backend (YouTube embed)
    */
   private loadTrailer() {
@@ -600,71 +624,77 @@ export class DetailsPageComponent {
       return;
     }
 
-    // GAME: RAWG
+    // ======================
+    // GAME: RAWG -> fallback YT (embed)
     if (this.kind === 'GAME') {
       const qTitle = this.cleanTitleForSearch(title);
 
-      this.rawg.getTrailerUrlByTitle(qTitle).pipe(
+      this.rawg.getTrailerSmartByTitle(qTitle).pipe(
         timeout(10000),
-        catchError(() => of(null)),
+        catchError(() => of({ source: 'RAWG', kind: 'MP4', url: null } as const)),
         finalize(() => {
           this.trailerLoading = false;
+          this.zone.run(() => this.cdr.markForCheck());
         })
-      ).subscribe((url: string | null) => {
-        if (!url) {
+      ).subscribe((pick) => {
+        console.log('[TRAILER][GAME] selected source:', pick.source, 'kind:', pick.kind, 'url:', pick.url);
+
+        // reset
+        this.trailerMp4Url = undefined;
+        this.trailerEmbed = undefined;
+
+        if (!pick.url) {
           this.trailerError = 'Trailer non disponibile.';
           return;
         }
-        this.trailerMp4Url = url;
+
+        if (pick.kind === 'MP4') {
+          this.trailerMp4Url = pick.url;
+          return;
+        }
+
+        // EMBED (YouTube)
+        this.trailerEmbed = this.sanitizer.bypassSecurityTrustResourceUrl(pick.url);
       });
 
       return;
     }
 
-    // MOVIE/SERIES: backend embed
-    const q = `${title} trailer`;
 
-    this.api.getTrailerEmbed(this.kind, q, year).pipe(
+    // ======================
+    // MOVIE/SERIES: backend embed
+    // ======================
+    const q = `${title} trailer`;
+    console.log('[TRAILER][MOVIE/SERIES] query:', q, 'year:', year);
+
+    // MOVIE/SERIES: TMDB videos -> YouTube embed
+    const qTitle = this.cleanTitleForSearch(title);
+
+    console.log('[TRAILER][TMDB] kind:', this.kind, 'title:', qTitle, 'year:', year);
+
+    this.tmdb.getTrailerEmbedSmart(this.kind, qTitle, year).pipe(
       timeout(10000),
-      catchError(() => of(null)),
+      catchError((err) => {
+        console.error('[TRAILER][TMDB] error:', err);
+        return of(null);
+      }),
       finalize(() => {
         this.trailerLoading = false;
+        this.zone.run(() => this.cdr.markForCheck());
       })
     ).subscribe((embedUrl: string | null) => {
-      if (!embedUrl) {
-        this.trailerError = 'Trailer non disponibile.';
-        return;
-      }
+      console.log('[TRAILER][TMDB] embedUrl:', embedUrl);
 
-      if (!embedUrl.startsWith('https://') && !embedUrl.startsWith('http://')) {
+      if (!embedUrl) {
         this.trailerError = 'Trailer non disponibile.';
         return;
       }
 
       this.trailerEmbed = this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
     });
+
   }
 
-  // ======================
-  // SCORE DISPLAY
-  // ======================
-
-  /**
-   * Calcola lo score da mostrare nel badge (1..10) da:
-   * - contenuto DB => mediaVoti
-   * - contenuto mock => rating
-   */
-  displayScore(): number | null {
-    const raw =
-      this.contenuto?.mediaVoti !== undefined
-        ? Number(this.contenuto.mediaVoti ?? 0)
-        : Number((this.content as any)?.rating ?? NaN);
-
-    if (!Number.isFinite(raw)) return null;
-
-    const clamped = Math.max(1, Math.min(10, raw));
-    return Math.round(clamped * 10) / 10;
-  }
 
   // ======================
   // MOCK FALLBACK

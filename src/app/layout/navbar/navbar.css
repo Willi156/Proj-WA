@@ -1,5 +1,6 @@
 /* =========================
    GLOBAL SAFE (anti “spazio a destra”)
+   - Queste regole “globali” evitano overflow orizzontale indesiderato
 ========================= */
 html, body {
   width: 100%;
@@ -8,33 +9,36 @@ html, body {
 
 /* =========================
    NAVBAR BASE
+   - Struttura principale della barra in alto (sfondo, altezza, sticky)
 ========================= */
+
+/* .navbar: contenitore principale della navbar (altezza, colori, sticky, z-index) */
 .navbar {
   width: 100%;
   height: 72px;
   background: #000;
   color: #fff;
-
+  padding: 0 0 60px;
   display: flex;
   align-items: center;
   box-sizing: border-box;
   font-family: Helvetica, Arial, sans-serif;
+  margin-top: -40px;
 
   overflow-x: hidden; /* extra safety */
-  position: sticky;/* resta visibile durante lo scroll */
+  position: sticky; /* resta visibile durante lo scroll */
   top: 0;
   z-index: 4000;
 }
 
+/* .navbar-container: griglia interna della navbar (3 colonne: sinistra/centro/destra) + padding laterale */
 .navbar-container {
   width: 100%;
   max-width: 100%;
-  margin: 0 auto;
-
   padding: 0 150px;
   box-sizing: border-box;
 
-  position: relative; /* ✅ fondamentale per mobile-menu assoluto */
+  position: relative;
 
   display: grid;
   grid-template-columns: auto 1fr auto;
@@ -42,20 +46,28 @@ html, body {
   gap: 24px;
 
   overflow: visible;
+  margin-top: 12px;
 }
 
 /* =========================
    ZONE
+   - Aree logiche dentro la navbar: left / center / right
 ========================= */
+
+/* .left, .center, .right: tre “zone” allineate verticalmente al centro */
 .left,
 .center,
 .right {
   display: flex;
   align-items: center;
 }
+
+/* .center: zona centrale, centra i contenuti orizzontalmente */
 .center {
   justify-content: center;
 }
+
+/* .right: zona destra, spinge i contenuti a destra e crea spacing tra elementi (search/profile/register) */
 .right {
   justify-content: flex-end;
   gap: 10px;
@@ -64,13 +76,17 @@ html, body {
 
 /* =========================
    LOGO
+   - Area logo: icona + testo
 ========================= */
+
+/* .logo-area: wrapper del logo (icona + testo) con gap */
 .logo-area {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
+/* .logo-circle: contenitore “quadrato” dell’immagine/logo, centrato */
 .logo-circle {
   width: 36px;
   height: 36px;
@@ -79,6 +95,7 @@ html, body {
   justify-content: center;
 }
 
+/* .logo-circle img: stile dell’immagine del logo (ingrandita e contenuta) */
 .logo-circle img {
   width: 150%;
   height: 150%;
@@ -86,6 +103,7 @@ html, body {
   display: block;
 }
 
+/* .logo-text: testo accanto al logo (dimensione, bold, offset) */
 .logo-text {
   font-size: 23px;
   font-weight: bold;
@@ -94,7 +112,10 @@ html, body {
 
 /* =========================
    MENU DESKTOP + DROPDOWN
+   - Menu orizzontale desktop e relativo dropdown su hover
 ========================= */
+
+/* .menu: lista orizzontale delle voci (ul) */
 .menu {
   list-style: none;
   display: flex;
@@ -104,13 +125,18 @@ html, body {
   padding: 0;
 }
 
+/* .hamburger: forzature per garantire clickabilità e “stare sopra” (utile con overlay/menu) */
 .hamburger { pointer-events: auto !important; z-index: 99999 !important; position: relative; }
+
+/* .navbar, .navbar-container, .right: forzatura overflow visibile per non tagliare dropdown/menu */
 .navbar, .navbar-container, .right { overflow: visible !important; }
 
+/* .menu-item: wrapper di ogni voce di menu (serve per posizionare dropdown assoluto) */
 .menu-item {
   position: relative;
 }
 
+/* .menu-link: stile del link di una voce menu (tipografia, padding, hover transition) */
 .menu-link {
   color: #fff;
   text-decoration: none;
@@ -128,20 +154,24 @@ html, body {
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
+/* .menu-link i: stile dell’icona dentro la voce menu (rotazione su hover dropdown) */
 .menu-link i {
   font-size: 14px;
   transition: transform 0.15s ease;
 }
 
+/* .menu-item.has-dropdown:hover .menu-link: hover della voce che apre dropdown (cambio colore/bg) */
 .menu-item.has-dropdown:hover .menu-link {
   background: rgba(255, 255, 255, 0.08);
   color: #06A77D;
 }
 
+/* .menu-item.has-dropdown:hover .menu-link i: ruota la “freccia” quando il dropdown è attivo */
 .menu-item.has-dropdown:hover .menu-link i {
   transform: rotate(180deg);
 }
 
+/* .dropdown: pannello dropdown desktop (posizione assoluta, stile box, animazione apertura) */
 .dropdown {
   position: absolute;
   top: 46px;
@@ -167,12 +197,14 @@ html, body {
   transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
 }
 
+/* .menu-item.has-dropdown:hover .dropdown: stato visibile del dropdown */
 .menu-item.has-dropdown:hover .dropdown {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
 }
 
+/* .dropdown a: stile link all’interno del dropdown */
 .dropdown a {
   color: #fff;
   text-decoration: none;
@@ -185,6 +217,7 @@ html, body {
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
+/* .dropdown a:hover: hover dei link nel dropdown */
 .dropdown a:hover {
   background: rgba(6, 167, 125, 0.18);
   color: #06A77D;
@@ -192,7 +225,10 @@ html, body {
 
 /* =========================
    DESKTOP SEARCH + PROFILE + REGISTER
+   - Elementi della zona destra su desktop
 ========================= */
+
+/* .search-pill: “pill” cliccabile per la ricerca (stile input finto) */
 .search-pill {
   display: flex;
   align-items: center;
@@ -210,21 +246,25 @@ html, body {
   transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
+/* .search-pill i: icona della pill di ricerca */
 .search-pill i {
   font-size: 16px;
   opacity: 0.9;
 }
 
+/* .search-pill-text: testo “placeholder” della pill */
 .search-pill-text {
   opacity: 0.9;
   font-weight: 600;
 }
 
+/* .search-pill:hover: hover della pill */
 .search-pill:hover {
   background: rgba(255, 255, 255, 0.14);
   border-color: rgba(6, 167, 125, 0.55);
 }
 
+/* .profile: bottone circolare profilo/utente */
 .profile {
   display: flex;
   align-items: center;
@@ -238,15 +278,18 @@ html, body {
   transition: background-color 0.2s ease;
 }
 
+/* .profile i: icona dentro il bottone profilo */
 .profile i {
   font-size: 22px;
   color: #fff;
 }
 
+/* .profile:hover: hover del bottone profilo */
 .profile:hover {
   background: #06A77D;
 }
 
+/* .register: bottone “Register” desktop (CTA) */
 .register {
   background: #06A77D;
   font-size: 16px;
@@ -260,8 +303,10 @@ html, body {
 
 /* =========================
    MOBILE ICON BUTTONS
-   (z-index alto => burger sempre cliccabile)
+   - Pulsanti icona (search/burger) usati in mobile
 ========================= */
+
+/* .search-icon, .hamburger: bottoni icona (dimensione tappabile, hover, z-index alto) */
 .search-icon,
 .hamburger {
   background: transparent;
@@ -283,13 +328,17 @@ html, body {
   z-index: 3001; /* ✅ sopra al menu */
 }
 
+/* .search-icon i: dimensione icona lente */
 .search-icon i {
   font-size: 20px;
 }
+
+/* .hamburger i: dimensione icona burger */
 .hamburger i {
   font-size: 28px;
 }
 
+/* .search-icon:hover, .hamburger:hover: hover dei bottoni icona */
 .search-icon:hover,
 .hamburger:hover {
   background: rgba(255, 255, 255, 0.1);
@@ -297,7 +346,10 @@ html, body {
 
 /* =========================
    MOBILE MENU (ancorato al container)
+   - Pannello menu mobile che compare sotto la navbar
 ========================= */
+
+/* .mobile-menu: pannello menu mobile (posizione assoluta, box, ombra, z-index) */
 .mobile-menu {
   position: absolute;
   top: 72px;
@@ -318,6 +370,7 @@ html, body {
   z-index: 3000; /* ✅ sopra navbar */
 }
 
+/* .mobile-menu a: link nel pannello mobile */
 .mobile-menu a {
   color: #fff;
   text-decoration: none;
@@ -328,17 +381,20 @@ html, body {
   border-radius: 10px;
 }
 
+/* .mobile-menu a:hover: hover link nel pannello mobile */
 .mobile-menu a:hover {
   background: rgba(6, 167, 125, 0.18);
   color: #06A77D;
 }
 
+/* .mobile-divider: separatore orizzontale nel menu mobile */
 .mobile-divider {
   height: 1px;
   background: rgba(255, 255, 255, 0.12);
   margin: 6px 0;
 }
 
+/* .mobile-accordion: bottone “accordion” per aprire/chiudere sottosezioni nel menu mobile */
 .mobile-accordion {
   width: 100%;
   background: transparent;
@@ -357,10 +413,12 @@ html, body {
   border-radius: 10px;
 }
 
+/* .mobile-accordion:hover: hover del bottone accordion */
 .mobile-accordion:hover {
   background: rgba(255, 255, 255, 0.06);
 }
 
+/* .mobile-submenu: contenitore della lista “figlia” dell’accordion (indent + separatore) */
 .mobile-submenu {
   display: flex;
   flex-direction: column;
@@ -372,11 +430,13 @@ html, body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.10);
 }
 
+/* .mobile-submenu a: link più piccoli dentro il submenu */
 .mobile-submenu a {
   font-size: 14px;
   opacity: 0.95;
 }
 
+/* .mobile-link: link “principale” del menu mobile con icona */
 .mobile-link {
   display: flex;
   align-items: center;
@@ -393,16 +453,19 @@ html, body {
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
+/* .mobile-link i: icona nei link mobile */
 .mobile-link i {
   font-size: 18px;
   opacity: 0.95;
 }
 
+/* .mobile-link:hover: hover link mobile */
 .mobile-link:hover {
   background: rgba(6, 167, 125, 0.18);
   color: #06A77D;
 }
 
+/* .mobile-register: bottone register nel menu mobile (full width) */
 .mobile-register {
   width: 100%;
   border: none;
@@ -420,6 +483,7 @@ html, body {
   transition: transform 0.12s ease, filter 0.12s ease;
 }
 
+/* .mobile-register:hover: micro-interazione (leggero lift + brightness) */
 .mobile-register:hover {
   filter: brightness(0.95);
   transform: translateY(-1px);
@@ -427,10 +491,16 @@ html, body {
 
 /* =========================
    VISIBILITY RULES
+   - Classi utility per mostrare/nascondere elementi in base alla viewport
 ========================= */
+
+/* .desktop-only: visibile solo in desktop (di default attivo) */
 .desktop-only { display: flex !important; }
+
+/* .mobile-only: visibile solo in mobile (di default nascosto) */
 .mobile-only  { display: none !important; }
 
+/* Media <= 900px: inverte visibilità (desktop-only off, mobile-only on) */
 @media (max-width: 900px) {
   .desktop-only { display: none !important; }
   .mobile-only  { display: flex !important; }
@@ -438,12 +508,16 @@ html, body {
 
 /* =========================
    RESPONSIVE PADDING (UNICO, NO DUPLICATI)
+   - Adatta padding navbar-container e posizione del menu mobile su diverse width
 ========================= */
+
+/* <=1200px: riduce padding e allinea il mobile-menu al nuovo padding */
 @media (max-width: 1200px) {
   .navbar-container { padding: 0 80px; }
   .mobile-menu { right: 80px; }
 }
 
+/* <=768px: padding “safe area” (notch) + resize bottoni e testo logo */
 @media (max-width: 768px) {
   .navbar-container {
     padding-left: max(16px, env(safe-area-inset-left));
@@ -465,6 +539,7 @@ html, body {
   .logo-text { font-size: 19px; }
 }
 
+/* <=420px: padding ancora più stretto e menu un filo più piccolo */
 @media (max-width: 420px) {
   .navbar-container {
     padding-left: max(12px, env(safe-area-inset-left));
@@ -481,7 +556,10 @@ html, body {
 
 /* =========================
    SEARCH OVERLAY (lasciato com’è, non confligge)
+   - Overlay e modale di ricerca (apertura con animazioni)
 ========================= */
+
+/* .search-overlay: sfondo full-screen semitrasparente + blur dietro la modale */
 .search-overlay {
   position: fixed;
   inset: 0;
@@ -497,11 +575,13 @@ html, body {
   animation: overlayFade 180ms ease-out;
 }
 
+/* keyframes overlayFade: fade-in dell’overlay */
 @keyframes overlayFade {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
+/* .search-modal: contenitore modale (dimensioni responsive, stile “card”, max-height e overflow) */
 .search-modal {
   width: min(680px, calc(100vw - 32px));
   border-radius: 16px;
@@ -522,11 +602,13 @@ html, body {
   overflow: hidden;
 }
 
+/* keyframes modalPop: ingresso della modale (pop + fade leggero) */
 @keyframes modalPop {
   from { transform: translateY(12px) scale(0.98); opacity: 0.7; }
   to { transform: translateY(0) scale(1); opacity: 1; }
 }
 
+/* .search-modal-header: header della modale (titolo a sinistra, bottone chiudi a destra) */
 .search-modal-header {
   display: flex;
   align-items: center;
@@ -534,6 +616,7 @@ html, body {
   margin-bottom: 12px;
 }
 
+/* .search-title: titolo della modale (icona + testo) */
 .search-title {
   display: flex;
   align-items: center;
@@ -543,8 +626,10 @@ html, body {
   font-family: Helvetica, Arial, sans-serif;
 }
 
+/* .search-title i: colore icona nel titolo */
 .search-title i { color: #06A77D; }
 
+/* .close-btn: bottone di chiusura della modale (stile, hover) */
 .close-btn {
   background: rgba(255,255,255,0.08);
   border: 2px solid rgba(255,255,255,0.12);
@@ -562,11 +647,13 @@ html, body {
   transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
+/* .close-btn:hover: hover bottone chiudi */
 .close-btn:hover {
   background: rgba(255,255,255,0.12);
   border-color: rgba(6,167,125,0.55);
 }
 
+/* .search-input-wrap: wrapper “input” (sfondo bianco, icona, padding, outline/box-shadow) */
 .search-input-wrap {
   display: flex;
   align-items: center;
@@ -579,8 +666,10 @@ html, body {
   box-shadow: 0 0 0 2px rgba(6,167,125,0.18);
 }
 
+/* .search-input-wrap i: icona dentro l’input */
 .search-input-wrap i { color: #06A77D; font-size: 18px; }
 
+/* .search-input-wrap input: input vero (reset bordi + tipografia) */
 .search-input-wrap input {
   border: 0;
   outline: none;
@@ -591,6 +680,7 @@ html, body {
   color: #111;
 }
 
+/* placeholder dell’input */
 .search-input-wrap input::placeholder {
   color: #8f8f8f;
   font-weight: 500;
@@ -598,8 +688,10 @@ html, body {
 
 /* =========================================
    SEARCH RESULTS (ti lascio solo 1 versione)
-   NB: avevi 3 blocchi che si sovrascrivevano
+   - Lista risultati ricerca nella modale
 ========================================= */
+
+/* .search-results: contenitore scrollabile risultati (sfondo, max-height, bordo superiore) */
 .search-results {
   margin-top: 12px;
   border-radius: 12px;
@@ -617,11 +709,13 @@ html, body {
   font-family: 'Spline Sans Mono', monospace;
 }
 
+/* .search-list: wrapper lista risultati (colonna) */
 .search-list {
   display: flex;
   flex-direction: column;
 }
 
+/* .sr-row: riga cliccabile del risultato (grid: thumb | testo | score) */
 .sr-row {
   all: unset;
   cursor: pointer;
@@ -635,10 +729,12 @@ html, body {
   background: #000;
 }
 
+/* .sr-row:hover: hover riga risultato */
 .sr-row:hover {
   background: rgba(255,255,255,0.06);
 }
 
+/* .sr-thumb: thumbnail immagine del risultato */
 .sr-thumb {
   width: 56px;
   height: 56px;
@@ -647,8 +743,10 @@ html, body {
   border: 1px solid rgba(255,255,255,0.12);
 }
 
+/* .sr-main: contenitore testo principale (min-width 0 per ellipsis corretto) */
 .sr-main { min-width: 0; }
 
+/* .sr-title: titolo risultato (ellipsis su una riga) */
 .sr-title {
   font-weight: 800;
   font-size: 18px;
@@ -659,6 +757,7 @@ html, body {
   text-overflow: ellipsis;
 }
 
+/* .sr-meta: riga meta info (tag + info) */
 .sr-meta {
   margin-top: 8px;
   display: flex;
@@ -666,6 +765,7 @@ html, body {
   gap: 10px;
 }
 
+/* .sr-tag: pill “categoria/tipo” del risultato */
 .sr-tag {
   font-size: 12px;
   font-weight: 800;
@@ -677,12 +777,14 @@ html, body {
   background: rgba(6,167,125,0.18);
 }
 
+/* .sr-info: testo secondario (anno/genere ecc.) */
 .sr-info {
   font-size: 12px;
   color: rgba(255,255,255,0.78);
   font-weight: 700;
 }
 
+/* .sr-score: box a destra con punteggio (centrato) */
 .sr-score {
   width: 44px;
   height: 44px;
@@ -697,18 +799,21 @@ html, body {
   font-size: 16px;
 }
 
+/* .sr-divider: separatore tra righe risultati */
 .sr-divider {
   height: 1px;
   background: rgba(255,255,255,0.10);
   margin: 0 14px;
 }
 
+/* .no-results: messaggio quando non ci sono risultati */
 .no-results {
   padding: 14px 12px;
   color: rgba(255,255,255,0.78);
   font-weight: 800;
 }
 
+/* Responsive risultati <=480px: compatta griglia e font */
 @media (max-width: 480px) {
   .sr-row {
     grid-template-columns: 52px 1fr 50px;
@@ -720,16 +825,23 @@ html, body {
   .sr-score { width: 42px; height: 42px; }
 }
 
+/* =========================
+   OVERRIDE MOBILE EXTRA (ULTIMO BLOCCO)
+   - Override finali specifici <=768px (forzano padding e micro-allineamenti)
+========================= */
 @media (max-width: 768px){
+  /* .navbar-container: override padding (con !important) per stringere ancora di più */
   .navbar-container{
     padding-right: max(8px, env(safe-area-inset-right)) !important;
     padding-left: 16px !important;
   }
 
+  /* .right: conferma allineamento a destra in mobile */
   .right{
     justify-content: flex-end;
   }
 
+  /* .hamburger: micro-spostamento a destra (negativo) per allineare visivamente */
   .hamburger{
     margin-right: -10px;
   }

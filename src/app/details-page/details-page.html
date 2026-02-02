@@ -15,7 +15,6 @@
       <main class="right">
         <header class="head">
 
-          <!-- prima: <div class="ratingBadge" ...> -->
           <div [ngClass]="scoreClass" *ngIf="displayScore() !== null">
             <span class="ratingValue">{{ displayScore() }}</span>
             <span class="ratingMax">/10</span>
@@ -59,12 +58,12 @@
               </a>
 
               <span class="muted" *ngIf="!platformsLoading && !platforms.length">
-      {{ kind === 'GAME' ? 'Piattaforme non disponibili.' : 'Non disponibile in streaming.' }}
-    </span>
+                {{ kind === 'GAME' ? 'Piattaforme non disponibili.' : 'Non disponibile in streaming.' }}
+              </span>
             </div>
           </div>
 
-          <!-- ✅ STATS STAGIONI / EPISODI (QUI: tra whereBox e descrizione) -->
+          <!-- ✅ STATS STAGIONI / EPISODI -->
           <p class="muted" *ngIf="kind === 'SERIES' && seriesStatsLoading">
             Caricamento stagioni/episodi...
           </p>
@@ -91,7 +90,7 @@
             Dati stagioni/episodi non disponibili.
           </p>
 
-          <!-- DESCRIZIONE (ORA VA DOPO LE STATS) -->
+          <!-- DESCRIZIONE -->
           <p class="desc">
             {{ contenuto ? (contenuto.descrizione || '') : (content?.description || '') }}
           </p>
@@ -105,13 +104,26 @@
         <!-- TRAILER -->
         <section class="trailer">
           <div class="accBody">
-
             <p class="muted" *ngIf="trailerLoading">Caricamento trailer...</p>
 
+            <!-- GAME: mp4 RAWG -->
             <div class="videoWrap" *ngIf="!trailerLoading && kind === 'GAME' && trailerMp4Url">
               <video class="video" [src]="trailerMp4Url" controls playsinline></video>
             </div>
 
+            <!-- GAME: embed YouTube (fallback) -->
+            <div class="videoWrap" *ngIf="!trailerLoading && kind === 'GAME' && !trailerMp4Url && trailerEmbed">
+              <iframe
+                class="video"
+                [src]="trailerEmbed"
+                title="Trailer"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              ></iframe>
+            </div>
+
+            <!-- MOVIE/SERIES: embed -->
             <div class="videoWrap" *ngIf="!trailerLoading && kind !== 'GAME' && trailerEmbed">
               <iframe
                 class="video"
@@ -214,7 +226,6 @@
             <ng-container *ngIf="!reviewsLoading && !reviewsError && reviews.length; else noReviews">
 
               <div class="reviews">
-                <!-- ✅ FIX: qui deve essere visibleReviews -->
                 <article class="rev" *ngFor="let r of visibleReviews">
 
                   <div class="revRow">
@@ -252,7 +263,6 @@
                 </article>
               </div>
 
-              <!-- ✅ Toggle -->
               <div class="reviewsToggle" *ngIf="hasMoreReviews">
                 <button type="button" class="btn ghost" (click)="toggleMoreReviews()">
                   {{ showAllReviews ? 'Mostra meno recensioni' : 'Mostra altre recensioni' }}

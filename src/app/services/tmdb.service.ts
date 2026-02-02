@@ -186,4 +186,111 @@ export class TmdbService {
       catchError(() => of({ seasons: 0, episodes: 0 }))
     );
   }
+
+
+  // ==============================
+// TRAILER (TMDB -> YouTube embed)
+// ==============================
+  getTrailerEmbedSmart(kind: 'MOVIE' | 'SERIES', title: string, year?: number) {
+    const q = (title ?? '').trim();
+    if (!q) return of<string | null>(null);
+
+    const isMovie = kind === 'MOVIE';
+    const searchUrl = `${this.BASE}/search/${isMovie ? 'movie' : 'tv'}`;
+
+    // filtro anno per rendere la search più precisa
+    const yearParamKey = isMovie ? 'primary_release_year' : 'first_air_date_year';
+
+    const searchParams: any = {
+      api_key: this.API_KEY,
+      query: q,
+      language: 'it-IT',
+      page: 1,
+    };
+    if (year) searchParams[yearParamKey] = String(year);
+
+    const pickId = (res: any) => Number(res?.results?.[0]?.id ?? 0) || null;
+
+    const fetchVideos = (id: number, language: string) => {
+      const videosUrl = `${this.BASE}/${isMovie ? 'movie' : 'tv'}/${id}/videos`;
+      return this.http.get<any>(videosUrl, {
+        params: { api_key: this.API_KEY, language },
+      });
+    };
+
+    const pickYoutubeKey = (res: any): string | null => {
+      const list = (res?.results ?? []) as any[];
+
+      // preferenze: YouTube + Trailer, poi Teaser
+      const yt = list.filter(v => (v?.site ?? '').toLowerCase() === 'youtube');
+
+      const isTrailer = (v: any) => (v?.type ?? '').toLowerCase() === 'trailer';
+      const isTeaser  = (v: any) => (v?.type ?? '').toLowerCase() === 'teaser';
+
+      const officialFirst = (arr: any[]) =>
+        [...arr].sort((a, b) => Number(!!b?.official) - Number(!!a?.official));
+
+      const candidates =
+        officialFirst(yt.filter(isTrailer)).length ? officialFirst(yt.filter(isTrailer)) :
+          officialFirst(yt.filter(isTeaser)).length  ? officialFirst(yt.filter(isTeaser))  :
+            officialFirst(yt);
+
+      const key = candidates?.[0]?.key;
+      return key ? String(key) : null;
+    };
+
+    const toEmbed = (key: string) => `https://www.youtube.com/embed/${key}?rel=0`;
+
+    // 1) search IT -> id
+    // 2) videos IT -> se vuoto, videos EN
+    // 3) se ancora nulla, search EN -> videos EN
+    return this.http.get<any>(searchUrl, { params: searchParams }).pipe(
+      map(pickId),
+      switchMap((id: number | null) => {
+        if (!id) return of(null);
+
+        return fetchVideos(id, 'it-IT').pipe(
+          map((vr) => pickYoutubeKey(vr)),
+          switchMap((keyIt) => {
+            if (keyIt) return of(toEmbed(keyIt));
+
+            return fetchVideos(id, 'en-US').pipe(
+              map((vr) => pickYoutubeKey(vr)),
+              map((keyEn) => (keyEn ? toEmbed(keyEn) : null)),
+              catchError(() => of(null))
+            );
+          }),
+          catchError(() => of(null))
+        );
+      }),
+      switchMap((embedItOrNull) => {
+        if (embedItOrNull) return of(embedItOrNull);
+
+        // fallback: search EN
+        const searchParamsEn: any = {
+          api_key: this.API_KEY,
+          query: q,
+          language: 'en-US',
+          page: 1,
+        };
+        if (year) searchParamsEn[yearParamKey] = String(year);
+
+        return this.http.get<any>(searchUrl, { params: searchParamsEn }).pipe(
+          map(pickId),
+          switchMap((idEn: number | null) => {
+            if (!idEn) return of(null);
+
+            return fetchVideos(idEn, 'en-US').pipe(
+              map((vr) => pickYoutubeKey(vr)),
+              map((key) => (key ? toEmbed(key) : null)),
+              catchError(() => of(null))
+            );
+          }),
+          catchError(() => of(null))
+        );
+      }),
+      catchError(() => of(null))
+    );
+  }
+
 }
