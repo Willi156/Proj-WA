@@ -6,6 +6,8 @@ import { LoginComponent } from './login/login';
 import { SignupComponent } from './signup/signup';
 import { UtenteComponent } from './utente/components/profilo utente/utente';
 import { SettingsComponent } from './utente/components/impostazioni/settings';
+import {NuovoContenutoComponent} from './nuovo-contenuto/aggiungi_contenuto';
+
 
 export const routes: Routes = [
   {
@@ -21,6 +23,7 @@ export const routes: Routes = [
   { path: 'signup', component: SignupComponent },
   { path: 'user', component: UtenteComponent },
   { path: 'settings', component: SettingsComponent },
+  { path: 'aggiungi-contenuto', component:NuovoContenutoComponent },
   { path: '**', redirectTo: '' },
 
 ];

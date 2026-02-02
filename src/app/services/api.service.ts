@@ -131,6 +131,11 @@ export class ApiService {
     return this.http.put<{ success: boolean }>(`${this.baseUrl}/api/recensioni/update/${id}`, { voto, testo, titolo, data }, { withCredentials: true });
   }
 
+  addContenuto(dati: any, categoria: string) {
+    const url = `${this.baseUrl}/api/contenuti/add/${categoria}`;
+    return this.http.post(url, dati);
+  }
+
   // Esempio per futuri endpoint:
   // getItems() { return this.http.get<Item[]>(`${this.baseUrl}/api/items`); }
   // createItem(payload: ItemCreateDto) { return this.http.post(`${this.baseUrl}/api/items`, payload); }
