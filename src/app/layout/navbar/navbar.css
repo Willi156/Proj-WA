@@ -15,7 +15,7 @@ html, body {
 /* .navbar: contenitore principale della navbar (altezza, colori, sticky, z-index) */
 .navbar {
   width: 100%;
-  height: 72px;
+  height: 80px;
   background: #000;
   color: #fff;
   padding: 0 0 60px;
@@ -35,7 +35,7 @@ html, body {
 .navbar-container {
   width: 100%;
   max-width: 100%;
-  padding: 0 150px;
+  padding: 0 170px;  /* distanza button sx e dx */
   box-sizing: border-box;
 
   position: relative;
@@ -46,7 +46,7 @@ html, body {
   gap: 24px;
 
   overflow: visible;
-  margin-top: 12px;
+  margin-top: 17px;
 }
 
 /* =========================
@@ -432,7 +432,7 @@ html, body {
 
 /* .mobile-submenu a: link più piccoli dentro il submenu */
 .mobile-submenu a {
-  font-size: 14px;
+  font-size: 16px;
   opacity: 0.95;
 }
 
@@ -513,15 +513,56 @@ html, body {
 
 /* <=1200px: riduce padding e allinea il mobile-menu al nuovo padding */
 @media (max-width: 1200px) {
-  .navbar-container { padding: 0 80px; }
+
+  .navbar {
+    width: 100%;
+    height: 90px;
+    background: #000;
+    color: #fff;
+    padding: 0 0 60px;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    font-family: Helvetica, Arial, sans-serif;
+    margin-top: -40px;
+
+    overflow-x: hidden; /* extra safety */
+    position: sticky; /* resta visibile durante lo scroll */
+    top: 0;
+    z-index: 4000;
+  }
+
+  /* .navbar-container: griglia interna della navbar (3 colonne: sinistra/centro/destra) + padding laterale */
+
+  .navbar-container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 100px;  /* distanza button sx e dx */
+    box-sizing: border-box;
+
+    position: relative;
+
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 24px;
+
+    overflow: visible;
+    margin-top: 12px;
+  }
   .mobile-menu { right: 80px; }
 }
 
 /* <=768px: padding “safe area” (notch) + resize bottoni e testo logo */
 @media (max-width: 768px) {
+  .navbar{
+    height: 80px;
+  }
   .navbar-container {
     padding-left: max(16px, env(safe-area-inset-left));
     padding-right: max(16px, env(safe-area-inset-right));
+    margin-top: 20px;
+    margin-left: 10px;
   }
 
   .mobile-menu {
@@ -826,7 +867,7 @@ html, body {
 }
 
 /* =========================
-   OVERRIDE MOBILE EXTRA (ULTIMO BLOCCO)
+   OVERRIDE MOBILE EXTRA
    - Override finali specifici <=768px (forzano padding e micro-allineamenti)
 ========================= */
 @media (max-width: 768px){
