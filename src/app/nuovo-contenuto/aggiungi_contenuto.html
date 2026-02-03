@@ -53,11 +53,11 @@
                 <div class="col-md-6">
                   <label class="small fw-bold text-muted d-block">PIATTAFORME</label>
                   <div class="btn-group flex-wrap gap-1">
-                    @for (p of listaPiattaforme; track p) {
+                    @for (p of listaPiattaformeApi; track p.id) {
                       <button class="btn btn-sm rounded-pill"
-                              [class.btn-primary]="nuovoContenuto.piattaforme.includes(p)"
-                              [class.btn-outline-secondary]="!nuovoContenuto.piattaforme.includes(p)"
-                              (click)="togglePiattaforma(p)">{{p}}</button>
+                              [class.btn-primary]="nuovoContenuto.piattaformeIds.includes(p.id)"
+                              [class.btn-outline-secondary]="!nuovoContenuto.piattaformeIds.includes(p.id)"
+                              (click)="togglePiattaforma(p.id)">{{p.nome}}</button>
                     }
                   </div>
                 </div>

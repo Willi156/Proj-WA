@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../services/api.service';
@@ -11,8 +11,9 @@ import { Router } from '@angular/router';
   templateUrl: './aggiungi_contenuto.html',
   styleUrl: './aggiungi_contenuto.css'
 })
-export class NuovoContenutoComponent {
+export class NuovoContenutoComponent implements OnInit {
   tipoSelezionato: string = '';
+  listaPiattaformeApi: any[] = []; // Per le piattaforme dal DB
 
   nuovoContenuto: any = {
     titolo: '',
@@ -20,23 +21,31 @@ export class NuovoContenutoComponent {
     descrizione: '',
     genere: '',
     link: '',
+    immagine: '',
     casaEditrice: '',
     casaProduttrice: '',
-    piattaforme: [],
+    piattaformeIds: [], // Useremo gli ID
     inCorso: false,
     stagioni: 1
   };
 
-  listaPiattaforme: string[] = ['PC', 'PS5', 'Xbox', 'Switch'];
-
   constructor(private api: ApiService, private router: Router) {}
 
-  togglePiattaforma(p: string) {
-    const index = this.nuovoContenuto.piattaforme.indexOf(p);
+  ngOnInit() {
+    this.api.getPiattaformeWithIds().subscribe({
+      next: (res) => {
+        this.listaPiattaformeApi = res.filter(p => p.nome.toLowerCase() !== 'mobile');
+      },
+      error: (err) => console.error('Errore recupero piattaforme:', err)
+    });
+  }
+
+  togglePiattaforma(id: number) {
+    const index = this.nuovoContenuto.piattaformeIds.indexOf(id);
     if (index > -1) {
-      this.nuovoContenuto.piattaforme.splice(index, 1);
+      this.nuovoContenuto.piattaformeIds.splice(index, 1);
     } else {
-      this.nuovoContenuto.piattaforme.push(p);
+      this.nuovoContenuto.piattaformeIds.push(id);
     }
   }
 
@@ -46,9 +55,25 @@ export class NuovoContenutoComponent {
       return;
     }
 
-    this.api.addContenuto(this.nuovoContenuto, this.tipoSelezionato).subscribe({
-      next: () => {
-        alert("Contenuto aggiunto con successo!");
+    let tipoDb = this.tipoSelezionato.toUpperCase();
+    if (tipoDb === 'SERIE') tipoDb = 'SERIE_TV';
+
+    this.api.createContenuto(
+      this.nuovoContenuto.titolo,
+      this.nuovoContenuto.descrizione,
+      this.nuovoContenuto.genere,
+      this.nuovoContenuto.link,
+      tipoDb,
+      this.nuovoContenuto.anno,
+      this.nuovoContenuto.immagine,
+      this.tipoSelezionato === 'film' ? this.nuovoContenuto.casaProduttrice : undefined,
+      this.tipoSelezionato === 'gioco' ? this.nuovoContenuto.casaEditrice : undefined,
+      this.tipoSelezionato === 'serie' ? this.nuovoContenuto.inCorso : undefined,
+      this.tipoSelezionato === 'serie' ? this.nuovoContenuto.stagioni : undefined,
+      this.tipoSelezionato === 'gioco' ? this.nuovoContenuto.piattaformeIds : undefined
+    ).subscribe({
+      next: (res) => {
+        alert("Contenuto aggiunto con successo! ID: " + res.id);
         this.router.navigate(['/user']);
       },
       error: (err) => alert("Errore nel salvataggio")

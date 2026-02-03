@@ -131,10 +131,17 @@ export class ApiService {
     return this.http.put<{ success: boolean }>(`${this.baseUrl}/api/recensioni/update/${id}`, { voto, testo, titolo, data }, { withCredentials: true });
   }
 
-  addContenuto(dati: any, categoria: string) {
-    const url = `${this.baseUrl}/api/contenuti/add/${categoria}`;
-    return this.http.post(url, dati);
+  createContenuto(titolo: string, descrizione: string, genere: string, link: string, tipo: string, annoPubblicazione: number, imageLink: string, casaProduzione?: string, casaEditrice?: string, inCorso?: boolean, stagioni?: number, piattaformaIds?: number[]) {
+    return this.http.post<{ id: number }>(`${this.baseUrl}/api/newContenuto`,
+      { titolo, descrizione, genere, link, tipo, annoPubblicazione, casaProduzione, casaEditrice, inCorso, stagioni, imageLink, piattaformaIds },
+      { withCredentials: true }
+    );
   }
+
+  getPiattaformeWithIds() {
+    return this.http.get<any[]>(`${this.baseUrl}/api/piattaforme/complete`, { withCredentials: true });
+  }
+
 
   // Esempio per futuri endpoint:
   // getItems() { return this.http.get<Item[]>(`${this.baseUrl}/api/items`); }
