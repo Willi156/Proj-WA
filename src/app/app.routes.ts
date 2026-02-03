@@ -6,7 +6,10 @@ import { LoginComponent } from './login/login';
 import { SignupComponent } from './signup/signup';
 import { UtenteComponent } from './utente/components/profilo utente/utente';
 import { SettingsComponent } from './utente/components/impostazioni/settings';
-import {GamesNewReleasesComponent} from './games/components/pages/games-new-releases/games-new-releases.component';
+import { GamesNewReleasesComponent } from './games/components/pages/games-new-releases/games-new-releases.component';
+import { GamesUpcomingComponent } from './games/components/pages/games-upcoming/games-upcoming.component';
+import { GamesBestComponent } from './games/components/pages/games-best-games/games-best-games';
+
 
 export const routes: Routes = [
   {
@@ -17,6 +20,8 @@ export const routes: Routes = [
   },
   { path: 'games', component: GameHomeComponent },
   { path: 'games/new-releases', component: GamesNewReleasesComponent },
+  { path: 'games/upcoming', component: GamesUpcomingComponent },
+  { path: 'games/best-games', component: GamesBestComponent },
   { path: 'movies', component: FilmPageComponent },
   { path: 'series', component: SeriePageComponent },
   { path: 'login', component: LoginComponent },
@@ -24,5 +29,4 @@ export const routes: Routes = [
   { path: 'user', component: UtenteComponent },
   { path: 'settings', component: SettingsComponent },
   { path: '**', redirectTo: 'home' },
-
 ];

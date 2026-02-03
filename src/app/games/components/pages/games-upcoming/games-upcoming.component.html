@@ -1,33 +1,29 @@
 <div class="page-container">
-  <header class="page-header">
-    <h1 class="page-title">
-      <ng-container *ngIf="isDefaultView; else filteredTitle">
-        I tuoi nuovi giochi ti aspettano!
-      </ng-container>
-      <ng-template #filteredTitle>
-        Tutti i giochi del – {{ selectedYear }}
-      </ng-template>
-    </h1>
 
+  <!-- HEADER -->
+  <header class="page-header">
+    <h1 class="page-title">Upcoming Games</h1>
     <p class="page-subtitle">
-      <ng-container *ngIf="isDefaultView; else filteredSubtitle">
-        Trova la tua nuova avventura!
-      </ng-container>
-      <ng-template #filteredSubtitle>
-        Giochi pubblicati nel {{ selectedYear }}.
-      </ng-template>
+      Games coming soon. Stay tuned 🎮
     </p>
   </header>
 
   <div class="page-content">
 
+    <!-- FILTERS -->
     <aside class="filters">
 
       <div class="filters-header">Filtri</div>
 
+      <!-- YEAR -->
       <div class="filter-header-row">
-        <h4 class="filter-title">Anno di rilascio</h4>
-        <button class="filter-reset" *ngIf="isYearFilterActive" (click)="resetYearFilter()">RESET</button>
+        <h4 class="filter-title">Release Year</h4>
+        <button
+          class="filter-reset"
+          *ngIf="isYearFilterActive"
+          (click)="resetYearFilter()">
+          RESET
+        </button>
       </div>
 
       <div class="year-slider">
@@ -55,6 +51,7 @@
         </div>
       </div>
 
+      <!-- PLATFORMS -->
       <div class="filter-block">
         <div class="filter-header-row">
           <h4 class="filter-title">Platforms</h4>
@@ -75,6 +72,7 @@
         </label>
       </div>
 
+      <!-- GENRES -->
       <div class="filter-block">
         <div class="filter-header-row">
           <h4 class="filter-title">Genres</h4>
@@ -93,78 +91,36 @@
             (change)="toggleGenre(genre, $any($event.target).checked)" />
           {{ genre }}
         </label>
-
-
       </div>
 
     </aside>
 
+    <!-- RESULTS -->
     <section class="results">
 
       <ng-container *ngIf="games$ | async as games">
 
         <div class="results-header">
-
-  <span class="results-count">
-    {{ games.length }} results
-  </span>
-          <div class="sort-controls">
-
-            <select
-              class="sort-select"
-              [ngModel]="sortValue"
-              (ngModelChange)="changeSort($event)">
-              <option value="date">Anno di uscita</option>
-              <option value="score">Criti-Score</option>
-            </select>
-
-            <div class="sort-arrows">
-
-              <div class="arrow-wrapper">
-                <button
-                  class="arrow-btn"
-                  [class.active]="sortDirection === 'asc'"
-                  (click)="setSortDirection('asc')">
-                  ↑
-                </button>
-
-                <div class="arrow-tooltip tooltip-top">
-                  {{ sortValue === 'date' ? 'Anno' : 'Criti-Score' }} – Crescente
-                </div>
-              </div>
-
-              <div class="arrow-wrapper">
-                <button
-                  class="arrow-btn"
-                  [class.active]="sortDirection === 'desc'"
-                  (click)="setSortDirection('desc')">
-                  ↓
-                </button>
-
-                <div class="arrow-tooltip tooltip-bottom">
-                  {{ sortValue === 'date' ? 'Anno' : 'Criti-Score' }} – Decrescente
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-
-
+          <span class="results-count">
+            {{ games.length }} results
+          </span>
         </div>
 
+        <!-- GRID -->
         <div class="games-grid" *ngIf="games.length > 0">
           <app-game-card
             *ngFor="let game of games"
             [game]="game"
-            [mode]="sortValue">
+            variant="upcoming">
           </app-game-card>
         </div>
 
+        <!-- NO RESULTS -->
         <p *ngIf="games.length === 0" class="no-results">
-          Nessun gioco trovato.
+          No upcoming games found.
         </p>
 
+        <!-- PAGINATION -->
         <div class="pagination" *ngIf="pages.length > 1">
           <button
             *ngFor="let page of pages"
@@ -174,7 +130,10 @@
             {{ page }}
           </button>
         </div>
+
       </ng-container>
+
     </section>
+
   </div>
 </div>

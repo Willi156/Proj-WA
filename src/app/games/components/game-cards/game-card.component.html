@@ -2,34 +2,41 @@
 
   <img
     class="poster"
-    [src]="game.imageLink || '/placeholder.png'"
+    [src]="game.imageLink || 'assets/placeholders/game-placeholder.svg'"
     alt="{{ game.titolo }}"
   />
 
-  <div class="info">
-    <div class="title">{{ game.titolo }}</div>
+  <div class="card-body">
+    <h3 class="title">{{ game.titolo }}</h3>
 
-    <div class="meta">
+    <!-- UPCOMING -->
+    <ng-container *ngIf="variant === 'upcoming'">
+      <span class="badge-coming">COMING SOON</span>
+      <p class="release-date">
+        Release: {{ game.annoPubblicazione || 'TBA' }}
+      </p>
+    </ng-container>
+
+    <!-- DEFAULT (new releases / games) -->
+    <ng-container *ngIf="variant === 'default'">
 
       <!-- RELEASE DATE -->
-      <ng-container *ngIf="mode === 'date'">
-    <span class="release-date">
-      {{ game.annoPubblicazione || 'TBA' }}
-    </span>
-      </ng-container>
+      <span *ngIf="mode === 'date'" class="release-date">
+        {{ game.annoPubblicazione || 'TBA' }}
+      </span>
 
       <!-- METASCORE -->
       <ng-container *ngIf="mode === 'score'">
-    <span class="score" [ngClass]="scoreClass">
-      {{ game.mediaVoti }}
-    </span>
+  <span class="score" [ngClass]="scoreClass">
+    {{ scoreValue ?? '-' }}
+  </span>
         <span class="label">
-      {{ scoreLabel }}
-    </span>
+    {{ scoreLabel }}
+  </span>
       </ng-container>
 
-    </div>
+
+    </ng-container>
 
   </div>
-
 </div>

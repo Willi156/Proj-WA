@@ -67,16 +67,9 @@ export class ApiService {
   getRecensioniByUserId(userId: number) {
     return this.http.get<any[]>(`${this.baseUrl}/api/recensioni/utente/${userId}`);
   }
+
+  getGeneriGiochi() {return this.http.get<string[]>(`${this.baseUrl}/api/contenuti/giochi/generi`);}
   getPiattaformeName(){return this.http.get<string[]> (`${this.baseUrl}/api/piattaforme/nomi`);}
-
-
-
-
-
-
-
-
-
 
 
 
