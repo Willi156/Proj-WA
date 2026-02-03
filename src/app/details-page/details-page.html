@@ -15,28 +15,46 @@
       <main class="right">
         <header class="head">
 
-          <div [ngClass]="scoreClass" *ngIf="displayScore() !== null">
-            <span class="ratingValue">{{ displayScore() }}</span>
-            <span class="ratingMax">/10</span>
-          </div>
+          <div class="headRow">
+            <h1 class="title">
+              {{ contenuto ? (contenuto.titolo || 'Senza titolo') : (content?.title || 'Senza titolo') }}
+            </h1>
 
-          <h1 class="title">
-            {{ contenuto ? (contenuto.titolo || 'Senza titolo') : (content?.title || 'Senza titolo') }}
-          </h1>
+            <!-- ⭐ STAR + SCORE a destra -->
+            <div class="headTop">
+              <button
+                *ngIf="isLoggedIn"
+                type="button"
+                class="favStar"
+                [class.is-on]="isFavorite"
+                (click)="toggleFavorite()"
+                aria-label="Aggiungi o rimuovi dai preferiti"
+                [attr.aria-pressed]="isFavorite"
+                title="Aggiungi ai Preferiti"
+              >
+                ★
+              </button>
+
+              <div [ngClass]="scoreClass" *ngIf="displayScore() !== null">
+                <span class="ratingValue">{{ displayScore() }}</span>
+                <span class="ratingMax">/10</span>
+              </div>
+            </div>
+          </div>
 
           <div class="meta">
             <div class="chip">
               <span class="label">Anno</span>
               <span class="value">
-                {{ contenuto ? (contenuto.annoPubblicazione ?? '—') : (content?.year ?? '—') }}
-              </span>
+        {{ contenuto ? (contenuto.annoPubblicazione ?? '—') : (content?.year ?? '—') }}
+      </span>
             </div>
 
             <div class="chip">
               <span class="label">Genere</span>
               <span class="value">
-                {{ contenuto ? (contenuto.genere || '—') : (content?.genre || '—') }}
-              </span>
+        {{ contenuto ? (contenuto.genere || '—') : (content?.genre || '—') }}
+      </span>
             </div>
           </div>
 
@@ -58,11 +76,10 @@
               </a>
 
               <span class="muted" *ngIf="!platformsLoading && !platforms.length">
-                {{ kind === 'GAME' ? 'Piattaforme non disponibili.' : 'Non disponibile in streaming.' }}
-              </span>
+        {{ kind === 'GAME' ? 'Piattaforme non disponibili.' : 'Non disponibile in streaming.' }}
+      </span>
             </div>
           </div>
-
           <!-- ✅ STATS STAGIONI / EPISODI -->
           <p class="muted" *ngIf="kind === 'SERIES' && seriesStatsLoading">
             Caricamento stagioni/episodi...

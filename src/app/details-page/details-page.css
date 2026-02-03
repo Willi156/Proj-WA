@@ -34,6 +34,7 @@
   border-radius: 16px;
   box-shadow: 0 16px 40px rgba(0,0,0,.25);
   transform: translateZ(0);
+  margin-top: 30px;
 }
 
 /* .right: colonna destra (contenuti) con min-width 0 per evitare overflow in grid/flex */
@@ -1106,3 +1107,111 @@
     white-space: normal;
   }
 }
+
+
+/* =========================
+   ⭐ STAR + SCORE
+   - stessa riga (stella a sinistra, score attaccato)
+========================= */
+
+.headTop{
+  display: inline-flex;     /* resta “in linea” sopra al titolo */
+  align-items: center;
+  gap: 6px;
+  margin: 2px 5px 0;
+}
+
+/* ⭐ stella preferiti: bordo giallo spesso, interno bianco */
+.favStar{
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+
+  margin-right: 15px;
+  margin-bottom: 5px;
+
+  font-size: 50px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+
+  /* interno bianco */
+  color: #ffffff;
+
+  /* bordo giallo spesso (Chrome/Safari) */
+  -webkit-text-stroke: 3px #ffd54a;
+
+  /* fallback (Firefox): “bordo” simulato */
+  text-shadow:
+    2px 0 0 #ffd54a,
+    -2px 0 0 #ffd54a,
+    0 2px 0 #ffd54a,
+    0 -2px 0 #ffd54a,
+    1.5px 1.5px 0 #ffd54a,
+    -1.5px 1.5px 0 #ffd54a,
+    1.5px -1.5px 0 #ffd54a,
+    -1.5px -1.5px 0 #ffd54a;
+}
+
+/* hover: tutta gialla (riempi giallo, bordo sempre giallo) */
+.favStar:hover{
+  color: #ffd54a;
+}
+
+/* stato ON: tutta gialla + glow */
+.favStar.is-on{
+  color: #ffd54a;
+  -webkit-text-stroke: 3px #ffd54a;
+  text-shadow: 0 0 8px rgba(255, 213, 74, 0.55);
+}
+
+
+
+/* =========================
+   HEADER ROW: title a sinistra, star+score a destra
+========================= */
+
+.headRow{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-width: 0;
+}
+
+/* titolo deve poter “stringersi” senza spaccare il layout */
+.title{
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0 5px 0;
+}
+
+/* container destro (stella + score) */
+.headTop{
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0; /* azzera il tuo margin vecchio */
+}
+
+/* IMPORTANTISSIMO: il badge non deve essere assoluto */
+.ratingBadge{
+  position: static;
+  display: inline-flex;
+  align-items: baseline;
+}
+
+/* mobile: impila per non schiacciare troppo */
+@media (max-width: 920px){
+  .headRow{
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .headTop{
+    align-self: flex-end;
+  }
+}
+

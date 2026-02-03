@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
-import { RawgService, TrailerPick } from '../services/rawg.service';
+import { RawgService } from '../services/rawg.service';
 import { ApiService } from '../services/api.service';
 import { TmdbService } from '../services/tmdb.service';
 
@@ -16,9 +16,6 @@ import { IContenuto } from '../features/home/pages/home-page/IContenuto';
 
 type OpenSection = 'trailer' | 'write' | 'list' | null;
 
-/**
- * Modello recensione come arriva dal backend (mappata in UI)
- */
 type Review = {
   id: number;
   idUtente: number;
@@ -42,7 +39,9 @@ type Review = {
   styleUrl: './details-page.css',
 })
 export class DetailsPageComponent {
-  // Stato pagina
+  // ======================
+  // STATO PAGINA
+  // ======================
   loading = true;
   error = '';
 
@@ -58,6 +57,13 @@ export class DetailsPageComponent {
   content: MockContent | null = null;
 
   // ======================
+  // ⭐ PREFERITI / AUTH
+  // ======================
+  isLoggedIn = false;          // true se /api/auth/me restituisce utente
+  isFavorite = false;          // true se contenuto presente nei preferiti
+  private currentUserId: number | null = null;  // id utente loggato (se presente)
+
+  // ======================
   // RECENSIONI
   // ======================
   reviews: Review[] = [];
@@ -66,25 +72,9 @@ export class DetailsPageComponent {
   reviewsPosting = false;
   reviewsPostError = '';
 
-  // UI: prime 5 + toggle
   readonly initialReviewsCount = 5;
   showAllReviews = false;
-
-  // Accordion aperto di default: recensioni
   openSection: OpenSection = 'list';
-
-  displayScore(): number | null {
-    const raw =
-      this.contenuto?.mediaVoti !== undefined
-        ? Number(this.contenuto.mediaVoti ?? 0)
-        : Number((this.content as any)?.rating ?? NaN);
-
-    if (!Number.isFinite(raw)) return null;
-
-    const clamped = Math.max(1, Math.min(10, raw));
-    return Math.round(clamped * 10) / 10;
-  }
-
 
   // ======================
   // TRAILER
@@ -131,131 +121,36 @@ export class DetailsPageComponent {
     private tmdb: TmdbService,
     @Inject(PLATFORM_ID) platformId: object
   ) {
-    // serve per evitare window/history in SSR
+    // ✅ evita usare window/localStorage se SSR
     this.isBrowser = isPlatformBrowser(platformId);
   }
 
-  /**
-   * ✅ FIX PRINCIPALE:
-   * In Angular, quando navighi su "stessa pagina" (Details) cambiando solo params (kind/id),
-   * il componente può essere RIUSATO => ngOnInit non si rilancia con snapshot.
-   *
-   * Qui ascoltiamo i parametri e ricarichiamo SEMPRE i dati quando cambiano.
-   */
-  ngOnInit() {
-    this.route.paramMap.subscribe((pm) => {
-      const kindParam = (pm.get('kind') || 'GAME').toUpperCase();
-      const idParam = pm.get('id') || '0';
-
-      this.kind = (['GAME', 'MOVIE', 'SERIES'] as const).includes(kindParam as any)
-        ? (kindParam as any)
-        : 'GAME';
-
-      this.id = Number(idParam) || 0;
-
-      // reset completo della pagina (evita che restino dati vecchi)
-      this.resetPageState();
-
-      // prendo eventuale contenuto passato via navigation state (se c'è)
-      const navState = this.router.getCurrentNavigation()?.extras?.state as any;
-      const passed =
-        (navState?.contenuto as IContenuto) ??
-        (this.isBrowser ? ((window.history.state?.contenuto as IContenuto) ?? null) : null);
-
-      // carico tutto
-      this.loadPage(passed);
-    });
-  }
-
-  /**
-   * Resetta tutti gli stati/dati quando cambia contenuto (navigazione details->details).
-   * Così non rimangono badge/recensioni/trailer vecchi in UI.
-   */
-  private resetPageState() {
-    this.loading = true;
-    this.error = '';
-
-    this.whereText = '—';
-
-    this.contenuto = null;
-    this.content = null;
-
-    // reviews
-    this.reviews = [];
-    this.reviewsLoading = false;
-    this.reviewsError = '';
-    this.reviewsPosting = false;
-    this.reviewsPostError = '';
-    this.showAllReviews = false;
-
-    // se vuoi, quando cambi contenuto riapro sempre la lista
-    this.openSection = 'list';
-
-    // trailer
-    this.trailerEmbed = undefined;
-    this.trailerMp4Url = undefined;
-    this.trailerLoading = false;
-    this.trailerError = '';
-
-    // platforms
-    this.platforms = [];
-    this.platformsLoading = false;
-    this.platformsError = '';
-
-    // stats serie
-    this.seriesSeasons = 0;
-    this.seriesEpisodes = 0;
-    this.seriesStatsLoading = false;
-  }
-
-  /**
-   * Carica la pagina:
-   * - se "passed" esiste => uso quello (contenuto DB passato da search/dashboard)
-   * - altrimenti => mock fallback (come facevi già)
-   */
-  private loadPage(passed: IContenuto | null) {
-    // Se ho un contenuto dal DB passato dalla pagina precedente
-    if (passed) {
-      this.contenuto = passed;
-      this.content = null;
-
-      this.setupWhereText();
-
-      this.loadPlatforms();
-      this.loadSeriesStatsFromApi();
-      this.loadTrailer();
-      this.loadReviewsFromApi();
-
-      this.loading = false;
-      this.error = '';
-      this.zone.run(() => this.cdr.markForCheck());
-      return;
-    }
-
-    // fallback: dati mock
-    this.loadFromMock();
-  }
-
   // ======================
-  // SCORE BADGE (COLORS)
+  // SCORE DISPLAY
   // ======================
+  displayScore(): number | null {
+    // 1) se arriva dal DB: mediaVoti
+    // 2) se arriva dai mock: rating
+    const raw =
+      this.contenuto?.mediaVoti !== undefined
+        ? Number(this.contenuto.mediaVoti ?? 0)
+        : Number((this.content as any)?.rating ?? NaN);
 
-  /**
-   * Restituisce lo score usato dal badge (numero tra 1 e 10, o 0 se nullo)
-   * Serve per calcolare la classe colore.
-   */
+    // Se non è un numero valido -> non mostro nulla
+    if (!Number.isFinite(raw)) return null;
+
+    // Clamp 1..10 e arrotondo a 1 decimale
+    const clamped = Math.max(1, Math.min(10, raw));
+    return Math.round(clamped * 10) / 10;
+  }
+
   get score(): number {
+    // Score numerico usato dal badge (se null => 0)
     return this.displayScore() ?? 0;
   }
 
-  /**
-   * Logica colore badge:
-   * - >= 6 green
-   * - >= 5 blue
-   * - >= 4 yellow
-   * - >= 1 orange
-   */
   get scoreClass(): string {
+    // Calcolo classe colore badge basata sul punteggio
     const s = this.score;
     if (s >= 6.0) return 'ratingBadge score score-green';
     if (s >= 5.0) return 'ratingBadge score score-blue';
@@ -265,44 +160,259 @@ export class DetailsPageComponent {
   }
 
   // ======================
-  // REVIEWS: PRIME 5 + TOGGLE
+  // INIT
+  // ======================
+  ngOnInit() {
+    // ✅ ascolto parametri route: se vai details->details cambia id/kind e ricarico tutto
+    this.route.paramMap.subscribe((pm) => {
+      // Leggo kind e id
+      const kindParam = (pm.get('kind') || 'GAME').toUpperCase();
+      const idParam = pm.get('id') || '0';
+
+      // Normalizzo kind
+      this.kind = (['GAME', 'MOVIE', 'SERIES'] as const).includes(kindParam as any)
+        ? (kindParam as any)
+        : 'GAME';
+
+      // Normalizzo id
+      this.id = Number(idParam) || 0;
+
+      // Reset stati (evita glitch con dati vecchi)
+      this.resetPageState();
+
+      // Se arrivo dalla home/search passo già tutto il contenuto nello state
+      const navState = this.router.getCurrentNavigation()?.extras?.state as any;
+      const passed =
+        (navState?.contenuto as IContenuto) ??
+        (this.isBrowser ? ((window.history.state?.contenuto as IContenuto) ?? null) : null);
+
+      // Carico contenuto + trailer + piattaforme + recensioni
+      this.loadPage(passed);
+
+      // ⭐ Ogni volta che cambia contenuto: ricalcolo auth + preferiti
+      this.checkAuthAndFav();
+    });
+  }
+
+  private resetPageState() {
+    // Reset stato pagina
+    this.loading = true;
+    this.error = '';
+
+    this.whereText = '—';
+
+    // Reset contenuti
+    this.contenuto = null;
+    this.content = null;
+
+    // ⭐ Reset auth/fav
+    this.isLoggedIn = false;
+    this.isFavorite = false;
+    this.currentUserId = null;
+
+    // Reset reviews
+    this.reviews = [];
+    this.reviewsLoading = false;
+    this.reviewsError = '';
+    this.reviewsPosting = false;
+    this.reviewsPostError = '';
+    this.showAllReviews = false;
+    this.openSection = 'list';
+
+    // Reset trailer
+    this.trailerEmbed = undefined;
+    this.trailerMp4Url = undefined;
+    this.trailerLoading = false;
+    this.trailerError = '';
+
+    // Reset platforms
+    this.platforms = [];
+    this.platformsLoading = false;
+    this.platformsError = '';
+
+    // Reset stats serie
+    this.seriesSeasons = 0;
+    this.seriesEpisodes = 0;
+    this.seriesStatsLoading = false;
+  }
+
+  private loadPage(passed: IContenuto | null) {
+    // Se ho un contenuto del DB passato dallo state, lo uso subito
+    if (passed) {
+      this.contenuto = passed;
+      this.content = null;
+
+      // Set label "where"
+      this.setupWhereText();
+
+      // Caricamenti secondari
+      this.loadPlatforms();
+      this.loadSeriesStatsFromApi();
+      this.loadTrailer();
+      this.loadReviewsFromApi();
+
+      // Fine loading
+      this.loading = false;
+      this.error = '';
+      this.zone.run(() => this.cdr.markForCheck());
+      return;
+    }
+
+    // Altrimenti fallback ai mock
+    this.loadFromMock();
+  }
+
+  // ======================
+  // ⭐ AUTH + PREFERITI
   // ======================
 
-  /**
-   * Restituisce le recensioni visibili:
-   * - se showAllReviews=true => tutte
-   * - altrimenti => prime 5
-   */
+  private getCurrentContentId(): number {
+    // Id contenuto corrente (route param)
+    return Number(this.id ?? 0);
+  }
+
+  private favLocalKey(uid: number): string {
+    // ✅ fallback locale (solo finché manca endpoint ADD)
+    // separo per utente e per tipo (GAME/MOVIE/SERIES) per evitare mix strani
+    return `favLocal:${uid}:${this.kind}`;
+  }
+
+  private readLocalFavs(uid: number): Set<number> {
+    // Legge da localStorage e ritorna set di contenutoId
+    if (!this.isBrowser) return new Set<number>();
+
+    try {
+      const raw = localStorage.getItem(this.favLocalKey(uid));
+      const arr = raw ? (JSON.parse(raw) as any[]) : [];
+      return new Set(
+        (arr ?? [])
+          .map((n) => Number(n))
+          .filter((n) => Number.isFinite(n) && n > 0)
+      );
+    } catch {
+      return new Set<number>();
+    }
+  }
+
+  private writeLocalFavs(uid: number, set: Set<number>) {
+    // Scrive set in localStorage
+    if (!this.isBrowser) return;
+    localStorage.setItem(this.favLocalKey(uid), JSON.stringify(Array.from(set)));
+  }
+
+  private checkAuthAndFav() {
+    // 1) Reset visivo iniziale (stella nascosta se non loggato)
+    this.isLoggedIn = false;
+    this.isFavorite = false;
+    this.currentUserId = null;
+
+    // 2) Chiamo /api/auth/me per capire se sono autenticato
+    this.api.getCurrentUserInfo().pipe(
+      timeout(8000),
+      catchError(() => of(null))
+    ).subscribe((me: any) => {
+      // Backend può restituire {user:{...}} oppure direttamente {...}
+      const user = me?.user ?? me;
+      const uid = Number(user?.id ?? 0);
+
+      // Se uid è valido, l'utente è loggato
+      this.isLoggedIn = !!uid;
+      this.currentUserId = uid || null;
+
+      // Se NON loggato: stop, non mostro stella e non controllo preferiti
+      if (!this.isLoggedIn || !this.currentUserId) {
+        this.zone.run(() => this.cdr.markForCheck());
+        return;
+      }
+
+      // 3) Se loggato: scarico preferiti dal backend (metodo già esistente)
+      this.api.getFavouritesMediaByUserId(uid).pipe(
+        timeout(8000),
+        catchError(() => of([]))
+      ).subscribe((list: any[]) => {
+        const cid = this.getCurrentContentId();
+
+        // Controllo se il contenuto è già nei preferiti DB
+        const inDb = (list ?? []).some((x: any) => {
+          // Robust: backend potrebbe chiamare il campo in modi diversi
+          const favId =
+            Number(x?.idContenuto ?? 0) ||
+            Number(x?.contenutoId ?? 0) ||
+            Number(x?.id ?? 0);
+
+          return favId === cid;
+        });
+
+        // 4) Fallback: controllo anche localStorage (solo perché manca ADD nel backend)
+        const local = this.readLocalFavs(uid).has(cid);
+
+        // Se è in uno dei due: stella piena
+        this.isFavorite = inDb || local;
+
+        this.zone.run(() => this.cdr.markForCheck());
+      });
+    });
+  }
+
+  toggleFavorite() {
+    // Se non loggato: non faccio nulla (la stella nemmeno dovrebbe esserci)
+    if (!this.isLoggedIn || !this.currentUserId) return;
+
+    const uid = this.currentUserId;
+    const contenutoId = this.getCurrentContentId();
+    if (!contenutoId) return;
+
+    // CASO A) È GIÀ PREFERITO -> RIMUOVO
+    if (this.isFavorite) {
+      // Provo a rimuovere dal DB (endpoint esiste già)
+      this.api.removeMediaFromFavourites(uid, contenutoId).pipe(
+        timeout(8000),
+        catchError(() => of(null))
+      ).subscribe(() => {
+        // In ogni caso tolgo anche dal localStorage (per coerenza)
+        const s = this.readLocalFavs(uid);
+        s.delete(contenutoId);
+        this.writeLocalFavs(uid, s);
+
+        // Aggiorno UI
+        this.isFavorite = false;
+        this.zone.run(() => this.cdr.markForCheck());
+      });
+
+      return;
+    }
+
+    // CASO B) NON È PREFERITO -> AGGIUNGO (fallback locale perché manca backend)
+    // ✅ qui quando avrete endpoint ADD, sostituisci con chiamata API reale
+    const s = this.readLocalFavs(uid);
+    s.add(contenutoId);
+    this.writeLocalFavs(uid, s);
+
+    this.isFavorite = true;
+    this.zone.run(() => this.cdr.markForCheck());
+  }
+
+  // ======================
+  // REVIEWS
+  // ======================
   get visibleReviews(): Review[] {
+    // Se showAllReviews true -> tutte, altrimenti prime N
     if (this.showAllReviews) return this.reviews;
     return this.reviews.slice(0, this.initialReviewsCount);
   }
 
-  /**
-   * True se ci sono più di 5 recensioni (mostra il bottone toggle)
-   */
   get hasMoreReviews(): boolean {
+    // true se il numero totale supera quelle iniziali
     return this.reviews.length > this.initialReviewsCount;
   }
 
-  /**
-   * Toggle mostra altre / mostra meno recensioni
-   */
   toggleMoreReviews() {
+    // Toggle mostra più / mostra meno
     this.showAllReviews = !this.showAllReviews;
   }
 
-  // ======================
-  // LOAD REVIEWS DAL DB
-  // ======================
-
-  /**
-   * Carica le recensioni dal backend per contenutoId = this.id
-   * - gestisce loading/error
-   * - mappa il formato DB in formato UI
-   * - ordina newest-first (id desc)
-   */
   private loadReviewsFromApi() {
+    // Inizio loading recensioni
     this.reviewsLoading = true;
     this.reviewsError = '';
     this.reviews = [];
@@ -313,35 +423,33 @@ export class DetailsPageComponent {
       return;
     }
 
+    // Chiamo endpoint recensioni per contenuto
     this.api.getRecensioniByContenutoId(contenutoId).pipe(
       timeout(10000),
       catchError((err) => {
+        // Se errore: mostro messaggio e torno lista vuota
         console.error('getRecensioniByContenutoId error', err);
         this.reviewsError = 'Errore nel caricamento recensioni.';
         return of([] as any[]);
       }),
       finalize(() => {
+        // Fine loading (sempre)
         this.reviewsLoading = false;
         this.zone.run(() => this.cdr.markForCheck());
       })
     ).subscribe((list: any[]) => {
-      // DEBUG utile: vedere raw
-      if (list && list.length > 0) console.log('RECENSIONE RAW (prima):', list[0]);
-
+      // Mappo dal formato DB al formato UI
       this.reviews = (list ?? []).map((r) => this.mapReviewFromDb(r));
 
-      // newest first
+      // Ordino newest-first
       this.reviews = [...this.reviews].sort((a, b) => (b.id ?? 0) - (a.id ?? 0));
 
       this.zone.run(() => this.cdr.markForCheck());
     });
   }
 
-  /**
-   * Converte un oggetto recensione del DB (titolo/testo/voto/data/username/immagineProfilo)
-   * in un oggetto Review usabile dalla UI.
-   */
   private mapReviewFromDb(r: any): Review {
+    // Converte una recensione DB in un oggetto Review per la UI
     return {
       id: Number(r?.id ?? 0),
       idUtente: Number(r?.idUtente ?? 0),
@@ -358,31 +466,23 @@ export class DetailsPageComponent {
     };
   }
 
-  /**
-   * Normalizza la data:
-   * - se già DD/MM/YYYY => ritorna com'è
-   * - se ISO => converte in DD/MM/YYYY
-   */
   private normalizeDate(v: any): string {
+    // Se già DD/MM/YYYY la lascio com’è
     if (typeof v === 'string' && v.includes('/')) return v;
 
+    // Se ISO -> converto in DD/MM/YYYY
     if (typeof v === 'string' && v.includes('-')) {
       const d = new Date(v);
       if (!Number.isNaN(d.getTime())) return this.formatDateDDMMYYYY(d);
     }
 
+    // Fallback
     const d = v ? new Date(v) : new Date();
     return this.formatDateDDMMYYYY(d);
   }
 
-  /**
-   * Invia una nuova recensione:
-   * - valida i campi
-   * - prende userId da /me
-   * - invia recensione
-   * - ricarica la lista dal DB
-   */
   submitReview() {
+    // Leggo e valido campi del form
     const titolo = (this.reviewDraft.title || '').trim();
     const commento = (this.reviewDraft.comment || '').trim();
     const voto = Number(this.reviewDraft.rating);
@@ -392,32 +492,33 @@ export class DetailsPageComponent {
     const contenutoId = Number(this.id);
     if (!contenutoId) return;
 
+    // Stato UI: in invio
     this.reviewsPosting = true;
     this.reviewsPostError = '';
 
+    // 1) chiedo userId al backend
+    // 2) invio recensione
+    // 3) ricarico recensioni
     this.api.me().pipe(
       timeout(10000),
-
-      // estraggo l'id utente
-      map((res: any) => Number(res?.id ?? 0)),
-
-      // se userId valido => invio recensione
+      map((res: any) => Number(res?.user?.id ?? res?.id ?? 0)),
       switchMap((userId) => {
         if (!userId) throw new Error('User non autenticato o id mancante.');
         return this.api.addRecensione(contenutoId, userId, voto, commento, titolo, new Date());
       }),
-
       catchError((err) => {
+        // Se errore: mostro messaggio
         console.error('submitReview error', err);
         this.reviewsPostError = 'Errore durante la pubblicazione.';
         return of(null);
       }),
-
       finalize(() => {
+        // Fine invio (sempre)
         this.reviewsPosting = false;
         this.zone.run(() => this.cdr.markForCheck());
       })
     ).subscribe((saved) => {
+      // Se salvata correttamente: reset e ricarico lista
       if (!saved) return;
       this.resetDraft();
       this.openSection = 'list';
@@ -425,42 +526,31 @@ export class DetailsPageComponent {
     });
   }
 
-  /**
-   * Resetta il form della recensione
-   */
   resetDraft() {
+    // Reset form recensione
     this.reviewDraft = { title: '', rating: 0, comment: '' };
   }
 
-  /**
-   * Imposta il voto scelto (1..10)
-   */
   setRating(n: number) {
+    // Set voto in UI (1..10)
     this.reviewDraft.rating = n;
   }
 
   // ======================
   // HELPERS CONTENUTO
   // ======================
-
-  /**
-   * Ritorna il titolo del contenuto (DB o mock), senza spazi inutili
-   */
   private getTitle(): string {
+    // Ritorna titolo del contenuto (DB o mock)
     return (this.contenuto?.titolo ?? this.content?.title ?? '').trim();
   }
 
-  /**
-   * Imposta la label "Disponibile su" (giochi) / "Guarda ora" (film/serie)
-   */
   private setupWhereText() {
+    // Imposta label box piattaforme
     this.whereText = this.kind === 'GAME' ? 'Disponibile su' : 'Guarda ora';
   }
 
-  /**
-   * Normalizza titolo per TMDB (gestisce casi tipo " - " trasformandolo in ": ")
-   */
   private cleanTitleForTmdb(title: string): string {
+    // Normalizzazione semplice per migliorare match su TMDB
     return (title || '')
       .trim()
       .replace(/\s+-\s+/g, ': ')
@@ -472,16 +562,13 @@ export class DetailsPageComponent {
   // ======================
   // STATS SERIE (TMDB)
   // ======================
-
-  /**
-   * Carica number_of_seasons e number_of_episodes da TMDB.
-   * Se kind !== SERIES esce.
-   */
   private loadSeriesStatsFromApi() {
+    // Reset valori
     this.seriesSeasons = 0;
     this.seriesEpisodes = 0;
     this.seriesStatsLoading = false;
 
+    // Solo per le serie
     if (this.kind !== 'SERIES') return;
 
     const rawTitle = this.getTitle();
@@ -489,27 +576,20 @@ export class DetailsPageComponent {
 
     const title = this.cleanTitleForTmdb(rawTitle);
 
+    // Stato UI: loading
     this.seriesStatsLoading = true;
 
-    console.log('[TMDB STATS] rawTitle:', rawTitle);
-    console.log('[TMDB STATS] cleanedTitle:', title);
-
+    // Chiamo TMDB e salvo seasons/episodes
     this.tmdb.getTvStatsSmart(title).pipe(
       timeout(10000),
-      catchError((err) => {
-        console.error('[TMDB STATS] error:', err);
-        return of({ seasons: 0, episodes: 0 });
-      }),
+      catchError(() => of({ seasons: 0, episodes: 0 })),
       finalize(() => {
         this.seriesStatsLoading = false;
         this.zone.run(() => this.cdr.markForCheck());
       })
     ).subscribe((stats: any) => {
-      console.log('[TMDB STATS] result:', stats);
-
       this.seriesSeasons = Number(stats?.seasons ?? 0);
       this.seriesEpisodes = Number(stats?.episodes ?? 0);
-
       this.zone.run(() => this.cdr.markForCheck());
     });
   }
@@ -517,13 +597,8 @@ export class DetailsPageComponent {
   // ======================
   // PIATTAFORME
   // ======================
-
-  /**
-   * Carica piattaforme:
-   * - per film/serie usa TMDB watch providers
-   * - per giochi usa link diretti a store (Steam/Xbox/PlayStation)
-   */
   private loadPlatforms() {
+    // Reset stato
     this.platformsLoading = true;
     this.platformsError = '';
     this.platforms = [];
@@ -535,24 +610,22 @@ export class DetailsPageComponent {
       return;
     }
 
-    // MOVIE / SERIES => TMDB
+    // MOVIE / SERIES => TMDB providers
     if (this.kind !== 'GAME') {
       this.tmdb.getWatchProvidersIT(this.kind, title).pipe(
         timeout(10000),
-        catchError(() => {
-          this.platformsError = 'Errore nel caricamento piattaforme.';
-          return of([] as { label: string; url: string }[]);
-        }),
+        catchError(() => of([] as { label: string; url: string }[])),
         finalize(() => {
           this.platformsLoading = false;
           this.zone.run(() => this.cdr.markForCheck());
         })
       ).subscribe((list: any[]) => {
+        // Mappo label corta + filtro null
         const mapped = (list ?? [])
           .map((p) => ({ label: this.shortPlatformLabel(p.label), url: p.url }))
           .filter((p) => !!p.label && !!p.url);
 
-        // dedup provider
+        // Dedup per label
         const seen = new Set<string>();
         this.platforms = mapped.filter((p) => {
           const k = p.label.toUpperCase();
@@ -567,13 +640,14 @@ export class DetailsPageComponent {
       return;
     }
 
-    // GAME => link store
+    // GAME => link store “fissi”
     const q = encodeURIComponent(title);
     this.platforms = [
       { label: 'PlayStation', url: `https://store.playstation.com/search/${q}` },
       { label: 'Xbox', url: `https://www.xbox.com/search?q=${q}` },
       { label: 'Steam', url: `https://store.steampowered.com/search/?term=${q}` },
     ];
+
     this.platformsLoading = false;
     this.zone.run(() => this.cdr.markForCheck());
   }
@@ -581,11 +655,8 @@ export class DetailsPageComponent {
   // ======================
   // TRAILER
   // ======================
-
-  /**
-   * Pulisce il titolo per la ricerca trailer (rimuove parentesi/quadre)
-   */
   private cleanTitleForSearch(title: string): string {
+    // Pulisce titolo per ricerche trailer
     return title
       .replace(/\(.*?\)/g, '')
       .replace(/\[.*?]/g, '')
@@ -593,23 +664,8 @@ export class DetailsPageComponent {
       .trim();
   }
 
-  /**
-   * Crea una query YouTube "buona" per i giochi.
-   * (Evita casi dove YouTube ti propone roba non trailer.)
-   */
-  private buildYoutubeQueryForGame(title: string): string {
-    // Esempio: "The Witcher 3 Wild Hunt official trailer game"
-    const base = this.cleanTitleForSearch(title);
-    return `${base} official trailer game`;
-  }
-
-  /**
-   * Carica trailer:
-   * - GAME: prova RAWG mp4 url
-   *   - se RAWG non ha trailer => fallback YouTube (backend getTrailerEmbed)
-   * - MOVIE/SERIES: endpoint embedUrl backend (YouTube embed)
-   */
   private loadTrailer() {
+    // Reset trailer
     this.trailerLoading = true;
     this.trailerError = '';
     this.trailerEmbed = undefined;
@@ -624,8 +680,7 @@ export class DetailsPageComponent {
       return;
     }
 
-    // ======================
-    // GAME: RAWG -> fallback YT (embed)
+    // GAME => RAWG mp4 / fallback embed
     if (this.kind === 'GAME') {
       const qTitle = this.cleanTitleForSearch(title);
 
@@ -636,10 +691,7 @@ export class DetailsPageComponent {
           this.trailerLoading = false;
           this.zone.run(() => this.cdr.markForCheck());
         })
-      ).subscribe((pick) => {
-        console.log('[TRAILER][GAME] selected source:', pick.source, 'kind:', pick.kind, 'url:', pick.url);
-
-        // reset
+      ).subscribe((pick: any) => {
         this.trailerMp4Url = undefined;
         this.trailerEmbed = undefined;
 
@@ -653,58 +705,36 @@ export class DetailsPageComponent {
           return;
         }
 
-        // EMBED (YouTube)
         this.trailerEmbed = this.sanitizer.bypassSecurityTrustResourceUrl(pick.url);
       });
 
       return;
     }
 
-
-    // ======================
-    // MOVIE/SERIES: backend embed
-    // ======================
-    const q = `${title} trailer`;
-    console.log('[TRAILER][MOVIE/SERIES] query:', q, 'year:', year);
-
-    // MOVIE/SERIES: TMDB videos -> YouTube embed
+    // MOVIE/SERIES => TMDB embed
     const qTitle = this.cleanTitleForSearch(title);
-
-    console.log('[TRAILER][TMDB] kind:', this.kind, 'title:', qTitle, 'year:', year);
 
     this.tmdb.getTrailerEmbedSmart(this.kind, qTitle, year).pipe(
       timeout(10000),
-      catchError((err) => {
-        console.error('[TRAILER][TMDB] error:', err);
-        return of(null);
-      }),
+      catchError(() => of(null)),
       finalize(() => {
         this.trailerLoading = false;
         this.zone.run(() => this.cdr.markForCheck());
       })
     ).subscribe((embedUrl: string | null) => {
-      console.log('[TRAILER][TMDB] embedUrl:', embedUrl);
-
       if (!embedUrl) {
         this.trailerError = 'Trailer non disponibile.';
         return;
       }
-
       this.trailerEmbed = this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
     });
-
   }
 
-
   // ======================
-  // MOCK FALLBACK
+  // MOCK
   // ======================
-
-  /**
-   * Carica contenuto da mock (se non arriva dallo state router)
-   * e avvia gli stessi caricamenti (platforms, stats, trailer, reviews)
-   */
   private loadFromMock() {
+    // Carico contenuto mock se non arriva dal DB
     this.loading = true;
     this.error = '';
 
@@ -718,6 +748,7 @@ export class DetailsPageComponent {
 
     this.content = found;
 
+    // Caricamenti secondari
     this.setupWhereText();
     this.loadPlatforms();
     this.loadSeriesStatsFromApi();
@@ -731,37 +762,28 @@ export class DetailsPageComponent {
   // ======================
   // UI HELPERS
   // ======================
-
-  /**
-   * Gestisce apertura/chiusura dei dettagli (accordion)
-   */
   onToggle(section: Exclude<OpenSection, null>, ev: Event) {
+    // Gestione accordion (details)
     const details = ev.target as HTMLDetailsElement;
     if (details.open) this.openSection = section;
     else if (this.openSection === section) this.openSection = null;
   }
 
-  /**
-   * Arrotonda il rating (stelle)
-   */
   roundedRating(rating: number): number {
+    // Arrotonda rating stelle recensione
     return Math.round(rating);
   }
 
-  /**
-   * Converte Date => stringa DD/MM/YYYY
-   */
   private formatDateDDMMYYYY(d: Date) {
+    // Converte Date -> "DD/MM/YYYY"
     const dd = String(d.getDate()).padStart(2, '0');
     const mm = String(d.getMonth() + 1).padStart(2, '0');
     const yyyy = String(d.getFullYear());
     return `${dd}/${mm}/${yyyy}`;
   }
 
-  /**
-   * Accorcia label provider (per bottone piattaforme)
-   */
   private shortPlatformLabel(name: string): string {
+    // Accorcia nomi provider per i bottoni
     const n = (name || '').toLowerCase();
 
     if (n.includes('netflix')) return 'Netflix';
