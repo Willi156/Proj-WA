@@ -1,0 +1,123 @@
+<div class="page-container">
+
+  <!-- HEADER -->
+  <header class="page-header">
+    <h1 class="page-title">Best Games</h1>
+    <p class="page-subtitle">
+      The highest rated games of all time 🎮
+    </p>
+  </header>
+
+  <div class="page-content">
+
+    <!-- FILTERS -->
+    <aside class="filters">
+
+      <div class="filters-header">Best Of</div>
+
+      <!-- GOTY TOGGLE -->
+      <div class="filter-block">
+        <div class="filter-header-row">
+          <h4 class="filter-title">Special</h4>
+        </div>
+
+        <button
+          class="filter-reset"
+          (click)="toggleGoty()">
+          {{ showGotyOnly ? 'Show All' : 'Game of the Year' }}
+        </button>
+      </div>
+
+      <!-- PLATFORMS -->
+      <div class="filter-block">
+        <div class="filter-header-row">
+          <h4 class="filter-title">Platforms</h4>
+          <button
+            class="filter-reset"
+            *ngIf="(selectedPlatforms$ | async)?.size"
+            (click)="resetPlatformFilter()">
+            RESET
+          </button>
+        </div>
+
+        <label *ngFor="let platform of platformKeys">
+          <input
+            #cb
+            type="checkbox"
+            [checked]="(selectedPlatforms$ | async)?.has(platform)"
+            (change)="togglePlatform(platform, cb.checked)" />
+          {{ platform | titlecase }}
+        </label>
+      </div>
+
+      <!-- GENRES -->
+      <div class="filter-block">
+        <div class="filter-header-row">
+          <h4 class="filter-title">Genres</h4>
+          <button
+            class="filter-reset"
+            *ngIf="(selectedGenres$ | async)?.size"
+            (click)="resetGenreFilter()">
+            RESET
+          </button>
+        </div>
+
+        <label *ngFor="let genre of availableGenres">
+          <input
+            #cb
+            type="checkbox"
+            [checked]="(selectedGenres$ | async)?.has(genre)"
+            (change)="toggleGenre(genre, cb.checked)" />
+          {{ genre }}
+        </label>
+
+
+      </div>
+
+
+    </aside>
+
+    <!-- RESULTS -->
+    <section class="results">
+
+      <ng-container *ngIf="games$ | async as games">
+
+        <!-- RESULTS HEADER -->
+        <div class="results-header">
+          <span class="results-count">
+            {{ games.length }} results
+          </span>
+        </div>
+
+        <!-- GRID -->
+        <div class="games-grid" *ngIf="games.length > 0">
+          <app-game-card
+            *ngFor="let game of games"
+            [game]="game"
+            mode="score"
+            variant="default">
+          </app-game-card>
+        </div>
+
+        <!-- EMPTY STATE -->
+        <p *ngIf="games.length === 0" class="no-results">
+          No best games found.
+        </p>
+
+        <!-- PAGINATION -->
+        <div class="pagination" *ngIf="pages.length > 1">
+          <button
+            *ngFor="let page of pages"
+            class="page-btn"
+            [class.active]="page === (currentPage$ | async)"
+            (click)="changePage(page)">
+            {{ page }}
+          </button>
+        </div>
+
+      </ng-container>
+
+    </section>
+
+  </div>
+</div>

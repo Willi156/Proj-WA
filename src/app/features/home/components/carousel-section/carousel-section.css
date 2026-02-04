@@ -38,6 +38,7 @@
   background: #222;
   opacity: 0.9;
 }
+
 /* ===== Title split: Category | Label ===== */
 .h2 {
   display: flex;
@@ -60,7 +61,6 @@
   color: #222;
   font-weight: 400; /* coerente col tuo font-weight generale */
 }
-
 
 .track > * {
   touch-action: pan-x;
@@ -136,8 +136,6 @@
 ========================= */
 .track {
   margin-top: 18px;
-  display: flex;
-  gap: 18px;
   overflow-x: auto;
 
   padding-bottom: 12px;
@@ -150,6 +148,23 @@
   /* Firefox */
   scrollbar-color: #06A77D transparent;
   scrollbar-width: thin;
+}
+
+/* ✅ il flex ora è su .cards (perché hai il wrapper) */
+.cards {
+  display: flex;
+  gap: 18px;
+  align-items: stretch;
+}
+
+/* ✅ impedisce alle card di comprimersi/collassare */
+.cards > * {
+  flex: 0 0 auto;
+}
+
+/* (opzionale ma utile) evita che qualche stile globale le renda inline */
+app-media-card {
+  display: block;
 }
 
 /* Webkit scrollbar */
@@ -165,25 +180,6 @@
 .track::-webkit-scrollbar-thumb:hover {
   background: #05906a;
 }
-/* ✅ FIX: impedisce alle card di comprimersi a 0 nel flex */
-.track > * {
-  flex: 0 0 auto;
-}
-
-/* (opzionale ma utile) evita che qualche stile globale le renda inline */
-app-media-card {
-  display: block;
-}
-
-/* ✅ FIX MINIMO: evita che le card collassino nel flex */
-.track > * {
-  flex: 0 0 auto;
-}
-
-/* (sicurezza) */
-app-media-card {
-  display: block;
-}
 
 /* Tablet */
 @media (max-width: 1200px) {
@@ -195,7 +191,7 @@ app-media-card {
     font-size: 22px;
   }
 
-  .track {
+  .cards {
     gap: 14px;
   }
 }
@@ -229,8 +225,11 @@ app-media-card {
 
   .track {
     margin-top: 14px;
-    gap: 12px;
     padding-bottom: 10px;
+  }
+
+  .cards {
+    gap: 12px;
   }
 }
 

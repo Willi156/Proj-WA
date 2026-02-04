@@ -32,7 +32,6 @@ export class GamesSectionComponent implements OnInit {
       this.startIndex + this.visibleCount
     );
 
-    // RAWG solo per visibili
     this.visibleGames.forEach(game => {
       if (!game.imageLink) {
         this.rawgService.getImageByTitle(game.titolo).subscribe(img => {

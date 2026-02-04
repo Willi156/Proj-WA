@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Game } from '../../models/game.model';
+import {RawgGame} from '../../models/rawg-game.model';
 
 @Component({
   selector: 'app-game-card',
@@ -9,19 +10,28 @@ import { Game } from '../../models/game.model';
   templateUrl: './game-card.component.html',
   styleUrl: './game-card.component.css'
 })
-
 export class GameCardComponent {
-  @Input() game!: Game;
+  @Input() game!: Game | RawgGame;
+  @Input() mode: 'date' | 'score' = 'date';
+  @Input() variant: 'default' | 'upcoming' = 'default';
+  currentMode: 'year' | 'allTime' = 'year';
 
+
+  get scoreValue(): number | null {
+    return typeof this.game.mediaVoti === 'number'
+      ? this.game.mediaVoti
+      : null;
+  }
   get scoreClass(): string {
-    if (this.game.mediaVoti >= 8) return 'score-green';
-    if (this.game.mediaVoti >= 6) return 'score-yellow';
+    if (this.scoreValue === null) return 'score-na';
+    if (this.scoreValue >= 8) return 'score-green';
+    if (this.scoreValue >= 6) return 'score-yellow';
     return 'score-red';
   }
-
   get scoreLabel(): string {
-    if (this.game.mediaVoti >= 8) return 'Generally Favorable';
-    if (this.game.mediaVoti >= 6) return 'Mixed or Average';
+    if (this.scoreValue === null) return 'No Score';
+    if (this.scoreValue >= 8) return 'Generally Favorable';
+    if (this.scoreValue >= 6) return 'Mixed or Average';
     return 'Generally Unfavorable';
   }
 }
