@@ -10,12 +10,7 @@ import { Film } from '../film/model/film.model';
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   private baseUrl = environment.apiBaseUrl;
-
   constructor(private http: HttpClient) {}
-
-  /* ======================
-     AUTH
-  ====================== */
 
   authenticate(username: string, password: string) {
     return this.http.post<any>(
@@ -31,18 +26,6 @@ export class ApiService {
       { withCredentials: true }
     );
   }
-
-  /* ======================
-     UTENTE
-  ====================== */
-
-  getCurrentUserInfo() {
-    return this.http.get<any>(
-      `${this.baseUrl}/api/auth/me`,
-      { withCredentials: true }
-    );
-  }
-
   getCheckUsername(username: string) {
     return this.http.get<{ available: boolean }>(
       `${this.baseUrl}/api/utente/checkUsernameExists`,
@@ -50,33 +33,14 @@ export class ApiService {
     );
   }
 
-  createUser(
-    nome: string,
-    cognome: string,
-    username: string,
-    password: string,
-    email: string
-  ) {
+  createUser(nome: string, cognome: string, username: string, password: string, email: string) {
     return this.http.post<{ id: number }>(
       `${this.baseUrl}/api/newUtente`,
       { nome, cognome, email, username, password }
     );
   }
 
-  updateUtente(userId: number, dati: any) {
-    return this.http.put<any>(
-      `${this.baseUrl}/api/utente/${userId}`,
-      dati
-    );
-  }
-
-  updateUserInfo(
-    userId: number,
-    nome: string,
-    cognome: string,
-    email: string,
-    immagineProfilo?: string
-  ) {
+  updateUserInfo(userId: number, nome: string, cognome: string, email: string, immagineProfilo?: string) {
     return this.http.put<{ success: boolean }>(
       `${this.baseUrl}/api/utente/update/${userId}`,
       { nome, cognome, email, immagineProfilo },
@@ -100,51 +64,39 @@ export class ApiService {
     );
   }
 
-  /* ======================
-     CONTENUTI
-  ====================== */
-
   getContenuti() {
-    return this.http.get<any[]>(
-      `${this.baseUrl}/api/contenuti`
-    );
+    return this.http.get<any[]>(`${this.baseUrl}/api/contenuti`);
   }
 
   getContenutoById(id: number) {
-    return this.http.get<any>(
-      `${this.baseUrl}/api/contenuti/${id}`
-    );
+    return this.http.get<any>(`${this.baseUrl}/api/contenuti/${id}`);
   }
 
   getGiochi() {
-    return this.http.get<Game[]>(
-      `${this.baseUrl}/api/contenuti/giochi`
-    );
+    return this.http.get<Game[]>(`${this.baseUrl}/api/contenuti/giochi`);
   }
 
   getFilm() {
-    return this.http.get<Film[]>(
-      `${this.baseUrl}/api/contenuti/film`
-    );
+    return this.http.get<Film[]>(`${this.baseUrl}/api/contenuti/film`);
   }
 
   getSerieTv() {
-    return this.http.get<any[]>(
-      `${this.baseUrl}/api/contenuti/serie_tv`
-    );
+    return this.http.get<any[]>(`${this.baseUrl}/api/contenuti/serie_tv`);
   }
 
-  newContenuto(
+  createContenuto(
     titolo: string,
     descrizione: string,
     genere: string,
     link: string,
     tipo: string,
     annoPubblicazione: number,
+    imageLink?: string,
     casaProduzione?: string,
     casaEditrice?: string,
     inCorso?: boolean,
-    stagioni?: number
+    stagioni?: number,
+    piattaformaIds?: number[]
   ) {
     return this.http.post<{ id: number }>(
       `${this.baseUrl}/api/newContenuto`,
@@ -155,10 +107,12 @@ export class ApiService {
         link,
         tipo,
         annoPubblicazione,
+        imageLink,
         casaProduzione,
         casaEditrice,
         inCorso,
-        stagioni
+        stagioni,
+        piattaformaIds
       },
       { withCredentials: true }
     );
@@ -170,10 +124,6 @@ export class ApiService {
       { params: { q: query } }
     );
   }
-
-  /* ======================
-     GENERI / PIATTAFORME
-  ====================== */
 
   getGeneriGiochi() {
     return this.http.get<string[]>(
@@ -187,9 +137,12 @@ export class ApiService {
     );
   }
 
-  /* ======================
-     RECENSIONI
-  ====================== */
+  getPiattaformeWithIds() {
+    return this.http.get<any[]>(
+      `${this.baseUrl}/api/piattaforme/complete`,
+      { withCredentials: true }
+    );
+  }
 
   getRecensioniByContenutoId(contenutoId: number) {
     return this.http.get<any[]>(
@@ -205,17 +158,18 @@ export class ApiService {
     );
   }
 
-  addRecensione(
-    idContenuto: number,
-    idUtente: number,
-    voto: number,
-    testo: string,
-    titolo: string,
-    data?: Date
-  ) {
+  addRecensione(idContenuto: number, idUtente: number, voto: number, testo: string, titolo: string, data?: Date) {
     return this.http.post<{ id: number }>(
       `${this.baseUrl}/api/recensione/new`,
       { idContenuto, idUtente, voto, testo, titolo, data },
+      { withCredentials: true }
+    );
+  }
+
+  updateRecensione(id: number, voto: number, testo: string, titolo: string, data?: Date) {
+    return this.http.put<{ success: boolean }>(
+      `${this.baseUrl}/api/recensioni/update/${id}`,
+      { voto, testo, titolo, data },
       { withCredentials: true }
     );
   }
@@ -226,21 +180,9 @@ export class ApiService {
       { withCredentials: true }
     );
   }
-
-  /* ======================
-     PREFERITI
-  ====================== */
-
   getFavouritesMediaByUserId(userId: number) {
     return this.http.get<any[]>(
       `${this.baseUrl}/api/utente/${userId}/preferiti`,
-      { withCredentials: true }
-    );
-  }
-
-  getFavouriteMediaByUserIdComplete(userId: number) {
-    return this.http.get<any[]>(
-      `${this.baseUrl}/api/utente/${userId}/preferitiCompleti`,
       { withCredentials: true }
     );
   }
@@ -254,7 +196,7 @@ export class ApiService {
   }
 
   removeMediaFromFavourites(userId: number, contenutoId: number) {
-    return this.http.delete<{ success: boolean }>(
+    return this.http.delete(
       `${this.baseUrl}/api/utente/${userId}/removePreferito`,
       {
         body: { contenutoId },
@@ -263,55 +205,11 @@ export class ApiService {
     );
   }
 
-  /* ======================
-     TRAILER
-  ====================== */
-
   getTrailerEmbed(
     kind: 'GAME' | 'MOVIE' | 'SERIES',
     q: string,
     year?: number
   ): Observable<string | null> {
-
-
-//Chiamata API per l'aggiunta di una recensione
-  addRecensione(idContenuto: number, idUtente: number, voto: number, testo: string, titolo: string, data?: Date) {
-    return this.http.post<{ id: number }>(`${this.baseUrl}/api/recensione/new`, { idContenuto, idUtente, voto, testo, titolo, data }, { withCredentials: true });
-  }
-
-//Chiamata API per l'aggiornamento di una recensione
-  updateRecensione(id: number, voto: number, testo: string, titolo: string, data?: Date) {
-    return this.http.put<{ success: boolean }>(`${this.baseUrl}/api/recensioni/update/${id}`, { voto, testo, titolo, data }, { withCredentials: true });
-  }
-
-  createContenuto(titolo: string, descrizione: string, genere: string, link: string, tipo: string, annoPubblicazione: number, imageLink: string, casaProduzione?: string, casaEditrice?: string, inCorso?: boolean, stagioni?: number, piattaformaIds?: number[]) {
-    return this.http.post<{ id: number }>(`${this.baseUrl}/api/newContenuto`,
-      { titolo, descrizione, genere, link, tipo, annoPubblicazione, casaProduzione, casaEditrice, inCorso, stagioni, imageLink, piattaformaIds },
-      { withCredentials: true }
-    );
-  }
-
-  getPiattaformeWithIds() {
-    return this.http.get<any[]>(`${this.baseUrl}/api/piattaforme/complete`, { withCredentials: true });
-  }
-
-  deleteContenuto(id: number) {
-    return this.http.delete(`${this.baseUrl}/api/contenuti/${id}`, { withCredentials: true });
-  }
-
-  // Aggiungi questo insieme agli altri metodi
-  getContenutoById(id: number) {
-    return this.http.get<any>(`${this.baseUrl}/api/contenuti/${id}`, { withCredentials: true });
-  }
-
-  updateContenuto(id: number, dati: any) {
-    return this.http.put<any>(`${this.baseUrl}/api/contenuti/${id}`, dati, { withCredentials: true });
-  }
-
-  // Esempio per futuri endpoint:
-  // getItems() { return this.http.get<Item[]>(`${this.baseUrl}/api/items`); }
-  // createItem(payload: ItemCreateDto) { return this.http.post(`${this.baseUrl}/api/items`, payload); }
-}
 
     const params = new HttpParams()
       .set('kind', kind)
@@ -327,5 +225,13 @@ export class ApiService {
         map(res => res?.embedUrl ?? null),
         catchError(() => of(null))
       );
+  }
+
+  getFavouriteMediaByUserIdComplete(userId: number) {
+    return this.http.get<any[]>(`${this.baseUrl}/api/utente/${userId}/preferitiCompleti`, { withCredentials: true });
+  }
+
+  getCurrentUserInfo() {
+    return this.http.get<any>(`${this.baseUrl}/api/auth/me`, { withCredentials: true });
   }
 }

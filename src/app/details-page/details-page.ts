@@ -173,7 +173,6 @@ export class DetailsPageComponent {
 
       this.loadPage(passed);
 
-      // ✅ ogni volta che entro (anche con refresh) ricontrollo auth + preferiti
       this.checkAuthAndFav();
     });
   }
@@ -690,9 +689,6 @@ export class DetailsPageComponent {
     });
   }
 
-  // ======================
-  // MOCK
-  // ======================
   private loadFromMock() {
     this.loading = true;
     this.error = '';
