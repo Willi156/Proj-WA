@@ -1,16 +1,13 @@
 /* =========================
    LAYOUT PAGINA
-   - Struttura generale della pagina e contenitore principale a 2 colonne
 ========================= */
 
-/* .page: wrapper della pagina (altezza piena viewport + padding interno) */
 .page{
   min-height: 100vh;
   padding: 24px;
   box-sizing: border-box;
 }
 
-/* .wrap: griglia principale (colonna sinistra fissa + contenuto a destra) con max-width centrata */
 .wrap{
   max-width: 1200px;
   margin: 0 auto;
@@ -20,13 +17,11 @@
   align-items: start;
 }
 
-/* .left: colonna sinistra (cover) resa sticky durante lo scroll */
 .left{
   position: sticky;
   top: 24px;
 }
 
-/* .cover: immagine di copertina (ratio 2:3, crop, shadow, rounded) */
 .cover{
   width: 100%;
   aspect-ratio: 2 / 3;
@@ -37,30 +32,63 @@
   margin-top: 30px;
 }
 
-/* .right: colonna destra (contenuti) con min-width 0 per evitare overflow in grid/flex */
 .right{
   min-width: 0;
 }
 
 /* =========================
    HEADER DETTAGLI
-   - Titolo + badge rating + meta info (chips)
 ========================= */
 
-/* .head: blocco superiore dei dettagli (gestisce spaziature e posizionamento badge) */
 .head{
   position: relative;
   display: grid;
   gap: 14px;
 }
 
-/* .ratingBadge: pill del voto (posizionata in alto a destra su desktop) */
-.ratingBadge{
-  position: absolute;
-  top: 3px;
-  right: 1px;
-
+/*   header: titolo+stella a sinistra, score a destra (desktop) */
+.headRow{
   display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  min-width: 0;
+}
+
+/*   wrapper titolo + stella */
+.titleWrap{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.title{
+  font-size: 36px;
+  line-height: 1.1;
+  margin: 0 5px 0;
+  letter-spacing: -0.02em;
+
+  /* per evitare overflow in flex */
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+/*   colonna destra dello score (desktop) */
+.headRight{
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* =========================
+   RATING BADGE
+========================= */
+
+.ratingBadge{
+  position: static; /*   non assoluto, così su mobile possiamo gestirlo meglio */
+  display: inline-flex;
   align-items: baseline;
   gap: 4px;
 
@@ -73,42 +101,66 @@
   transform: translateZ(0);
 }
 
-/* .score-green/.score-yellow/.score-orange/.score-red/.score-blue:
-   varianti colore del badge rating in base alla logica del punteggio */
 .score-green { background: #06A77D; }
 .score-yellow { background: #ffbd3f; }
 .score-orange { background: #fb7400; }
 .score-red { background: #ff4d4d; }
 .score-blue { background: #4d8bff; }
 
-/* .ratingValue: valore numerico grande nel badge */
 .ratingValue{
   font-size: 23px;
   line-height: 1;
 }
 
-/* .ratingMax: “/10” o max score più piccolo e attenuato */
 .ratingMax{
-  font-size:15px;
+  font-size: 15px;
   opacity: .7;
 }
 
-/* .title: titolo contenuto (dimensione grande, letter-spacing, margini) */
-.title{
-  font-size: 36px;
-  line-height: 1.1;
-  margin: 0 5px 0;
-  letter-spacing: -0.02em;
+/* =========================
+   ⭐ FAVORITES STAR (SVG)
+========================= */
+
+.favStar{
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
 }
 
-/* .meta: riga di metadati a chip, con wrap quando manca spazio */
+.favIcon{
+  width: 40px;
+  height: 40px;
+  display: block;
+
+  fill: #ffffff;
+  stroke: #ffd54a;
+  stroke-width: 2.3;
+  stroke-linejoin: round;
+}
+
+.favStar.is-on .favIcon{
+  fill: #ffd54a;
+}
+
+.favStar:hover .favIcon{
+  fill: #ffd54a;
+}
+
+/* =========================
+   META / CHIPS
+========================= */
+
 .meta{
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
 }
 
-/* .chip: pill metadato (label + value), con hover “lift” */
 .chip{
   display: inline-flex;
   gap: 10px;
@@ -122,14 +174,12 @@
   will-change: transform;
 }
 
-/* hover chip: micro alzata + contrasto border/bg */
 .chip:hover{
   transform: translateY(-1px);
   border-color: rgba(255,255,255,.22);
   background: rgba(255,255,255,.08);
 }
 
-/* .label: label del metadato (piccola, uppercase, attenuata) */
 .label{
   opacity: .7;
   font-size: 12px;
@@ -137,17 +187,14 @@
   letter-spacing: .08em;
 }
 
-/* .value: valore del metadato (più “bold”) */
 .value{
   font-weight: 600;
 }
 
-/* .score: numeri allineati (tabular-nums) per punteggi/valori numerici */
 .score{
   font-variant-numeric: tabular-nums;
 }
 
-/* .desc: descrizione lunga del contenuto (spaziatura + line-height) */
 .desc{
   margin: 10px 5px 50px;
   opacity: .9;
@@ -155,76 +202,9 @@
 }
 
 /* =========================
-   STAGIONI
-   - Riga selezione stagione (label + select) con hover/focus accessibile
-========================= */
-
-/* .seasonRow: contenitore “card” per selettore stagioni */
-.seasonRow{
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  max-width: 560px;
-  padding: 10px 12px;
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.03);
-
-  transition: border-color .12s ease, background .12s ease;
-}
-
-/* hover della card stagione */
-.seasonRow:hover{
-  border-color: rgba(255,255,255,.18);
-  background: rgba(255,255,255,.04);
-}
-
-/* .seasonLabel: etichetta “Season” (uppercase, compatta, no wrap) */
-.seasonLabel{
-  opacity: .75;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: .08em;
-  white-space: nowrap;
-}
-
-/* .seasonSelect: select personalizzato (pill, bg, focus shadow) */
-.seasonSelect{
-  flex: 1;
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.14);
-  background: rgba(255,255,255,.06);
-  color: inherit;
-  outline: none;
-  appearance: none;
-
-  transition: border-color .12s ease, box-shadow .12s ease, background .12s ease;
-}
-
-/* hover select */
-.seasonSelect:hover{
-  background: rgba(255,255,255,.08);
-}
-
-/* focus select (stato attivo) */
-.seasonSelect:focus{
-  border-color: rgba(255,255,255,.28);
-  box-shadow: 0 0 0 3px rgba(255,255,255,.08);
-}
-
-/* focus accessibile (tastiera) */
-.seasonSelect:focus-visible{
-  outline: none;
-}
-
-/* =========================
    WHERE TO WATCH
-   - Box con label + gruppo bottoni piattaforme
 ========================= */
 
-/* .whereBox: contenitore “card” per dove acquistare/vedere (wrap + hover) */
 .whereBox{
   display: flex;
   flex-wrap: wrap;
@@ -239,13 +219,11 @@
   transition: border-color .12s ease, background .12s ease;
 }
 
-/* hover box piattaforme */
 .whereBox:hover{
   border-color: rgba(255,255,255,.18);
   background: rgba(255,255,255,.05);
 }
 
-/* .whereLabel: etichetta evidenziata “Where” (pill gialla) */
 .whereLabel{
   opacity: .9;
   font-size: 12px;
@@ -258,15 +236,12 @@
   background: #f6b000;
 }
 
-/* .whereButtons: wrapper del gruppo bottoni piattaforme (wrap) */
 .whereButtons{
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 }
 
-/* Regole di “contenimento”:
-   - min-width:0 evita overflow in contesti grid/flex (importantissimo per wrap) */
 .whereButtons,
 .whereBox,
 .right,
@@ -274,7 +249,6 @@
   min-width: 0;
 }
 
-/* .whereBtn: bottone piattaforma (pill verde, non selezionabile, hover lift) */
 .whereBtn{
   padding: 10px 14px;
   border-radius: 999px;
@@ -297,36 +271,75 @@
   margin-top: 5px;
 }
 
-/* hover bottone piattaforma */
 .whereBtn:hover{
   transform: translateY(-1px);
   filter: brightness(1.04);
 }
 
-/* active bottone piattaforma */
 .whereBtn:active{
   transform: translateY(0);
 }
 
 /* =========================
-   ACCORDIONS
-   - Sezioni collassabili (trailer, cast, reviews, ecc.)
+   STAGIONI / EPISODI STATS
 ========================= */
 
-/* .accordions: wrapper lista accordion con spaziatura verticale */
+.seasonStats{
+  margin-top: 1px;
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.03);
+}
+
+.seasonCol{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statsLabel{
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+
+  color: inherit;
+  opacity: .75;
+}
+
+.statsValue{
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1;
+
+  color: inherit;
+}
+
+@media (max-width: 768px){
+  .seasonStats{ gap: 28px; }
+  .statsValue{ font-size: 28px; }
+}
+
+/* =========================
+   ACCORDIONS
+========================= */
+
 .accordions{
   margin-top: 0;
   display: grid;
   gap: 12px;
 }
 
-/* .fullRow: contenitore “full width” allineato al max-width pagina */
 .fullRow{
   max-width: 1200px;
   margin: 18px auto 0;
 }
 
-/* .acc: card accordion (bordi, bg, shadow, hover) */
 .acc{
   border-radius: 16px;
   border: 1px solid rgba(255,255,255,.14);
@@ -337,13 +350,11 @@
   transition: transform .12s ease, border-color .12s ease, background .12s ease;
 }
 
-/* hover accordion card */
 .acc:hover{
   border-color: rgba(255,255,255,.20);
   background: rgba(255,255,255,.05);
 }
 
-/* .accSum: summary cliccabile (titolo accordion + chevron) */
 .accSum{
   cursor: pointer;
   list-style: none;
@@ -352,45 +363,37 @@
   justify-content: space-between;
   padding: 14px 16px;
   font-weight: 600;
-  font-size:18px;
+  font-size: 18px;
 
   transition: background .12s ease;
   background-color: #06A77D;
 }
 
-/* hover summary */
 .accSum:hover{
   background: rgba(255,255,255,.04);
 }
 
-/* rimuove marker default di details/summary su webkit */
 .accSum::-webkit-details-marker{ display:none; }
 
-/* .chev: icona chevron (ruota quando open) */
 .chev{
   opacity: .7;
   transition: transform .18s ease, opacity .18s ease;
 }
 
-/* stato open: ruota chevron */
 .acc[open] .chev{
   transform: rotate(180deg);
   opacity: .95;
 }
 
-/* .accBody: contenuto accordion (padding + separatore top) */
 .accBody{
   padding: 14px 16px 16px;
   border-top: 1px solid rgba(255,255,255,.12);
-
 }
 
 /* =========================
    TRAILER / VIDEO
-   - Wrapper responsive 16:9 e iframe pieno
 ========================= */
 
-/* .videoWrap: contenitore video (ratio 16:9, border, bg, overflow hidden) */
 .videoWrap{
   width: 100%;
   aspect-ratio: 16 / 9;
@@ -401,7 +404,6 @@
   transform: translateZ(0);
 }
 
-/* .video: iframe/video a dimensione piena nel wrapper */
 .video{
   width: 100%;
   height: 100%;
@@ -409,10 +411,8 @@
 
 /* =========================
    REVIEW FORM
-   - Form recensione (griglia, fields uniformi, azioni e bottoni)
 ========================= */
 
-/* .reviewForm: card form recensione (padding, border, shadow, grid verticale) */
 .reviewForm{
   display: grid;
   gap: 12px;
@@ -427,7 +427,6 @@
   box-shadow: 0 12px 30px rgba(0,0,0,.10);
 }
 
-/* .grid2: layout 2 colonne nel form (sx flessibile, dx stretto), diventa 1 col su mobile */
 .grid2{
   display: grid;
   grid-template-columns: 1fr 180px;
@@ -437,15 +436,13 @@
   grid-auto-rows: min-content;
 }
 
-/* .field: wrapper di un campo (label + input) con spacing coerente */
-.field {
+.field{
   display: grid;
   gap: 6px;
   align-content: start;
   font-size: 14px;
 }
 
-/* .field-title: variante campo “titolo” con altezza minima e tipografia diversa */
 .field-title{
   min-height: 30px;
   padding: 6px 8px;
@@ -453,17 +450,15 @@
   line-height: 1.25;
 }
 
-/* label con altezza fissa => evita “salti” tra campi */
 .field label{
   display: block;
-  height: 18px;          /* fisso */
-  line-height: 18px;     /* fisso */
-  white-space: nowrap;   /* non va a capo */
+  height: 18px;
+  line-height: 18px;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* .label-rev: label “Recensioni”/titolo sezione (verde, uppercase, grande) */
 .label-rev{
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-weight: 700;
@@ -475,14 +470,12 @@
   padding-right: 10px;
   text-transform: uppercase;
   font-size: 18px;
-
 }
 
-/* Base comune per input/select/textarea: stile uniforme e “box” stabile */
 .field input,
 .field select,
 .field textarea{
-  display: block;     /* evita differenze baseline */
+  display: block;
   width: 100%;
   padding: 10px 12px;
   border-radius: 12px;
@@ -492,29 +485,24 @@
   box-sizing: border-box;
   background-color: #cdd4d0;
   font-size: 19px;
-
-  line-height: 20px;  /* stabile tra input e select */
+  line-height: 20px;
 }
 
-/* input/select: altezza uniforme */
 .field input,
 .field select{
   height: 42px;
 }
 
-/* textarea: blocca resize per non rompere layout */
 .field textarea{
   resize: none;
 }
 
-/* hover campi: cambia bg senza “saltare” */
 .field input:hover,
 .field select:hover,
 .field textarea:hover{
   background: rgba(255,255,255,.08);
 }
 
-/* focus campi: ring e border */
 .field input:focus,
 .field select:focus,
 .field textarea:focus{
@@ -523,19 +511,15 @@
   outline: none;
 }
 
-/* .field.field-title textarea: textarea “titolo” con altezza fissa e senza scrollbar */
 .field.field-title textarea{
-  /* eredita tutto da .field textarea (font-size 19, padding 10/12, bg, border, ecc.) */
-
-  min-height: 52px;   /* più grande del solito */
-  height: 52px;       /* fisso per non "ballare" */
+  min-height: 52px;
+  height: 52px;
   max-height: 52px;
 
-  overflow: hidden;   /* niente scrollbar */
-  resize: none;       /* coerente con il resto */
+  overflow: hidden;
+  resize: none;
 }
 
-/* .actions: barra bottoni form (allineati a destra) */
 .actions{
   display: flex;
   gap: 10px;
@@ -543,7 +527,6 @@
   align-items: center;
 }
 
-/* .btn: stile base bottoni (hover “lift” e cambio bg) */
 .btn{
   padding: 10px 14px;
   border-radius: 12px;
@@ -557,7 +540,6 @@
   will-change: transform;
 }
 
-/* hover bottone: pill + verde */
 .btn:hover{
   border-radius: 999px;
   transform: translateY(-1px);
@@ -565,22 +547,18 @@
   border-color: rgba(255, 255, 255, 0.22);
 }
 
-/* active bottone */
 .btn:active{
   transform: translateY(0);
 }
 
-/* .btn.ghost: variante trasparente */
 .btn.ghost{
   background: transparent;
 }
 
-/* hover ghost */
 .btn.ghost:hover{
   background: rgba(255,255,255,.06);
 }
 
-/* disabled bottone */
 .btn:disabled{
   opacity: .45;
   cursor: not-allowed;
@@ -589,16 +567,13 @@
 
 /* =========================
    LISTA RECENSIONI
-   - Card recensioni e componenti (stelle, testo, meta)
 ========================= */
 
-/* .reviews: wrapper elenco recensioni (grid verticale) */
 .reviews{
   display: grid;
   gap: 10px;
 }
 
-/* .rev: card recensione base (padding, border, bg, hover) */
 .rev{
   padding: 12px 12px;
   border-radius: 14px;
@@ -606,37 +581,81 @@
   background: rgba(255,255,255,.04);
 
   transition: transform .12s ease, border-color .12s ease, background .12s ease;
+
+  box-shadow: 0 9px 10px rgb(20, 111, 96);
+  backdrop-filter: blur(6px);
 }
 
-/* hover card recensione */
 .rev:hover{
   transform: translateY(-1px);
   border-color: rgba(255,255,255,.18);
   background: rgba(255,255,255,.05);
 }
 
-/* .revTop: riga alta della recensione (titolo/utente a sx, voto/meta a dx) */
-.revTop{
+.revRow{
   display: flex;
   justify-content: space-between;
-  gap: 10px;
-  align-items: baseline;
+  align-items: flex-start;
+  gap: 14px;
 }
 
-/* .revScore: punteggio (numeri tabular) */
+.revLeft{
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.revAvatar{
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  object-fit: cover;
+  flex: 0 0 auto;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.06);
+}
+
+.revBody{
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.revAuthor{
+  display: block;
+  font-weight: 800;
+  font-size: 18px;
+}
+
+.revTitle{
+  display: block;
+  font-size: 16px;
+  font-weight: 800;
+  opacity: .95;
+}
+
+.revText{
+  margin: 0;
+  opacity: .9;
+  line-height: 1.55;
+  font-size: 18px;
+}
+
+.revRight{
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
 .revScore{
   opacity: .9;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
-/* .rev: override “più card” (shadow + blur) */
-.rev{
-  box-shadow: 0 9px 10px rgb(20, 111, 96);
-  backdrop-filter: blur(6px);
-}
-
-/* .revScore.stars: contenitore stelle inline (no wrap) */
 .revScore.stars{
   display: inline-flex;
   gap: 2px;
@@ -645,7 +664,6 @@
   white-space: nowrap;
 }
 
-/* .revScore.stars .star: stile stella “vuota” */
 .revScore.stars .star{
   font-size: 22px;
   opacity: .25;
@@ -653,46 +671,55 @@
   transition: opacity .12s ease, transform .12s ease;
 }
 
-/* .revScore.stars .star.filled: stella “piena” (più visibile) */
 .revScore.stars .star.filled{
-  opacity: 1.2;
+  opacity: 1;
 }
 
-/* hover card: alza leggermente la visibilità delle stelle */
 .rev:hover .revScore.stars .star{
   opacity: .35;
 }
 
-/* hover card: stelle piene più evidenti + micro lift */
 .rev:hover .revScore.stars .star.filled{
   opacity: 1;
   transform: translateY(-1px);
 }
 
-/* .revText: testo recensione (NOTA: questa classe appare più volte nel file) */
-.revText{
-  margin: 8px 0 6px;
-  opacity: .9;
-  line-height: 1.55;
-  font-size: 18px;
+.revDate{
+  margin-top: 10px;
+  font-size: 15px;
+  opacity: .70;
+}
 
+.reviewsToggle{
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+/* Responsive review row <=768px */
+@media (max-width: 768px){
+  .revRow{
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .revRight{
+    justify-items: start;
+    white-space: normal;
+  }
 }
 
 /* =========================
    RATING PICKER (FORM)
-   - Selettore stelle cliccabili per inserire il voto
 ========================= */
 
-/* .ratingPicker: riga stelle + testo, con wrap */
 .ratingPicker{
   display: flex;
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-
 }
 
-/* .pickStar: bottone stella selezionabile (stato base attenuato) */
 .pickStar{
   border: 0;
   background: transparent;
@@ -702,54 +729,46 @@
   cursor: pointer;
   opacity: .25;
   transition: opacity .12s ease, transform .12s ease;
-
 }
 
-/* .pickStar.filled: stella selezionata */
 .pickStar.filled{
   opacity: 1;
 }
 
-/* hover stella: highlight + lift */
 .pickStar:hover{
   transform: translateY(-1px);
   opacity: 1;
 }
 
-/* .ratingText: testo di supporto al rating (es. “7/10”) */
 .ratingText{
   opacity: .75;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   font-size: 18px;
-
 }
 
 /* =========================
    STATI / UTILITY
 ========================= */
 
-/* .muted: testo “secondario” attenuato */
 .muted{
   opacity: .65;
 }
 
-/* .centerState: stato centrato (loading/empty) con altezza grande */
 .centerState{
   min-height: 70vh;
   display: grid;
   place-items: center;
 }
 
-/* .err: testo errore (rosso semi-trasparente) */
 .err{
   color: rgba(255, 0, 0, 0.55);
 }
 
 /* =========================
    SCROLLBAR STYLING
-   - Personalizzazione scrollbar (Firefox + WebKit)
 ========================= */
+
 *{
   scrollbar-width: thin;
   scrollbar-color: rgba(255,255,255,.22) rgba(255,255,255,.06);
@@ -765,53 +784,67 @@
 }
 
 /* =========================
-   RESPONSIVE (<=920px)
-   - Collassa layout a 1 colonna e adatta badge/where/buttons
+   MOBILE LAYOUT (<=920px)
+     struttura: cover -> rating -> title+star
 ========================= */
+
+.mobileRating{
+  display: none; /*   visibile solo su mobile */
+}
+
 @media (max-width: 920px){
-  /* .wrap: da 2 colonne a 1 colonna */
+
   .wrap{
     grid-template-columns: 1fr;
   }
 
-  /* .left: cover non sticky in mobile (torna “normale”) */
   .left{
     position: relative;
     margin: 10px 10px;
     top: auto;
   }
 
-  /* .cover: limita larghezza cover e forza display block */
+  /* cover a tutta larghezza */
   .cover{
-    max-width: 480px;
+    width: 100%;
+    max-width: 100%;
     display: block;
+    margin-top: 0;
   }
 
-  /* .grid2: form da 2 colonne a 1 colonna */
-  .grid2{
-    grid-template-columns: 1fr;
+  /* mostra rating sotto immagine */
+  .mobileRating{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 10px 10px 0;
+    box-sizing: border-box;
   }
 
-  /* .seasonRow: nota: qui usi grid-template-columns su un flex (non cambia layout, ma lo lasciamo com’è) */
-  .seasonRow{
-    grid-template-columns: 1fr;
-  }
-
-  /* .ratingBadge: in mobile diventa statico e centrabile, evita overflow */
-  .ratingBadge{
-    position: static;
-    align-self: flex-end;
-    margin-top: 6px;
+  .ratingBadgeMobile{
+    width: 100%;
     justify-content: center;
     text-align: center;
-
-    max-width: 100%;
+    padding: 12px 16px;
     box-sizing: border-box;
-    overflow: hidden;
-    flex-wrap: wrap;
   }
 
-  /* .whereBox: in mobile centra e compatta spazi */
+  /*   nasconde lo score nel header su mobile */
+  .headRightDesktop{
+    display: none;
+  }
+
+  /*   header: titolo+stella su una riga */
+  .headRow{
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .titleWrap{
+    width: 100%;
+  }
+
+  /* where box sistemata come avevi */
   .whereBox{
     flex-wrap: wrap;
     justify-content: center;
@@ -823,12 +856,10 @@
     margin-top: 1px;
   }
 
-  /* .whereLabel: non si restringe, resta “auto” */
   .whereLabel{
     flex: 0 0 auto;
   }
 
-  /* .whereButtons: gestisce correttamente wrap e allineamenti righe bottoni */
   .whereButtons{
     flex: 1 1 auto;
     min-width: 0;
@@ -836,382 +867,12 @@
     flex-wrap: wrap;
     gap: 8px;
 
-    align-items: center;      /* ✅ allinea tutti i bottoni sulla riga */
-    align-content: flex-start; /* ✅ righe successive “ordinate” */
+    align-items: center;
+    align-content: flex-start;
     margin-top: 5px;
   }
 
-  /* .whereBtn: safety per evitare overflow su bottoni lunghi */
   .whereBtn{
     max-width: 100%;
   }
 }
-
-/* =========================
-   STAGIONI / EPISODI STATS
-   - Box statistiche (due colonne: label + valore)
-========================= */
-
-/* .seasonStats: “card” per statistiche stagioni/episodi (flex con gap) */
-.seasonStats{
-  margin-top: 1px;
-  display: flex;
-  gap: 40px;
-  align-items: flex-start;
-
-  /* box simile alle altre "card" del sito */
-  padding: 12px 14px;
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.03);
-}
-
-/* .seasonCol: colonna singola con label sopra e valore sotto */
-.seasonCol{
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-/* .statsLabel: label statistica (uppercase, non forza colore, usa inherit) */
-.statsLabel{
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-
-  color: inherit;
-  opacity: .75;
-}
-
-/* .statsValue: valore statistica grande (non forza colore, usa inherit) */
-.statsValue{
-  font-size: 32px;
-  font-weight: 900;
-  line-height: 1;
-
-  color: inherit;
-}
-
-/* Responsive stats <=768px: riduce gap e font valore */
-@media (max-width: 768px){
-  .seasonStats{
-    gap: 28px;
-  }
-  .statsValue{
-    font-size: 28px;
-  }
-}
-
-/* =========================
-   RECENSIONI: CARD GRID (NUOVA)
-   - Layout interno a 2 colonne: sx testo, dx rating/data
-========================= */
-
-/* .revGrid: griglia interna recensione (sx prende spazio, dx auto) */
-.revGrid{
-  display: grid;
-  grid-template-columns: 1fr auto; /* sx prende spazio, dx si adatta al contenuto */
-  gap: 16px;
-  align-items: start;
-}
-
-/* .revLeft: colonna sinistra della review (testi), min-width 0 per troncare correttamente */
-.revLeft{
-  min-width: 0; /* evita overflow su testi lunghi */
-}
-
-/* .revAuthor: nome utente/autore (bold) — NOTA: questa classe appare più volte nel file */
-.revAuthor{
-  display: block;
-  font-weight: 800;
-  font-size: 16px;
-  margin-bottom: 6px;
-}
-
-/* .revText: testo recensione (qui reimposti margin a 0) — NOTA: duplicata nel file */
-.revText{
-  margin: 0;           /* evita spazi “strani” tra paragrafi */
-  opacity: .9;
-  line-height: 1.55;
-  font-size: 18px;
-}
-
-/* .revRight: colonna destra (stelle sopra, data sotto) — NOTA: duplicata nel file */
-.revRight{
-  display: grid;
-  justify-items: end;  /* allinea tutto a destra */
-  gap: 8px;
-  white-space: nowrap; /* stelle e data non vanno a capo */
-}
-
-/* .revDate: data recensione (piccola e “muted”) */
-.revDate{
-  margin-top:10px;
-  font-size: 15px;
-  opacity: .70;
-}
-
-/* =========================
-   TOGGLE “MOSTRA ALTRE”
-========================= */
-
-/* .reviewsToggle: wrapper del bottone/link per mostrare altre recensioni */
-.reviewsToggle{
-  display: flex;
-  justify-content: center;
-  margin-top: 30px;
-}
-
-/* =========================
-   REVIEW CARD: NUOVO LAYOUT (FLEX ROW)
-   - sinistra: avatar + testi
-   - destra: stelle + data
-========================= */
-
-/* .revRow: riga principale (sx e dx distanziate) */
-.revRow{
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 14px; /* spazio tra colonna sx e dx */
-}
-
-/* .revLeft: colonna sinistra (avatar + testo) — NOTA: duplicata e con definizione diversa */
-.revLeft{
-  display: flex;
-  align-items: flex-start;
-  gap: 12px; /* spazio tra avatar e testo */
-  min-width: 0; /* evita overflow in flex */
-}
-
-/* .revAvatar: avatar tondo piccolo */
-.revAvatar{
-  width: 38px;
-  height: 38px;
-  border-radius: 999px; /* cerchio */
-  object-fit: cover;
-  flex: 0 0 auto;
-  border: 1px solid rgba(255,255,255,.18);
-  background: rgba(255,255,255,.06);
-}
-
-/* .revBody: blocco testi dentro la review (username/titolo/testo) */
-.revBody{
-  display: grid;
-  gap: 6px;
-  min-width: 0; /* permette di andare a capo senza rompere */
-}
-
-/* .revAuthor: autore — NOTA: qui lo reimposti come block (già sopra) */
-.revAuthor{
-  display: block;
-}
-
-/* .revTitle: titolo recensione (bold e separato) — NOTA: compare più volte nel file */
-.revTitle{
-  display: block;
-  font-size: 16px;
-  opacity: .95;
-}
-
-/* .revRight: colonna destra (rating + data) — NOTA: duplicata e con definizione diversa */
-.revRight{
-  display: grid;
-  justify-items: end; /* allinea a destra */
-  gap: 8px;
-  flex: 0 0 auto;
-}
-
-/* Responsive review row <=768px: impila e allinea a sinistra la colonna destra */
-@media (max-width: 768px){
-  .revRow{
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .revRight{
-    justify-items: start; /* stelle + data a sinistra su mobile */
-  }
-}
-
-/* =========================
-   MOBILE: impila le colonne (<=520px)
-   - Variante per revGrid in singola colonna
-========================= */
-
-@media (max-width: 520px){
-  /* .revGrid: passa a una colonna */
-  .revGrid{
-    grid-template-columns: 1fr;  /* una colonna */
-    gap: 10px;
-  }
-
-  /* .revRight: allinea a sinistra su mobile */
-  .revRight{
-    justify-items: start;        /* su mobile a sinistra è più leggibile */
-  }
-}
-
-/* =========================
-   REVIEW CARD LAYOUT (NEW) (DUPLICATO)
-   - Reintroduce revGrid/revLeft/revRight/revAuthor/revTitle
-   - (lo lasciamo identico: è un override/duplicato nel tuo file)
-========================= */
-
-/* .revGrid: (duplicato) griglia 2 colonne dentro la card */
-.revGrid{
-  display: grid;
-  grid-template-columns: 1fr auto; /* sinistra espande, destra compatta */
-  gap: 14px;
-  align-items: start;
-}
-
-/* .revLeft: (duplicato) colonna sinistra con grid interno */
-.revLeft{
-  min-width: 0; /* evita overflow */
-  display: grid;
-  gap: 6px;
-}
-
-/* .revRight: (duplicato) colonna destra allineata a destra */
-.revRight{
-  display: grid;
-  gap: 8px;
-  justify-items: end;  /* allinea a destra */
-  text-align: right;
-  white-space: nowrap; /* evita che data/stelle vadano a capo */
-}
-
-/* .revAuthor: (duplicato) autore più grande */
-.revAuthor{
-  font-size: 18px;
-  font-weight: 800;
-}
-
-/* .revTitle: (duplicato) titolo più “strong” */
-.revTitle{
-  font-size: 16px;
-  font-weight: 800;
-  opacity: .95;
-}
-
-/* Responsive <=768px: revGrid in colonna singola e revRight torna “normale” */
-@media (max-width: 768px){
-  .revGrid{
-    grid-template-columns: 1fr;
-  }
-  .revRight{
-    justify-items: start;
-    text-align: left;
-    white-space: normal;
-  }
-}
-
-
-/* =========================
-   ⭐ STAR + SCORE
-   - stessa riga (stella a sinistra, score attaccato)
-========================= */
-
-.headTop{
-  display: inline-flex;     /* resta “in linea” sopra al titolo */
-  align-items: center;
-  gap: 6px;
-  margin: 2px 5px 0;
-}
-
-/* ⭐ stella preferiti: bordo giallo spesso, interno bianco */
-.favStar{
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-
-  margin-right: 15px;
-  margin-bottom: 5px;
-
-  font-size: 50px;
-  line-height: 1;
-  display: inline-flex;
-  align-items: center;
-
-  /* interno bianco */
-  color: #ffffff;
-
-  /* bordo giallo spesso (Chrome/Safari) */
-  -webkit-text-stroke: 3px #ffd54a;
-
-  /* fallback (Firefox): “bordo” simulato */
-  text-shadow:
-    2px 0 0 #ffd54a,
-    -2px 0 0 #ffd54a,
-    0 2px 0 #ffd54a,
-    0 -2px 0 #ffd54a,
-    1.5px 1.5px 0 #ffd54a,
-    -1.5px 1.5px 0 #ffd54a,
-    1.5px -1.5px 0 #ffd54a,
-    -1.5px -1.5px 0 #ffd54a;
-}
-
-/* hover: tutta gialla (riempi giallo, bordo sempre giallo) */
-.favStar:hover{
-  color: #ffd54a;
-}
-
-/* stato ON: tutta gialla + glow */
-.favStar.is-on{
-  color: #ffd54a;
-  -webkit-text-stroke: 3px #ffd54a;
-  text-shadow: 0 0 8px rgba(255, 213, 74, 0.55);
-}
-
-
-
-/* =========================
-   HEADER ROW: title a sinistra, star+score a destra
-========================= */
-
-.headRow{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  min-width: 0;
-}
-
-/* titolo deve poter “stringersi” senza spaccare il layout */
-.title{
-  flex: 1 1 auto;
-  min-width: 0;
-  margin: 0 5px 0;
-}
-
-/* container destro (stella + score) */
-.headTop{
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin: 0; /* azzera il tuo margin vecchio */
-}
-
-/* IMPORTANTISSIMO: il badge non deve essere assoluto */
-.ratingBadge{
-  position: static;
-  display: inline-flex;
-  align-items: baseline;
-}
-
-/* mobile: impila per non schiacciare troppo */
-@media (max-width: 920px){
-  .headRow{
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .headTop{
-    align-self: flex-end;
-  }
-}
-

@@ -12,49 +12,68 @@
         />
       </aside>
 
+      <!-- ✅ MOBILE ONLY: rating sotto la copertina -->
+      <div class="mobileRating" *ngIf="displayScore() !== null">
+        <div [ngClass]="scoreClass" class="ratingBadge ratingBadgeMobile">
+          <span class="ratingValue">{{ displayScore() }}</span>
+          <span class="ratingMax">/10</span>
+        </div>
+      </div>
+
       <main class="right">
         <header class="head">
 
+          <!-- ✅ HEADER ROW: titolo (con stella accanto) + score a destra (desktop) -->
           <div class="headRow">
-            <h1 class="title">
-              {{ contenuto ? (contenuto.titolo || 'Senza titolo') : (content?.title || 'Senza titolo') }}
-            </h1>
 
-            <!-- ⭐ STAR + SCORE a destra -->
-            <div class="headTop">
+            <!-- ✅ SINISTRA: titolo + stella attaccata -->
+            <div class="titleWrap">
+              <h1 class="title">
+                {{ contenuto ? (contenuto.titolo || 'Senza titolo') : (content?.title || 'Senza titolo') }}
+              </h1>
+
+              <!-- ⭐ STAR accanto al titolo -->
               <button
                 *ngIf="isLoggedIn"
                 type="button"
                 class="favStar"
                 [class.is-on]="isFavorite"
                 (click)="toggleFavorite()"
-                aria-label="Aggiungi o rimuovi dai preferiti"
                 [attr.aria-pressed]="isFavorite"
-                title="Aggiungi ai Preferiti"
+                aria-label="Aggiungi o rimuovi dai preferiti"
+                title="Preferiti"
               >
-                ★
+                <svg class="favIcon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+                  />
+                </svg>
               </button>
+            </div>
 
-              <div [ngClass]="scoreClass" *ngIf="displayScore() !== null">
+            <!-- ✅ DESTRA: SOLO score (desktop) -->
+            <div class="headRight headRightDesktop" *ngIf="displayScore() !== null">
+              <div [ngClass]="scoreClass" class="ratingBadge">
                 <span class="ratingValue">{{ displayScore() }}</span>
                 <span class="ratingMax">/10</span>
               </div>
             </div>
+
           </div>
 
           <div class="meta">
             <div class="chip">
               <span class="label">Anno</span>
               <span class="value">
-        {{ contenuto ? (contenuto.annoPubblicazione ?? '—') : (content?.year ?? '—') }}
-      </span>
+                {{ contenuto ? (contenuto.annoPubblicazione ?? '—') : (content?.year ?? '—') }}
+              </span>
             </div>
 
             <div class="chip">
               <span class="label">Genere</span>
               <span class="value">
-        {{ contenuto ? (contenuto.genere || '—') : (content?.genre || '—') }}
-      </span>
+                {{ contenuto ? (contenuto.genere || '—') : (content?.genre || '—') }}
+              </span>
             </div>
           </div>
 
@@ -76,10 +95,11 @@
               </a>
 
               <span class="muted" *ngIf="!platformsLoading && !platforms.length">
-        {{ kind === 'GAME' ? 'Piattaforme non disponibili.' : 'Non disponibile in streaming.' }}
-      </span>
+                {{ kind === 'GAME' ? 'Piattaforme non disponibili.' : 'Non disponibile in streaming.' }}
+              </span>
             </div>
           </div>
+
           <!-- ✅ STATS STAGIONI / EPISODI -->
           <p class="muted" *ngIf="kind === 'SERIES' && seriesStatsLoading">
             Caricamento stagioni/episodi...
@@ -111,6 +131,7 @@
           <p class="desc">
             {{ contenuto ? (contenuto.descrizione || '') : (content?.description || '') }}
           </p>
+
         </header>
       </main>
     </div>
