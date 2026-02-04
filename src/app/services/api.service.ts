@@ -1,16 +1,21 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environment/environment';
-import { Game } from '../games/models/game.model';
-import { Film } from '../film/model/film.model';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+
+import { Game } from '../games/models/game.model';
+import { Film } from '../film/model/film.model';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   private baseUrl = environment.apiBaseUrl;
 
   constructor(private http: HttpClient) {}
+
+  /* ======================
+     AUTH
+  ====================== */
 
   authenticate(username: string, password: string) {
     return this.http.post<any>(
@@ -20,85 +25,21 @@ export class ApiService {
     );
   }
 
+  me() {
+    return this.http.get<{ user: any }>(
+      `${this.baseUrl}/api/auth/me`,
+      { withCredentials: true }
+    );
+  }
+
+  /* ======================
+     UTENTE
+  ====================== */
+
   getCurrentUserInfo() {
-    return this.http.get<any>(`${this.baseUrl}/api/auth/me`, { withCredentials: true });
-  }
-
-  // ======================
-  // ⭐ PREFERITI (BACKEND)
-  // ======================
-
-  // Recupera la lista dei preferiti dell'utente
-  getFavouritesMediaByUserId(userId: number) {
-    return this.http.get<any[]>(
-      `${this.baseUrl}/api/utente/${userId}/preferiti`,
+    return this.http.get<any>(
+      `${this.baseUrl}/api/auth/me`,
       { withCredentials: true }
-    );
-  }
-
-  // Rimuove un contenuto dai preferiti dell'utente
-  removeMediaFromFavourites(userId: number, contenutoId: number) {
-    return this.http.delete<{ success: boolean }>(
-      `${this.baseUrl}/api/utente/${userId}/removePreferito`,
-      {
-        body: { contenutoId },
-        withCredentials: true,
-      }
-    );
-  }
-
-  // (già presente) lista preferiti “completa”
-  getFavouriteMediaByUserIdComplete(userId: number) {
-    return this.http.get<any[]>(
-      `${this.baseUrl}/api/utente/${userId}/preferitiCompleti`,
-      { withCredentials: true }
-    );
-  }
-
-  getRecensioniByUserId(userId: number) {
-    return this.http.get<any[]>(
-      `${this.baseUrl}/api/recensioni/utente/${userId}`,
-      { withCredentials: true }
-    );
-  }
-
-  getServerTime() {
-    return this.http.get<{ serverTime: { now: string } }>(`${this.baseUrl}/api/test`);
-  }
-
-  getFirstUser() {
-    return this.http.get<any>(`${this.baseUrl}/api/utente/first`);
-  }
-
- authenticate(username: string, password: string) {
-    return this.http.post<{ token: string }>(`${this.baseUrl}/api/auth/login`, { username, password });
-  }
-
-  newContenuto(titolo: string, descrizione: string, genere: string, link: string, tipo: string, annoPubblicazione: number, casaProduzione?: string, casaEditrice?: string,inCorso?: boolean, stagioni?: number) {
-    console.log('Creating new contenuto with casa produzione:', { casaProduzione});
-    return this.http.post<{ id: number }>(`${this.baseUrl}/api/newContenuto`, { titolo, descrizione, genere, link, tipo, annoPubblicazione, casaProduzione, casaEditrice, inCorso, stagioni });
-  }
-
-  getContenuti() {
-    return this.http.get<any[]>(`${this.baseUrl}/api/contenuti`);
-  }
-
-  getGiochi() {
-    return this.http.get<Game[]>(`${this.baseUrl}/api/contenuti/giochi`);
-  }
-
-  getFilm() {
-    return this.http.get<Film[]>(`${this.baseUrl}/api/contenuti/film`);
-  }
-
-  getSerieTv() {
-    return this.http.get<any[]>(`${this.baseUrl}/api/contenuti/serie_tv`);
-  }
-
-  getRecensioniByContenutoId(contenutoId: number) {
-    return this.http.get<any[]>(
-      `${this.baseUrl}/api/recensioni/contenuto`,
-      { params: { contenutoId } }
     );
   }
 
@@ -109,7 +50,13 @@ export class ApiService {
     );
   }
 
-  createUser(nome: string, cognome: string, username: string, password: string, email: string) {
+  createUser(
+    nome: string,
+    cognome: string,
+    username: string,
+    password: string,
+    email: string
+  ) {
     return this.http.post<{ id: number }>(
       `${this.baseUrl}/api/newUtente`,
       { nome, cognome, email, username, password }
@@ -117,10 +64,19 @@ export class ApiService {
   }
 
   updateUtente(userId: number, dati: any) {
-    return this.http.put<any>(`${this.baseUrl}/api/utente/${userId}`, dati);
+    return this.http.put<any>(
+      `${this.baseUrl}/api/utente/${userId}`,
+      dati
+    );
   }
 
-  updateUserInfo(userId: number, nome: string, cognome: string, email: string, immagineProfilo?: string) {
+  updateUserInfo(
+    userId: number,
+    nome: string,
+    cognome: string,
+    email: string,
+    immagineProfilo?: string
+  ) {
     return this.http.put<{ success: boolean }>(
       `${this.baseUrl}/api/utente/update/${userId}`,
       { nome, cognome, email, immagineProfilo },
@@ -132,9 +88,52 @@ export class ApiService {
     return this.http.put<{ success: boolean }>(
       `${this.baseUrl}/api/utente/update/${userId}/password`,
       { password },
-      { params: { password }, withCredentials: true }
+      { withCredentials: true }
     );
   }
+
+  checkUserPassword(userId: number, password: string) {
+    return this.http.post<{ valid: boolean }>(
+      `${this.baseUrl}/api/utente/${userId}/checkPassword`,
+      { password },
+      { withCredentials: true }
+    );
+  }
+
+  /* ======================
+     CONTENUTI
+  ====================== */
+
+  getContenuti() {
+    return this.http.get<any[]>(
+      `${this.baseUrl}/api/contenuti`
+    );
+  }
+
+  getContenutoById(id: number) {
+    return this.http.get<any>(
+      `${this.baseUrl}/api/contenuti/${id}`
+    );
+  }
+
+  getGiochi() {
+    return this.http.get<Game[]>(
+      `${this.baseUrl}/api/contenuti/giochi`
+    );
+  }
+
+  getFilm() {
+    return this.http.get<Film[]>(
+      `${this.baseUrl}/api/contenuti/film`
+    );
+  }
+
+  getSerieTv() {
+    return this.http.get<any[]>(
+      `${this.baseUrl}/api/contenuti/serie_tv`
+    );
+  }
+
   newContenuto(
     titolo: string,
     descrizione: string,
@@ -159,47 +158,51 @@ export class ApiService {
         casaProduzione,
         casaEditrice,
         inCorso,
-        stagioni,
+        stagioni
       },
       { withCredentials: true }
     );
   }
 
-  checkUserPassword(userId: number, password: string) {
-    return this.http.post<{ valid: boolean }>(
-      `${this.baseUrl}/api/utente/${userId}/checkPassword`,
-      { password },
-      { withCredentials: true }
+  searchContenuti(query: string) {
+    return this.http.get<any[]>(
+      `${this.baseUrl}/api/contenuti/search`,
+      { params: { q: query } }
     );
   }
 
-  deleteRecensione(id: number) {
-    return this.http.delete<{ success: boolean }>(
-      `${this.baseUrl}/api/recensioni/delete/${id}`,
-      { withCredentials: true }
+  /* ======================
+     GENERI / PIATTAFORME
+  ====================== */
+
+  getGeneriGiochi() {
+    return this.http.get<string[]>(
+      `${this.baseUrl}/api/contenuti/giochi/generi`
     );
   }
 
-  me() {
-    return this.http.get<{ user: any }>(`${this.baseUrl}/api/auth/me`, { withCredentials: true });
+  getPiattaformeName() {
+    return this.http.get<string[]>(
+      `${this.baseUrl}/api/piattaforme/nomi`
+    );
   }
 
-  getContenutoById(id: number) {
-    return this.http.get<any>(`${this.baseUrl}/api/contenuti/${id}`);
+  /* ======================
+     RECENSIONI
+  ====================== */
+
+  getRecensioniByContenutoId(contenutoId: number) {
+    return this.http.get<any[]>(
+      `${this.baseUrl}/api/recensioni/contenuto`,
+      { params: { contenutoId } }
+    );
   }
 
-  getTrailerEmbed(kind: 'GAME' | 'MOVIE' | 'SERIES', q: string, year?: number): Observable<string | null> {
-    const params = new HttpParams()
-      .set('kind', kind)
-      .set('q', q)
-      .set('year', year ? String(year) : '');
-
-    return this.http
-      .get<{ embedUrl: string | null }>(`${this.baseUrl}/trailers/embed`, { params })
-      .pipe(
-        map((res) => (res?.embedUrl ? String(res.embedUrl) : null)),
-        catchError(() => of(null))
-      );
+  getRecensioniByUserId(userId: number) {
+    return this.http.get<any[]>(
+      `${this.baseUrl}/api/recensioni/utente/${userId}`,
+      { withCredentials: true }
+    );
   }
 
   addRecensione(
@@ -217,10 +220,28 @@ export class ApiService {
     );
   }
 
-  searchContenuti(query: string) {
+  deleteRecensione(id: number) {
+    return this.http.delete<{ success: boolean }>(
+      `${this.baseUrl}/api/recensioni/delete/${id}`,
+      { withCredentials: true }
+    );
+  }
+
+  /* ======================
+     PREFERITI
+  ====================== */
+
+  getFavouritesMediaByUserId(userId: number) {
     return this.http.get<any[]>(
-      `${this.baseUrl}/api/contenuti/search`,
-      { params: { q: query } }
+      `${this.baseUrl}/api/utente/${userId}/preferiti`,
+      { withCredentials: true }
+    );
+  }
+
+  getFavouriteMediaByUserIdComplete(userId: number) {
+    return this.http.get<any[]>(
+      `${this.baseUrl}/api/utente/${userId}/preferitiCompleti`,
+      { withCredentials: true }
     );
   }
 
@@ -231,9 +252,40 @@ export class ApiService {
       { withCredentials: true }
     );
   }
-  getGeneriGiochi() {return this.http.get<string[]>(`${this.baseUrl}/api/contenuti/giochi/generi`);}
-  getPiattaformeName(){return this.http.get<string[]> (`${this.baseUrl}/api/piattaforme/nomi`);}
 
+  removeMediaFromFavourites(userId: number, contenutoId: number) {
+    return this.http.delete<{ success: boolean }>(
+      `${this.baseUrl}/api/utente/${userId}/removePreferito`,
+      {
+        body: { contenutoId },
+        withCredentials: true
+      }
+    );
+  }
 
+  /* ======================
+     TRAILER
+  ====================== */
 
+  getTrailerEmbed(
+    kind: 'GAME' | 'MOVIE' | 'SERIES',
+    q: string,
+    year?: number
+  ): Observable<string | null> {
+
+    const params = new HttpParams()
+      .set('kind', kind)
+      .set('q', q)
+      .set('year', year ? String(year) : '');
+
+    return this.http
+      .get<{ embedUrl: string | null }>(
+        `${this.baseUrl}/trailers/embed`,
+        { params }
+      )
+      .pipe(
+        map(res => res?.embedUrl ?? null),
+        catchError(() => of(null))
+      );
+  }
 }

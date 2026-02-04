@@ -173,7 +173,7 @@ export class RawgService {
 
     return this.http.get<any>(this.BASE_URL, {
       params: {
-        key: this.API_KEY,
+        key: this.RAWG_KEY, // ✅
         dates: `${today},2027-12-31`,
         ordering: 'released',
         page_size: pageSize.toString()
@@ -182,6 +182,7 @@ export class RawgService {
       map(res => res.results ?? [])
     );
   }
+
   getBestGames(options: {
     pageSize?: number;
     fromYear?: number;
@@ -195,7 +196,7 @@ export class RawgService {
     } = options;
 
     const params: any = {
-      key: this.API_KEY,
+      key: this.RAWG_KEY,
       ordering: '-rating',
       page_size: pageSize.toString()
     };
@@ -208,4 +209,5 @@ export class RawgService {
       map(res => res.results ?? [])
     );
   }
+
 }
