@@ -1,0 +1,77 @@
+/* Stile generale della card (uguale al profilo utente) */
+.card {
+  border: none !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+  border-radius: 20px !important; /* Arrotondamento moderno */
+  overflow: hidden; /* Importante per gli angoli della tabella */
+}
+
+/* Intestazione della Tabella */
+thead th {
+  background-color: #f8f9fa; /* Grigio chiarissimo */
+  color: #6c757d; /* Testo grigio scuro */
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-bottom: none;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+/* Righe della tabella */
+tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+tbody tr:hover {
+  background-color: #fcfcfc; /* Leggerissimo effetto hover */
+}
+
+/* Celle */
+td {
+  vertical-align: middle; /* Centra verticalmente il contenuto */
+  border-bottom: 1px solid #f0f0f0; /* Linea separatrice sottile */
+  padding: 1.2rem 1rem;
+  color: #495057;
+}
+
+/* Badge del Tipo (Film/Gioco/Serie) */
+.badge {
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  background-color: #f1f3f5 !important;
+  border: 1px solid #e9ecef !important;
+  color: #495057 !important;
+}
+
+/* Bottoni Azione */
+.btn-sm {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  transition: all 0.2s ease;
+}
+
+.btn-outline-primary:hover {
+  background-color: #0d6efd;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* Bottone Aggiungi Nuovo (in alto a destra) */
+.btn-success {
+  background: linear-gradient(135deg, #28a745, #218838);
+  border: none;
+  transition: transform 0.2s;
+}
+
+.btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}

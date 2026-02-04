@@ -1,0 +1,40 @@
+<div class="container py-5 font-sans">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-dark">Gestione Catalogo</h2>
+    <a routerLink="/aggiungi-contenuto" class="btn btn-success rounded-pill px-4 fw-bold shadow-sm">
+      + Aggiungi Nuovo Contenuto
+    </a>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light text-muted small fw-bold">
+          <tr>
+            <th class="ps-4 py-3">TITOLO</th>
+            <th class="py-3">CATEGORIA</th>
+            <th class="py-3">ANNO</th>
+            <th class="text-end pe-4 py-3">AZIONI</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of contenuti; track item.id) {
+            <tr>
+              <td class="ps-4 fw-bold text-dark">{{ item.titolo }}</td>
+              <td>
+                <span class="badge rounded-pill bg-light text-dark border px-3">
+                  {{ item.tipo }}
+                </span>
+              </td>
+              <td class="text-muted">{{ item.annoPubblicazione }}</td>
+              <td class="text-end pe-4">
+                <button class="btn btn-sm btn-outline-primary rounded-pill px-3 me-2">Modifica</button>
+                <button class="btn btn-sm btn-outline-danger rounded-pill px-3" (click)="elimina(item.id)">Elimina</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

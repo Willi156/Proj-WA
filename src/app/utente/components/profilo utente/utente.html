@@ -13,11 +13,18 @@
         </div>
         <h5 class="fw-bold mb-0 text-dark">{{user.nome}} {{user.cognome}}</h5>
         <p class="text-muted small mb-4">&#64;{{user.username}}</p>
+
         <div class="w-100 text-start bg-light p-3 rounded-3 mb-4">
           <small class="text-muted fw-bold d-block mb-1" style="font-size: 0.7rem;">EMAIL</small>
           <div class="text-break small fw-medium text-dark lh-sm">{{user.email}}</div>
         </div>
+
         <div class="d-grid gap-2 w-100 mt-auto mb-4 px-2">
+
+          <a routerLink="/admin/gestione" class="btn btn-primary btn-sm rounded-3 d-flex align-items-center justify-content-center gap-2 fw-bold shadow-sm mb-2">
+            <span style="font-size: 1.1rem;">⚙</span> Gestione App
+          </a>
+
           <a routerLink="/settings" class="btn btn-outline-secondary btn-sm rounded-3 d-flex align-items-center justify-content-center gap-2">Impostazioni</a>
           <button class="btn btn-danger-subtle text-danger btn-sm rounded-3 d-flex align-items-center justify-content-center gap-2">Esci</button>
         </div>

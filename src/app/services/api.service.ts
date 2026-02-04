@@ -142,6 +142,18 @@ export class ApiService {
     return this.http.get<any[]>(`${this.baseUrl}/api/piattaforme/complete`, { withCredentials: true });
   }
 
+  deleteContenuto(id: number) {
+    return this.http.delete(`${this.baseUrl}/api/contenuti/${id}`, { withCredentials: true });
+  }
+
+  // Aggiungi questo insieme agli altri metodi
+  getContenutoById(id: number) {
+    return this.http.get<any>(`${this.baseUrl}/api/contenuti/${id}`, { withCredentials: true });
+  }
+
+  updateContenuto(id: number, dati: any) {
+    return this.http.put<any>(`${this.baseUrl}/api/contenuti/${id}`, dati, { withCredentials: true });
+  }
 
   // Esempio per futuri endpoint:
   // getItems() { return this.http.get<Item[]>(`${this.baseUrl}/api/items`); }
