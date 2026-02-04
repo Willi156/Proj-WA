@@ -2,126 +2,143 @@
   <div class="row flex-nowrap">
 
     <div class="col-auto col-md-3 col-xl-2 px-0 bg-white border-end vh-100 sticky-top d-flex flex-column pt-5 shadow-sm" style="z-index: 1000;">
-
       <div class="d-flex flex-column align-items-center w-100 px-3 text-center">
-
         <div class="mb-3 position-relative">
-          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alessia" alt="Avatar" class="rounded-circle bg-light p-1" width="90" height="90">
+          @if (user.immagineProfilo) {
+            <img [src]="user.immagineProfilo" alt="Avatar" class="rounded-circle bg-light p-1" width="90" height="90" style="object-fit: cover;">
+          } @else {
+            <img [src]="'https://api.dicebear.com/7.x/avataaars/svg?seed=' + (user.username || 'default')" alt="Avatar" class="rounded-circle bg-light p-1" width="90" height="90">
+          }
           <div class="position-absolute bottom-0 end-0 bg-success border border-white rounded-circle p-2"></div>
         </div>
-
         <h5 class="fw-bold mb-0 text-dark">{{user.nome}} {{user.cognome}}</h5>
         <p class="text-muted small mb-4">&#64;{{user.username}}</p>
-
         <div class="w-100 text-start bg-light p-3 rounded-3 mb-4">
           <small class="text-muted fw-bold d-block mb-1" style="font-size: 0.7rem;">EMAIL</small>
           <div class="text-break small fw-medium text-dark lh-sm">{{user.email}}</div>
         </div>
-
         <div class="d-grid gap-2 w-100 mt-auto mb-4 px-2">
-
-          <a routerLink="/settings" class="btn btn-outline-secondary btn-sm rounded-3 d-flex align-items-center justify-content-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/><path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"/></svg>
-            Impostazioni
-          </a>
-
-          <button class="btn btn-danger-subtle text-danger btn-sm rounded-3 d-flex align-items-center justify-content-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/><path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/></svg>
-            Esci
-          </button>
-
+          <a routerLink="/settings" class="btn btn-outline-secondary btn-sm rounded-3 d-flex align-items-center justify-content-center gap-2">Impostazioni</a>
+          <button class="btn btn-danger-subtle text-danger btn-sm rounded-3 d-flex align-items-center justify-content-center gap-2">Esci</button>
         </div>
       </div>
     </div>
 
     <div class="col py-5 px-4 overflow-auto h-100">
-
       <div class="d-flex justify-content-between align-items-center mb-5">
         <div>
-          <h2 class="fw-bold text-dark mb-1">Bentornat*, {{user.nome}}!</h2>
+          <h2 class="fw-bold text-dark mb-1">{{ saluto }}, {{ user.nome ? user.nome : 'Utente' }}!</h2>
           <p class="text-muted small">Ecco il riepilogo delle tue recensioni.</p>
         </div>
       </div>
 
       <div class="row g-5">
-
         <div class="col-lg-8">
-
           <div class="bg-white p-1 rounded-3 border mb-4 d-inline-flex">
             <ul class="nav nav-pills" id="pills-tab">
-              <li class="nav-item">
-                <a class="nav-link rounded-3 px-3 py-2 small fw-bold" [class.active]="activeTab === 'games'" (click)="setActiveTab('games')" href="javascript:void(0)">
-                  Games
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link rounded-3 px-3 py-2 small fw-bold" [class.active]="activeTab === 'serie'" (click)="setActiveTab('serie')" href="javascript:void(0)">
-                  Serie TV
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link rounded-3 px-3 py-2 small fw-bold" [class.active]="activeTab === 'film'" (click)="setActiveTab('film')" href="javascript:void(0)">
-                  Film
-                </a>
-              </li>
+              <li class="nav-item"><a class="nav-link rounded-3 px-3 py-2 small fw-bold" [class.active]="activeTab === 'games'" (click)="setActiveTab('games')" href="javascript:void(0)">Games</a></li>
+              <li class="nav-item"><a class="nav-link rounded-3 px-3 py-2 small fw-bold" [class.active]="activeTab === 'serie'" (click)="setActiveTab('serie')" href="javascript:void(0)">Serie TV</a></li>
+              <li class="nav-item"><a class="nav-link rounded-3 px-3 py-2 small fw-bold" [class.active]="activeTab === 'film'" (click)="setActiveTab('film')" href="javascript:void(0)">Film</a></li>
             </ul>
           </div>
 
           <div class="fade-in mb-5">
-
-
+            @if (activeTab === 'games') {
+              <h6 class="fw-bold text-secondary mb-3 text-uppercase small ls-1">Recensioni Videogiochi</h6>
+              <div class="row g-3">
+                @for (rec of recensioniIds; track rec) {
+                  @if (rec.contenuto?.tipo === 'GIOCO' || rec.contenuto?.tipo === 'Game' || rec.categoria === 'Games') {
+                    <div class="col-12">
+                      <div class="card border-0 shadow-sm rounded-3 p-2">
+                        <div class="card-body">
+                          <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="fw-bold mb-1">{{rec.titolo || rec.contenuto?.titolo || rec.oggetto}}</h6>
+                            <span class="badge bg-success-subtle text-success rounded-pill">{{rec.voto}}/10</span>
+                          </div>
+                          <p class="small text-muted mb-0 mt-2">
+                            @if (rec.testo || rec.descrizione) { "{{ rec.testo || rec.descrizione }}" } @else { <span class="fst-italic opacity-50">Nessun commento inserito.</span> }
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                }
+                @if (recensioniIds.length === 0) { <p class="text-muted small">Nessuna recensione trovata.</p> }
+              </div>
+            }
           </div>
 
           <hr class="border-secondary opacity-10 my-5">
 
           <h5 class="fw-bold text-dark mb-4">Tutte le recensioni</h5>
+          @for (rec of recensioniIds; track rec) {
+            <div class="card border-0 shadow-sm rounded-3 mb-3 bg-white">
+              <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <div class="d-flex align-items-center gap-3">
+                    @if (rec.voto >= 7) {
+                      <span class="badge bg-success-subtle text-success border border-success-subtle rounded-3 p-2 fs-6 fw-bold" style="min-width: 60px;">{{rec.voto}}/10</span>
+                    } @else if (rec.voto >= 5) {
+                      <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle rounded-3 p-2 fs-6 fw-bold" style="min-width: 60px;">{{rec.voto}}/10</span>
+                    } @else {
+                      <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-3 p-2 fs-6 fw-bold" style="min-width: 60px;">{{rec.voto}}/10</span>
+                    }
+                    <div>
+                      <h6 class="fw-bold mb-0 text-dark">{{rec.titolo || rec.contenuto?.titolo || rec.oggetto}}</h6>
+                      <small class="text-muted d-block" style="font-size: 0.7rem;">{{rec.contenuto?.tipo || rec.categoria}}</small>
+                    </div>
+                  </div>
 
+                  <button class="btn btn-sm fw-bold"
+                          [class.btn-danger]="rec.inEliminazione"
+                          [class.text-white]="rec.inEliminazione"
+                          [class.text-muted]="!rec.inEliminazione"
+                          (click)="rimuoviRecensione(rec)">
+                    {{ rec.inEliminazione ? 'Elimina?' : '✕' }}
+                  </button>
+
+                </div>
+                <p class="text-muted mt-2 mb-0 small">
+                  @if (rec.testo || rec.descrizione) { "{{ rec.testo || rec.descrizione }}" } @else { <span class="fst-italic opacity-50">Nessun commento inserito.</span> }
+                </p>
+              </div>
+            </div>
+          }
         </div>
 
-          <div class="col-lg-4">
-              <div class="card border-0 shadow-sm rounded-4 sticky-top bg-white" style="top: 20px;">
-                  <div class="card-body p-4">
-                      <h6 class="fw-bold mb-4 text-dark">Preferiti (ID)</h6>
-
-                      <div class="input-group mb-4">
-                          <input type="text" class="form-control bg-light border-0 py-2 small" placeholder="Cerca ID..." [(ngModel)]="searchText">
-                      </div>
-
-                      <div class="d-flex flex-column gap-2">
-
-                          @for (id of preferitiIds; track id) {
-                              <div class="d-flex align-items-center justify-content-between p-2 rounded-3 border-bottom border-light">
-                                  <div class="d-flex align-items-center gap-3">
-                                      <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center"
-                                           style="width: 8px; height: 8px;">
-                                      </div>
-
-                                      <div class="d-flex flex-column">
-                                          <span class="fw-bold text-dark small">Media ID: {{id}}</span>
-                                          <span class="text-muted" style="font-size: 0.7rem;">Preferito</span>
-                                      </div>
-                                  </div>
-
-                                  <button class="btn btn-sm text-secondary p-0 ms-1 small">✕</button>
-                              </div>
-                          }
-
-                          @if (preferitiIds.length === 0) {
-
-                              <p class="text-muted small text-center">Nessun preferito trovato.</p>
-                          }
-                          <ul *ngIf="preferitiIds.length>0; else empty">
-                              <li *ngFor="let id of preferitiIds">
-                                  contenutoId : {{id}}
-                              </li>
-                          </ul>
-                          <ng-template #empty>
-                              <p> nessun contenuto nei preferiti </p>
-                          </ng-template>
-                      </div>
-                  </div>
+        <div class="col-lg-4">
+          <div class="card border-0 shadow-sm rounded-4 sticky-top bg-white" style="top: 20px;">
+            <div class="card-body p-4">
+              <h6 class="fw-bold mb-4 text-dark">Preferiti (ID)</h6>
+              <div class="input-group mb-4">
+                <input type="text" class="form-control bg-light border-0 py-2 small" placeholder="Cerca ID..." [(ngModel)]="searchText">
               </div>
+              <div class="d-flex flex-column gap-2">
+                @for (id of preferitiIds; track id) {
+                  <div class="d-flex align-items-center justify-content-between p-2 rounded-3 border-bottom border-light">
+                    <div class="d-flex align-items-center gap-3">
+                      <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width: 8px; height: 8px;"></div>
+                      <div class="d-flex flex-column">
+                        <span class="fw-bold text-dark small">{{ id.titolo || id.contenuto?.titolo || ('Media ID: ' + id.id) }}</span>
+                        <span class="text-muted" style="font-size: 0.7rem;">Preferito</span>
+                      </div>
+                    </div>
+
+                    <button class="btn btn-sm fw-bold"
+                            [class.btn-danger]="id.inEliminazione"
+                            [class.text-white]="id.inEliminazione"
+                            [class.text-secondary]="!id.inEliminazione"
+                            (click)="rimuoviPreferito(id)">
+                      {{ id.inEliminazione ? 'Elimina?' : '✕' }}
+                    </button>
+
+                  </div>
+                }
+              </div>
+            </div>
           </div>
+        </div>
+
       </div>
     </div>
   </div>

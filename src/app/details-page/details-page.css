@@ -1,0 +1,878 @@
+/* =========================
+   LAYOUT PAGINA
+========================= */
+
+.page{
+  min-height: 100vh;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.wrap{
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.left{
+  position: sticky;
+  top: 24px;
+}
+
+.cover{
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 0 16px 40px rgba(0,0,0,.25);
+  transform: translateZ(0);
+  margin-top: 30px;
+}
+
+.right{
+  min-width: 0;
+}
+
+/* =========================
+   HEADER DETTAGLI
+========================= */
+
+.head{
+  position: relative;
+  display: grid;
+  gap: 14px;
+}
+
+/*   header: titolo+stella a sinistra, score a destra (desktop) */
+.headRow{
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  min-width: 0;
+}
+
+/*   wrapper titolo + stella */
+.titleWrap{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.title{
+  font-size: 36px;
+  line-height: 1.1;
+  margin: 0 5px 0;
+  letter-spacing: -0.02em;
+
+  /* per evitare overflow in flex */
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+/*   colonna destra dello score (desktop) */
+.headRight{
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* =========================
+   RATING BADGE
+========================= */
+
+.ratingBadge{
+  position: static; /*   non assoluto, così su mobile possiamo gestirlo meglio */
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+
+  padding: 10px 18px;
+  border-radius: 999px;
+
+  background: #ff8100;
+  font-weight: 999;
+
+  transform: translateZ(0);
+}
+
+.score-green { background: #06A77D; }
+.score-yellow { background: #ffbd3f; }
+.score-orange { background: #fb7400; }
+.score-red { background: #ff4d4d; }
+.score-blue { background: #4d8bff; }
+
+.ratingValue{
+  font-size: 23px;
+  line-height: 1;
+}
+
+.ratingMax{
+  font-size: 15px;
+  opacity: .7;
+}
+
+/* =========================
+   ⭐ FAVORITES STAR (SVG)
+========================= */
+
+.favStar{
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+}
+
+.favIcon{
+  width: 40px;
+  height: 40px;
+  display: block;
+
+  fill: #ffffff;
+  stroke: #ffd54a;
+  stroke-width: 2.3;
+  stroke-linejoin: round;
+}
+
+.favStar.is-on .favIcon{
+  fill: #ffd54a;
+}
+
+.favStar:hover .favIcon{
+  fill: #ffd54a;
+}
+
+/* =========================
+   META / CHIPS
+========================= */
+
+.meta{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chip{
+  display: inline-flex;
+  gap: 10px;
+  align-items: baseline;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+
+  transition: transform .12s ease, background .12s ease, border-color .12s ease;
+  will-change: transform;
+}
+
+.chip:hover{
+  transform: translateY(-1px);
+  border-color: rgba(255,255,255,.22);
+  background: rgba(255,255,255,.08);
+}
+
+.label{
+  opacity: .7;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.value{
+  font-weight: 600;
+}
+
+.score{
+  font-variant-numeric: tabular-nums;
+}
+
+.desc{
+  margin: 10px 5px 50px;
+  opacity: .9;
+  line-height: 1.8;
+}
+
+/* =========================
+   WHERE TO WATCH
+========================= */
+
+.whereBox{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+
+  padding: 2px 0 0;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.04);
+
+  transition: border-color .12s ease, background .12s ease;
+}
+
+.whereBox:hover{
+  border-color: rgba(255,255,255,.18);
+  background: rgba(255,255,255,.05);
+}
+
+.whereLabel{
+  opacity: .9;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-right: 6px;
+  margin-top: 5px;
+  padding: 12px 14px;
+  border-radius: 999px;
+  background: #f6b000;
+}
+
+.whereButtons{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.whereButtons,
+.whereBox,
+.right,
+.head{
+  min-width: 0;
+}
+
+.whereBtn{
+  padding: 10px 14px;
+  border-radius: 999px;
+
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+
+  border: 1px solid rgba(255,255,255,.18);
+  background: #06A77D;
+  color: inherit;
+
+  cursor: default;
+  user-select: none;
+
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.15);
+
+  transition: transform .12s ease, filter .12s ease;
+  will-change: transform;
+  margin-top: 5px;
+}
+
+.whereBtn:hover{
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+}
+
+.whereBtn:active{
+  transform: translateY(0);
+}
+
+/* =========================
+   STAGIONI / EPISODI STATS
+========================= */
+
+.seasonStats{
+  margin-top: 1px;
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.03);
+}
+
+.seasonCol{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statsLabel{
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+
+  color: inherit;
+  opacity: .75;
+}
+
+.statsValue{
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1;
+
+  color: inherit;
+}
+
+@media (max-width: 768px){
+  .seasonStats{ gap: 28px; }
+  .statsValue{ font-size: 28px; }
+}
+
+/* =========================
+   ACCORDIONS
+========================= */
+
+.accordions{
+  margin-top: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.fullRow{
+  max-width: 1200px;
+  margin: 18px auto 0;
+}
+
+.acc{
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.04);
+  overflow: hidden;
+
+  box-shadow: 0 16px 40px rgba(0,0,0,.10);
+  transition: transform .12s ease, border-color .12s ease, background .12s ease;
+}
+
+.acc:hover{
+  border-color: rgba(255,255,255,.20);
+  background: rgba(255,255,255,.05);
+}
+
+.accSum{
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  font-weight: 600;
+  font-size: 18px;
+
+  transition: background .12s ease;
+  background-color: #06A77D;
+}
+
+.accSum:hover{
+  background: rgba(255,255,255,.04);
+}
+
+.accSum::-webkit-details-marker{ display:none; }
+
+.chev{
+  opacity: .7;
+  transition: transform .18s ease, opacity .18s ease;
+}
+
+.acc[open] .chev{
+  transform: rotate(180deg);
+  opacity: .95;
+}
+
+.accBody{
+  padding: 14px 16px 16px;
+  border-top: 1px solid rgba(255,255,255,.12);
+}
+
+/* =========================
+   TRAILER / VIDEO
+========================= */
+
+.videoWrap{
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(21, 15, 15, 0.16);
+  background: rgba(0,0,0,.25);
+  transform: translateZ(0);
+}
+
+.video{
+  width: 100%;
+  height: 100%;
+}
+
+/* =========================
+   REVIEW FORM
+========================= */
+
+.reviewForm{
+  display: grid;
+  gap: 12px;
+  margin-left: 10px;
+  max-width: 1999px;
+
+  align-content: start;
+  padding: 16px 16px 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.03);
+  box-shadow: 0 12px 30px rgba(0,0,0,.10);
+}
+
+.grid2{
+  display: grid;
+  grid-template-columns: 1fr 180px;
+  gap: 12px;
+
+  align-items: start;
+  grid-auto-rows: min-content;
+}
+
+.field{
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  font-size: 14px;
+}
+
+.field-title{
+  min-height: 30px;
+  padding: 6px 8px;
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+.field label{
+  display: block;
+  height: 18px;
+  line-height: 18px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.label-rev{
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-weight: 700;
+  color: #06A77D;
+
+  display: inline-block;
+  margin-left: 8px;
+  letter-spacing: .02em;
+  padding-right: 10px;
+  text-transform: uppercase;
+  font-size: 18px;
+}
+
+.field input,
+.field select,
+.field textarea{
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+  color: inherit;
+  box-sizing: border-box;
+  background-color: #cdd4d0;
+  font-size: 19px;
+  line-height: 20px;
+}
+
+.field input,
+.field select{
+  height: 42px;
+}
+
+.field textarea{
+  resize: none;
+}
+
+.field input:hover,
+.field select:hover,
+.field textarea:hover{
+  background: rgba(255,255,255,.08);
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
+  border-color: rgba(255,255,255,.28);
+  box-shadow: 0 0 0 3px rgba(255,255,255,.08);
+  outline: none;
+}
+
+.field.field-title textarea{
+  min-height: 52px;
+  height: 52px;
+  max-height: 52px;
+
+  overflow: hidden;
+  resize: none;
+}
+
+.actions{
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.btn{
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.12);
+  color: inherit;
+  cursor: pointer;
+  font-weight: 600;
+
+  transition: transform .12s ease, background .12s ease, border-color .12s ease, opacity .12s ease;
+  will-change: transform;
+}
+
+.btn:hover{
+  border-radius: 999px;
+  transform: translateY(-1px);
+  background: #06A77D;
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.btn:active{
+  transform: translateY(0);
+}
+
+.btn.ghost{
+  background: transparent;
+}
+
+.btn.ghost:hover{
+  background: rgba(255,255,255,.06);
+}
+
+.btn:disabled{
+  opacity: .45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* =========================
+   LISTA RECENSIONI
+========================= */
+
+.reviews{
+  display: grid;
+  gap: 10px;
+}
+
+.rev{
+  padding: 12px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+
+  transition: transform .12s ease, border-color .12s ease, background .12s ease;
+
+  box-shadow: 0 9px 10px rgb(20, 111, 96);
+  backdrop-filter: blur(6px);
+}
+
+.rev:hover{
+  transform: translateY(-1px);
+  border-color: rgba(255,255,255,.18);
+  background: rgba(255,255,255,.05);
+}
+
+.revRow{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.revLeft{
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.revAvatar{
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  object-fit: cover;
+  flex: 0 0 auto;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.06);
+}
+
+.revBody{
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.revAuthor{
+  display: block;
+  font-weight: 800;
+  font-size: 18px;
+}
+
+.revTitle{
+  display: block;
+  font-size: 16px;
+  font-weight: 800;
+  opacity: .95;
+}
+
+.revText{
+  margin: 0;
+  opacity: .9;
+  line-height: 1.55;
+  font-size: 18px;
+}
+
+.revRight{
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.revScore{
+  opacity: .9;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.revScore.stars{
+  display: inline-flex;
+  gap: 2px;
+  align-items: center;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.revScore.stars .star{
+  font-size: 22px;
+  opacity: .25;
+  transform: translateY(0);
+  transition: opacity .12s ease, transform .12s ease;
+}
+
+.revScore.stars .star.filled{
+  opacity: 1;
+}
+
+.rev:hover .revScore.stars .star{
+  opacity: .35;
+}
+
+.rev:hover .revScore.stars .star.filled{
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.revDate{
+  margin-top: 10px;
+  font-size: 15px;
+  opacity: .70;
+}
+
+.reviewsToggle{
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+/* Responsive review row <=768px */
+@media (max-width: 768px){
+  .revRow{
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .revRight{
+    justify-items: start;
+    white-space: normal;
+  }
+}
+
+/* =========================
+   RATING PICKER (FORM)
+========================= */
+
+.ratingPicker{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pickStar{
+  border: 0;
+  background: transparent;
+  padding: 0;
+  line-height: 1;
+  font-size: 24px;
+  cursor: pointer;
+  opacity: .25;
+  transition: opacity .12s ease, transform .12s ease;
+}
+
+.pickStar.filled{
+  opacity: 1;
+}
+
+.pickStar:hover{
+  transform: translateY(-1px);
+  opacity: 1;
+}
+
+.ratingText{
+  opacity: .75;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  font-size: 18px;
+}
+
+/* =========================
+   STATI / UTILITY
+========================= */
+
+.muted{
+  opacity: .65;
+}
+
+.centerState{
+  min-height: 70vh;
+  display: grid;
+  place-items: center;
+}
+
+.err{
+  color: rgba(255, 0, 0, 0.55);
+}
+
+/* =========================
+   SCROLLBAR STYLING
+========================= */
+
+*{
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,.22) rgba(255,255,255,.06);
+}
+*::-webkit-scrollbar{ height: 10px; width: 10px; }
+*::-webkit-scrollbar-thumb{
+  background: rgba(255,255,255,.22);
+  border-radius: 999px;
+}
+*::-webkit-scrollbar-track{
+  background: rgba(255,255,255,.06);
+  border-radius: 999px;
+}
+
+/* =========================
+   MOBILE LAYOUT (<=920px)
+     struttura: cover -> rating -> title+star
+========================= */
+
+.mobileRating{
+  display: none; /*   visibile solo su mobile */
+}
+
+@media (max-width: 920px){
+
+  .wrap{
+    grid-template-columns: 1fr;
+  }
+
+  .left{
+    position: relative;
+    margin: 10px 10px;
+    top: auto;
+  }
+
+  /* cover a tutta larghezza */
+  .cover{
+    width: 100%;
+    max-width: 100%;
+    display: block;
+    margin-top: 0;
+  }
+
+  /* mostra rating sotto immagine */
+  .mobileRating{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 10px 10px 0;
+    box-sizing: border-box;
+  }
+
+  .ratingBadgeMobile{
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    padding: 12px 16px;
+    box-sizing: border-box;
+  }
+
+  /*   nasconde lo score nel header su mobile */
+  .headRightDesktop{
+    display: none;
+  }
+
+  /*   header: titolo+stella su una riga */
+  .headRow{
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .titleWrap{
+    width: 100%;
+  }
+
+  /* where box sistemata come avevi */
+  .whereBox{
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-top: 1px;
+  }
+
+  .whereLabel{
+    flex: 0 0 auto;
+  }
+
+  .whereButtons{
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    align-items: center;
+    align-content: flex-start;
+    margin-top: 5px;
+  }
+
+  .whereBtn{
+    max-width: 100%;
+  }
+}

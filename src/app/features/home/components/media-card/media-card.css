@@ -1,9 +1,11 @@
 .card {
-  width: 200px;
+  width: 202px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   overflow: hidden;
+  background: transparent;
+  border-color: transparent;
 }
 
 .poster {
@@ -70,20 +72,20 @@ img {
 
 .score-green { background: #06A77D; }
 .score-yellow { background: #ffbd3f; }
-.score-yellow { background: #fb7400; }
+.score-orange { background: #fb7400; }
 .score-red { background: #ff4d4d; }
 .score-blue { background: #4d8bff; }
 
 .label {
   font-size: 13px;
-  color: #666;
+  color: #474545;
   font-weight: 600;
 }
 
 .watch {
   margin-top: 2px;
   height: 38px;
-  border-radius: 6px;
+  border-radius:10px;
   border: 1px solid #cfcfcf;
   background: #fff;
 

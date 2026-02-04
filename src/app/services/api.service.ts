@@ -1,11 +1,10 @@
-
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environment/environment';
-
 import { Game } from '../games/models/game.model';
 import { Film } from '../film/model/film.model';
-import {SerieTv} from '../serieTV/model/serie-tv.model';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
@@ -13,14 +12,63 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
-  // Endpoint di test che abbiamo nel backend: /api/test
+  authenticate(username: string, password: string) {
+    return this.http.post<any>(
+      `${this.baseUrl}/api/auth/login`,
+      { username, password },
+      { withCredentials: true }
+    );
+  }
+
+  getCurrentUserInfo() {
+    return this.http.get<any>(`${this.baseUrl}/api/auth/me`, { withCredentials: true });
+  }
+
+  // ======================
+  // ⭐ PREFERITI (BACKEND)
+  // ======================
+
+  // Recupera la lista dei preferiti dell'utente
+  getFavouritesMediaByUserId(userId: number) {
+    return this.http.get<any[]>(
+      `${this.baseUrl}/api/utente/${userId}/preferiti`,
+      { withCredentials: true }
+    );
+  }
+
+  // Rimuove un contenuto dai preferiti dell'utente
+  removeMediaFromFavourites(userId: number, contenutoId: number) {
+    return this.http.delete<{ success: boolean }>(
+      `${this.baseUrl}/api/utente/${userId}/removePreferito`,
+      {
+        body: { contenutoId },
+        withCredentials: true,
+      }
+    );
+  }
+
+  // (già presente) lista preferiti “completa”
+  getFavouriteMediaByUserIdComplete(userId: number) {
+    return this.http.get<any[]>(
+      `${this.baseUrl}/api/utente/${userId}/preferitiCompleti`,
+      { withCredentials: true }
+    );
+  }
+
+  getRecensioniByUserId(userId: number) {
+    return this.http.get<any[]>(
+      `${this.baseUrl}/api/recensioni/utente/${userId}`,
+      { withCredentials: true }
+    );
+  }
+
   getServerTime() {
     return this.http.get<{ serverTime: { now: string } }>(`${this.baseUrl}/api/test`);
   }
 
   getFirstUser() {
-  return this.http.get<any>(`${this.baseUrl}/api/utente/first`);
-}
+    return this.http.get<any>(`${this.baseUrl}/api/utente/first`);
+  }
 
  authenticate(username: string, password: string) {
     return this.http.post<{ token: string }>(`${this.baseUrl}/api/auth/login`, { username, password });
@@ -48,32 +96,144 @@ export class ApiService {
   }
 
   getRecensioniByContenutoId(contenutoId: number) {
-    return this.http.get<any[]>(`${this.baseUrl}/api/recensioni/contenuto`,{params: {contenutoId}});
+    return this.http.get<any[]>(
+      `${this.baseUrl}/api/recensioni/contenuto`,
+      { params: { contenutoId } }
+    );
   }
 
   getCheckUsername(username: string) {
-    return this.http.get<{ available: boolean }>(`${this.baseUrl}/api/utente/checkUsernameExists`, { params: { username } });
+    return this.http.get<{ available: boolean }>(
+      `${this.baseUrl}/api/utente/checkUsernameExists`,
+      { params: { username } }
+    );
   }
+
   createUser(nome: string, cognome: string, username: string, password: string, email: string) {
-    return this.http.post<{ id: number }>(`${this.baseUrl}/api/newUtente`, { nome, cognome, email, username, password });
-  }
-  getFavouritesMediaByUserId(userId: number) {
-    return this.http.get<any[]>(`${this.baseUrl}/api/utente/${userId}/preferiti`);
-  }
-  getFavouriteMediaByUserIdComplete(userId: number) {
-    return this.http.get<any[]>(`${this.baseUrl}/api/utente/${userId}/preferitiCompleti`);
+    return this.http.post<{ id: number }>(
+      `${this.baseUrl}/api/newUtente`,
+      { nome, cognome, email, username, password }
+    );
   }
 
-  getRecensioniByUserId(userId: number) {
-    return this.http.get<any[]>(`${this.baseUrl}/api/recensioni/utente/${userId}`);
+  updateUtente(userId: number, dati: any) {
+    return this.http.put<any>(`${this.baseUrl}/api/utente/${userId}`, dati);
   }
 
+  updateUserInfo(userId: number, nome: string, cognome: string, email: string, immagineProfilo?: string) {
+    return this.http.put<{ success: boolean }>(
+      `${this.baseUrl}/api/utente/update/${userId}`,
+      { nome, cognome, email, immagineProfilo },
+      { withCredentials: true }
+    );
+  }
+
+  updateUserPassword(userId: number, password: string) {
+    return this.http.put<{ success: boolean }>(
+      `${this.baseUrl}/api/utente/update/${userId}/password`,
+      { password },
+      { params: { password }, withCredentials: true }
+    );
+  }
+  newContenuto(
+    titolo: string,
+    descrizione: string,
+    genere: string,
+    link: string,
+    tipo: string,
+    annoPubblicazione: number,
+    casaProduzione?: string,
+    casaEditrice?: string,
+    inCorso?: boolean,
+    stagioni?: number
+  ) {
+    return this.http.post<{ id: number }>(
+      `${this.baseUrl}/api/newContenuto`,
+      {
+        titolo,
+        descrizione,
+        genere,
+        link,
+        tipo,
+        annoPubblicazione,
+        casaProduzione,
+        casaEditrice,
+        inCorso,
+        stagioni,
+      },
+      { withCredentials: true }
+    );
+  }
+
+  checkUserPassword(userId: number, password: string) {
+    return this.http.post<{ valid: boolean }>(
+      `${this.baseUrl}/api/utente/${userId}/checkPassword`,
+      { password },
+      { withCredentials: true }
+    );
+  }
+
+  deleteRecensione(id: number) {
+    return this.http.delete<{ success: boolean }>(
+      `${this.baseUrl}/api/recensioni/delete/${id}`,
+      { withCredentials: true }
+    );
+  }
+
+  me() {
+    return this.http.get<{ user: any }>(`${this.baseUrl}/api/auth/me`, { withCredentials: true });
+  }
+
+  getContenutoById(id: number) {
+    return this.http.get<any>(`${this.baseUrl}/api/contenuti/${id}`);
+  }
+
+  getTrailerEmbed(kind: 'GAME' | 'MOVIE' | 'SERIES', q: string, year?: number): Observable<string | null> {
+    const params = new HttpParams()
+      .set('kind', kind)
+      .set('q', q)
+      .set('year', year ? String(year) : '');
+
+    return this.http
+      .get<{ embedUrl: string | null }>(`${this.baseUrl}/trailers/embed`, { params })
+      .pipe(
+        map((res) => (res?.embedUrl ? String(res.embedUrl) : null)),
+        catchError(() => of(null))
+      );
+  }
+
+  addRecensione(
+    idContenuto: number,
+    idUtente: number,
+    voto: number,
+    testo: string,
+    titolo: string,
+    data?: Date
+  ) {
+    return this.http.post<{ id: number }>(
+      `${this.baseUrl}/api/recensione/new`,
+      { idContenuto, idUtente, voto, testo, titolo, data },
+      { withCredentials: true }
+    );
+  }
+
+  searchContenuti(query: string) {
+    return this.http.get<any[]>(
+      `${this.baseUrl}/api/contenuti/search`,
+      { params: { q: query } }
+    );
+  }
+
+  addMediaToFavourites(userId: number, contenutoId: number) {
+    return this.http.post(
+      `${this.baseUrl}/api/utente/${userId}/addPreferito`,
+      { contenutoId },
+      { withCredentials: true }
+    );
+  }
   getGeneriGiochi() {return this.http.get<string[]>(`${this.baseUrl}/api/contenuti/giochi/generi`);}
   getPiattaformeName(){return this.http.get<string[]> (`${this.baseUrl}/api/piattaforme/nomi`);}
 
 
 
-  // Esempio per futuri endpoint:
-  // getItems() { return this.http.get<Item[]>(`${this.baseUrl}/api/items`); }
-  // createItem(payload: ItemCreateDto) { return this.http.post(`${this.baseUrl}/api/items`, payload); }
 }

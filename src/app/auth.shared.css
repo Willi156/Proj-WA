@@ -7,104 +7,129 @@
   --pLight: #477baf;
   --ink:#222;
 }
+
+/* ===== BASE WRAPPERS ===== */
 .all{
   margin: 0;
   padding: 0;
   overflow: hidden;
 }
+
 .auth{
-  width:100vw;height:100vh;
-  display:grid;place-items:center;
+  width:100vw;
+  height:100vh;
+  display:grid;
+  place-items:center;
   background: transparent;
   font-family:'Spline Sans Mono', monospace;
 }
 
-.shell-signup{
-  width:min(1100px, 94vw);
-  height:min(925px, 92vh);
-  background:#06A77D;
-  border-radius:20px;
-  overflow:hidden;
-  display:grid;
-  grid-template-columns: 46% 54%;
-  box-shadow: 0 26px 60px rgba(0,0,0,.45);
-}
-
+/* ===== SHELLS (LOGIN / SIGNUP) ===== */
 .shell{
-  width:min(1100px, 94vw);
-  height:min(725px, 92vh);
+  width: min(900px, 90vw);
+  height: min(750px, 85vh);
   background:#06A77D;
   border-radius:20px;
   overflow:hidden;
   display:grid;
   grid-template-columns: 46% 54%;
-  box-shadow: 0 26px 60px rgba(0,0,0,.45);
+  box-shadow: 30px 26px 60px rgb(20, 111, 96);
 }
 
+.shell-signup{
+  width: min(900px, 90vw);
+  height: min(950px, 88vh);
+  background:#06A77D;
+  border-radius:20px;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns: 46% 54%;
+  box-shadow: 0 26px 60px rgb(20, 111, 96);
+}
+
+/* ===== LEFT SIDE ===== */
 .side{
   position:relative;
-  background:
-    linear-gradient(135deg, rgba(255,255,255,.18) 0 14%, transparent 14% 100%),
-    linear-gradient(135deg, rgba(0,0,0,.50) 0 16%, transparent 16% 100%),
-    linear-gradient(135deg, var(--pDark), var(--pMid));
+  background: rgb(2, 9, 7);
   overflow:hidden;
-}
-/* logo sopra i tab */
-.side-logo{
-  position: relative;
-  z-index: 2;
-  margin-top: 110px;
-  margin-left: 130px;
-  width: 280px;
-  height: 100px;
-  display: grid;
-  place-items: center;
+
+  /* evita artefatti/righe da overlay in alcuni browser */
+  isolation: isolate;
 }
 
-.side-logo img{
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  display: block;
-}
-
-/* due bande diagonali grandi come foto */
+/* overlay sotto ai contenuti (morbido, niente riga verticale) */
 .side::before{
   content:"";
   position:absolute;
-  inset:-40%;
+  inset:-60%;
   transform: rotate(45deg);
+
+  /* ✅ niente “seam”: uso radial invece di bande verticali */
   background:
-    linear-gradient(90deg,
-    rgba(255,255,255,0.18) 0 18%,
-    transparent 18% 55%,
-    rgba(0,0,0,0.10) 55% 74%,
-    transparent 74% 100%);
+    radial-gradient(circle at 35% 30%, rgba(20,111,96,0.22), transparent 60%),
+    radial-gradient(circle at 70% 70%, rgba(0,0,0,0.30), transparent 55%);
+
   opacity: .9;
+  z-index: 0;
+  pointer-events: none;
+
+  /* evita linee sottili dovute al compositing */
+  backface-visibility: hidden;
+  transform-origin: center;
 }
 
-/*  SIGN IN / SIGN UP */
+/* ===== LOGO ===== */
+.side-logo{
+  position: relative;
+  z-index: 2;
+
+  width: 150%;
+  height: 180px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin-top: 30px;
+  padding: 0 20px;
+}
+
+.side-logo img{
+  margin: 0;
+  display: block;
+  max-width: 560px;
+  max-height: 460px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  margin-left: 25px;
+  margin-top: 25px;
+}
+
+/* ===== SIGN IN / SIGN UP container ===== */
 .side-text{
-  margin-top: 250px;
-  margin-left: 170px;
+  margin-top: 100px;
+  margin-inline: auto;
+  width: 100%;
+
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  width: 170px;
+  align-items: center;
+  gap: 12px;
 }
 
-/* tab base */
+/* ===== TABS ===== */
 .vtab{
   all: unset;
   cursor: pointer;
 
-  height: 70px;
-  width: 100%;
+  height: 55px;
+  width: 170px;
 
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 0;
+
   border-radius: 999px;
   border: 1px solid rgba(255,255,255,0.55);
 
@@ -114,19 +139,21 @@
   color: rgba(255,255,255,0.92);
   background: rgba(255,255,255,0.10);
   text-decoration: none;
-  position: relative;
-  transition: transform .15s ease, background .15s ease, box-shadow .15s ease, border-color .15s ease, color .15s ease;
+
+  transition:
+    transform .15s ease,
+    background .15s ease,
+    box-shadow .15s ease,
+    border-color .15s ease,
+    color .15s ease;
 }
 
-/* hover */
 .vtab:hover{
-  border-color: transparent;
   transform: translateY(-1px);
   background: rgba(255,255,255,0.16);
   border-color: rgba(255,255,255,0.80);
 }
 
-/* attivo: pill bianca */
 .vtab.is-active{
   background: #fff;
   color: #000000;
@@ -134,16 +161,13 @@
   box-shadow: 0 10px 22px rgba(0,0,0,0.18);
 }
 
-/* focus accessibile */
-.vtab:focus-visible{
-  outline: 3px solid rgba(255,255,255,0.65);
-  outline-offset: 3px;
+/* ===== RIGHT PANEL ===== */
+.panel{
+  padding: 80px 50px 30px;
 }
 
-
-/* RIGHT PANEL */
-.panel{
-  padding: 70px 80px 30px;
+.auth--login .panel{
+  padding: 150px 50px 30px;
 }
 
 .panel-head{
@@ -157,40 +181,43 @@
 .avatar{
   width: 78px;
   height:78px;
+  margin-top: 8px;
   border-radius:999px;
-  display:grid;place-items:center;
+  display:grid;
+  place-items:center;
   background: linear-gradient(145deg, var(--pMid), var(--pDark));
   color:#fff;
-  box-shadow: 0 2px 14px 10px rgba(250, 247, 250, 0.35);
+  box-shadow: 0 2px 30px 10px rgb(0, 0, 0);
 }
 
 .title{
-  margin-top: 8px;
-  font-size: 40px;
+  margin-top: 12px;
+  font-size: 41px;
   font-weight: 900;
-  color: white;
+  color: rgb(0, 0, 0);
   letter-spacing: 1px;
 }
 
+/* ===== FORM ===== */
 .form{
   display:flex;
   flex-direction:column;
-  gap: 10px;
+  gap: 1px;
+  margin-top: -30px;
 }
 
 .row{
   display:flex;
   align-items:center;
   gap: 12px;
-  border-bottom: 2px solid rgba(0,0,0,.16);
-  padding: 12px 6px;
+  border-bottom: 2px solid rgba(15, 0, 0, 0.959);
+  padding: 2px 2px;
 }
 
 .row input::placeholder{
   color: rgba(255,255,255,0.90);
   opacity: 1;
 }
-
 
 .ico{
   width:50px;
@@ -214,7 +241,7 @@
   color:#b00020;
   font-size: 14px;
   min-height: 14px;
-  margin-top: -8px;
+  margin-top: 2px;
 }
 
 .forgot{
@@ -222,18 +249,19 @@
   color: white;
   text-decoration:none;
   width: fit-content;
-  margin-top: 2px;
+  margin-top: 20px;
 }
 
+/* ===== BUTTON ===== */
 .pill{
   align-self: flex-end;
-  margin-top: 8px;
+  margin-top: -5px;
 
-  border: 0px solid #ffffff;
+  border: 2px solid #000000;
   border-radius: 999px;
 
   padding: 12px 34px;
-  background: transparent;
+  background: rgba(0, 0, 0, 0.45);
 
   color: #ffffff;
   font-weight: 900;
@@ -241,68 +269,23 @@
 
   cursor: pointer;
 
-  transition:
-    transform .30s ease,
-    box-shadow .30s ease,
-    background-color .30s ease,
-    color .30s ease,
-    border-color .30s ease;
+  transition: transform .30s ease, box-shadow .30s ease, background-color .30s ease, color .30s ease, border-color .30s ease;
 }
 
-/* hover */
 .pill:hover{
   background: #ffffff;
   color: var(--pDark);
   border-color: transparent;
   transform: translateY(-2px);
-  box-shadow: 0 14px 26px rgba(6, 167, 125, 0.45);
+  box-shadow: 0 25px 26px rgba(0, 0, 0, 0.45);
 }
 
-/* active */
 .pill:active{
   transform: translateY(0);
-  box-shadow: 0 8px 14px rgba(6, 167, 125, 0.35);
+  box-shadow: 0 8px 14px rgba(0, 0, 0, 0.35);
 }
 
-
-.orline{
-  margin-top: 26px;
-  padding-top: 18px;
-  border-top: 2px solid rgba(0,0,0,.10);
-  font-size: 14px;
-  color: rgb(255, 255, 255);
-}
-
-.providers{
-  display:flex;
-  justify-content: space-between;
-  align-items:center;
-  gap: 18px;
-  margin-top: 6px;
-  color: rgba(0,0,0,.70);
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.provider{
-  display:flex;
-  align-items:center;
-  gap: 10px;
-  color: white;
-}
-
-.provider .g,
-.provider .f{
-  color: black;
-  width: 42px;
-  height: 34px;
-  border-radius: 10px;
-  border: 1px solid rgba(0,0,0,.12);
-  display:grid;
-  place-items:center;
-  background:#fff;
-}
-
+/* ===== MESSAGES ===== */
 .success{
   margin-top: 10px;
   color:#0a8a3b;
@@ -310,12 +293,217 @@
   text-align:right;
 }
 
-/* MOBILE */
-@media (max-width: 900px){
-  .shell{ grid-template-columns: 1fr; height:auto; }
-  .side{ min-height: 240px; }
-  .notch{ left: 58%; top: 70px; }
-  .panel{ padding: 34px 20px; }
-  .pill{ align-self:center; }
-  .providers{ justify-content:center; flex-wrap:wrap; }
+/* === FORCE LOGO SIZE=== */
+.side .side-logo{
+  height: 200px !important;
+  margin-top: 100px !important;
+  padding: 0 70px !important;
+
+  display: flex !important;
+  justify-content: flex-start;
+  align-items: center !important;
+
+  padding-left: 150px;
+  margin-top: 70px;
 }
+
+.side .side-logo img{
+  width: 230px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+/* ===== RESPONSIVE (MERGED) ===== */
+@media (max-width: 768px){
+
+  /* (blocchi duplicati: uniti e mantenuti con gli stessi valori) */
+
+  html, body{
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  .auth{
+    /* valori presenti nei tuoi blocchi */
+    padding: 16px;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+
+    height: auto;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+  }
+
+  .shell,
+  .shell-signup{
+    width: 100%;
+    max-width: 520px;
+    height: auto;
+
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+
+    box-sizing: border-box;
+  }
+
+  .side{
+    /* valori presenti nei tuoi blocchi (alla fine vince questo set) */
+    padding: 5px 5px 14px;
+    min-height: unset;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    overflow: hidden;
+  }
+
+  .side-logo{
+    /* valori presenti nei tuoi blocchi (alla fine vince questo set) */
+    width: 100%;
+    height: 70px;
+
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    padding-left: 20px;
+    padding-top: 4px;
+
+    margin: 0;
+  }
+
+  .side-logo img{
+    /* valori presenti nei tuoi blocchi (alla fine vince questo set) */
+    width: 50px;
+    height: auto;
+    object-fit: contain;
+
+    margin: 0;
+    padding-bottom: 100px;
+    padding-right: 11px;
+
+    max-width: 190px;
+    max-height: 78px;
+  }
+
+  .side-text{
+    /* valori presenti nei tuoi blocchi (alla fine vince questo set) */
+    margin: 0;
+    width: 100%;
+    max-width: 340px;
+    margin-inline: auto;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 14px;
+
+    padding-bottom: 10px;
+  }
+
+  .vtab{
+    /* unione valori presenti nei blocchi */
+    width: 100%;
+    height: 48px;
+    font-size: 14px;
+    flex: 1;
+    text-align: center;
+  }
+
+  .panel{
+    padding: 18px 16px 18px;
+    align-content: start;
+    justify-items: stretch;
+  }
+
+  .auth--login .panel{
+    padding: 18px 16px 18px;
+  }
+
+  .auth--signup .panel{
+    padding: 18px 16px 18px;
+  }
+
+  .panel-head{
+    margin-bottom: 14px;
+  }
+
+  .avatar{
+    width: 62px;
+    height: 62px;
+  }
+
+  .title{
+    font-size: 30px;
+    text-align: center;
+  }
+
+  .form{
+    width: 100%;
+    max-width: 420px;
+    margin-inline: auto;
+
+    /* dai tuoi blocchi: uno aveva margin-top, uno gap */
+    margin-top: 2px;
+    gap: 10px;
+  }
+
+  .ico{
+    width: 42px;
+    height: 42px;
+  }
+
+  .row{
+    padding: 10px 4px;
+  }
+
+  .pill{
+    align-self: center;
+
+    /* dai tuoi blocchi: uno aveva solo align-self, uno aveva margin-top/width */
+    margin-top: 16px;
+    width: min(320px, 100%);
+  }
+
+  .all,
+  .shell,
+  .shell-signup,
+  .side,
+  .panel{
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* forza la riga a non andare a capo */
+  .row{
+    display: flex;
+    flex-wrap: nowrap;     /* ✅ niente wrap */
+    align-items: center;
+  }
+
+  /* icona: non deve mai restringersi */
+  .row .ico{
+    flex: 0 0 42px;        /* ✅ larghezza fissa */
+  }
+
+  /* tutto ciò che non è l’icona deve poter occupare lo spazio rimanente */
+  .row > *:not(.ico){
+    flex: 1 1 auto;
+    min-width: 0;          /* ✅ fondamentale per evitare overflow e wrap */
+  }
+
+  /* l’input deve stare inline nella riga e prendere spazio */
+  .row input{
+    width: 100%;           /* ✅ riempie il contenitore flessibile */
+    min-width: 0;
+  }
+}
+
+.side-logo { pointer-events: none; }
