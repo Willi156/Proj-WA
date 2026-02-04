@@ -12,6 +12,8 @@ import { GamesNewReleasesComponent } from './games/components/pages/games-new-re
 import { GamesUpcomingComponent } from './games/components/pages/games-upcoming/games-upcoming.component';
 import { GamesBestComponent } from './games/components/pages/games-best-games/games-best-games';
 
+import {NuovoContenutoComponent} from './nuovo-contenuto/aggiungi_contenuto';
+import {GestioneContenutiComponent} from './gestione-admin/gestione-contenuti.component';
 
 export const routes: Routes = [
   {
@@ -30,7 +32,8 @@ export const routes: Routes = [
   { path: 'signup', component: SignupComponent },
   { path: 'user', component: UtenteComponent },
   { path: 'settings', component: SettingsComponent },
+  { path: 'aggiungi-contenuto', component:NuovoContenutoComponent },
+  { path: 'admin/gestione', component: GestioneContenutiComponent },
   { path: 'details/:kind/:id', component: DetailsPageComponent },
   { path: '**', redirectTo: 'home' },
-
 ];

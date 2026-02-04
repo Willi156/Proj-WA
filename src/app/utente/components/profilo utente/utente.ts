@@ -65,10 +65,28 @@ export class UtenteComponent implements OnInit {
 
   scaricaRecensioni() {
     this.api.getRecensioniByUserId(this.userId).subscribe({
-      next: (recs) => {
-        this.recensioniIds = recs;
+      next: (recs: any[]) => {
+
+        this.recensioniIds = recs.map(item => {
+
+          const r = item.recensione || {};
+          const c = item.contenuto || {};
+
+          return {
+            ...item,
+            id: r.id || item.id,
+            voto: r.voto || 0,
+            testo: r.testo || '',
+            // CERCHIAMO IL TITOLO: Prima in Titolo (maiuscolo), poi in titolo (minuscolo) dentro contenuto
+            titolo: c.Titolo || c.titolo || r.Titolo || r.titolo || ('Recensione ID: ' + r.id),
+            tipo: c.tipo || 'N/A',
+            isEditing: false
+          };
+        });
+
         this.cd.detectChanges();
-      }
+      },
+      error: (err) => console.error("Errore recupero:", err)
     });
   }
 
@@ -127,6 +145,51 @@ export class UtenteComponent implements OnInit {
       },
       error: (err) => {
         alert(`Errore Server: ${err.status} - Impossibile rimuovere.`);
+      }
+    });
+  }
+
+  //modifica recensione
+
+  attivaModifica(rec: any) {
+    rec.editVoto = rec.voto;
+    rec.editTesto = rec.testo || rec.descrizione || '';
+    rec.isEditing = true;
+  }
+
+  annullaModifica(rec: any) {
+    rec.isEditing = false;
+  }
+
+  salvaModifica(rec: any) {
+    const idReale = rec.id || (rec.recensione ? rec.recensione.id : null) || rec.idRecensione;
+
+    if (!idReale) {
+      alert("Errore: Impossibile identificare la recensione per il salvataggio.");
+      return;
+    }
+
+    const titoloInviato = rec.titolo || 'Recensione';
+
+    this.api.updateRecensione(
+      idReale,
+      Number(rec.editVoto),
+      rec.editTesto,
+      titoloInviato,
+      new Date()
+    ).subscribe({
+      next: (res) => {
+
+        // Aggiornamento locale immediato
+        rec.voto = Number(rec.editVoto);
+        rec.testo = rec.editTesto;
+        rec.isEditing = false;
+        this.cd.detectChanges();
+
+        setTimeout(() => this.scaricaRecensioni(), 500);
+      },
+      error: (err) => {
+        alert("Il server non ha accettato la modifica per questa categoria.");
       }
     });
   }

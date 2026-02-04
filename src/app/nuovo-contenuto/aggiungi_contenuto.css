@@ -1,0 +1,85 @@
+/* Container principale */
+.container {
+  max-width: 900px;
+}
+
+/* Stile della Card bianca - Coerente con la pagina utente */
+.card {
+  background: #ffffff;
+  border: none !important;
+  border-radius: 20px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+  transition: all 0.3s ease;
+}
+
+/* Input e Textarea - Sfondo grigio chiaro come nella pagina utente */
+.form-control, .form-select {
+  background-color: #f8f9fa !important;
+  border: 2px solid transparent !important;
+  border-radius: 12px !important;
+  padding: 12px 15px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Effetto focus sugli input */
+.form-control:focus, .form-select:focus {
+  background-color: #ffffff !important;
+  border-color: #0d6efd !important;
+  box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1) !important;
+  outline: none;
+}
+
+/* Animazione di comparsa quando scegli tra Gioco/Film/Serie */
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Stile per i tastini delle Piattaforme (Pill Buttons) */
+.btn-group .btn {
+  margin-bottom: 5px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  padding: 8px 16px;
+  border-radius: 50px !important;
+  transition: all 0.2s ease;
+}
+
+/* Etichette dei campi (Labels) */
+label {
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  display: block;
+  color: #6c757d;
+}
+
+/* Switch per la Serie TV "In Corso" */
+.form-switch .form-check-input {
+  width: 3em;
+  height: 1.5em;
+  cursor: pointer;
+}
+
+/* Bottone Salva */
+.btn-success {
+  background: linear-gradient(135deg, #28a745, #218838);
+  border: none;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+}

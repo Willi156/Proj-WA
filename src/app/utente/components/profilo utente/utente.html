@@ -13,11 +13,18 @@
         </div>
         <h5 class="fw-bold mb-0 text-dark">{{user.nome}} {{user.cognome}}</h5>
         <p class="text-muted small mb-4">&#64;{{user.username}}</p>
+
         <div class="w-100 text-start bg-light p-3 rounded-3 mb-4">
           <small class="text-muted fw-bold d-block mb-1" style="font-size: 0.7rem;">EMAIL</small>
           <div class="text-break small fw-medium text-dark lh-sm">{{user.email}}</div>
         </div>
+
         <div class="d-grid gap-2 w-100 mt-auto mb-4 px-2">
+
+          <a routerLink="/admin/gestione" class="btn btn-primary btn-sm rounded-3 d-flex align-items-center justify-content-center gap-2 fw-bold shadow-sm mb-2">
+            <span style="font-size: 1.1rem;">⚙</span> Gestione App
+          </a>
+
           <a routerLink="/settings" class="btn btn-outline-secondary btn-sm rounded-3 d-flex align-items-center justify-content-center gap-2">Impostazioni</a>
           <button class="btn btn-danger-subtle text-danger btn-sm rounded-3 d-flex align-items-center justify-content-center gap-2">Esci</button>
         </div>
@@ -46,24 +53,138 @@
             @if (activeTab === 'games') {
               <h6 class="fw-bold text-secondary mb-3 text-uppercase small ls-1">Recensioni Videogiochi</h6>
               <div class="row g-3">
-                @for (rec of recensioniIds; track rec) {
-                  @if (rec.contenuto?.tipo === 'GIOCO' || rec.contenuto?.tipo === 'Game' || rec.categoria === 'Games') {
+                @for (rec of recensioniIds; track (rec.id)) {
+                  @if (rec.tipo === 'GIOCO' || rec.tipo === 'GAME') {
                     <div class="col-12">
-                      <div class="card border-0 shadow-sm rounded-3 p-2">
+                      <div class="card border-0 shadow-sm rounded-3 p-2"
+                           [class.bg-success-subtle]="rec.voto >= 7"
+                           [class.bg-warning-subtle]="rec.voto >= 5 && rec.voto < 7"
+                           [class.bg-danger-subtle]="rec.voto < 5">
                         <div class="card-body">
-                          <div class="d-flex justify-content-between align-items-center">
-                            <h6 class="fw-bold mb-1">{{rec.titolo || rec.contenuto?.titolo || rec.oggetto}}</h6>
-                            <span class="badge bg-success-subtle text-success rounded-pill">{{rec.voto}}/10</span>
-                          </div>
-                          <p class="small text-muted mb-0 mt-2">
-                            @if (rec.testo || rec.descrizione) { "{{ rec.testo || rec.descrizione }}" } @else { <span class="fst-italic opacity-50">Nessun commento inserito.</span> }
-                          </p>
+                          @if (!rec.isEditing) {
+                            <div class="d-flex justify-content-between align-items-center">
+                              <h6 class="fw-bold mb-1">{{rec.titolo}}</h6>
+                              <div class="d-flex align-items-center gap-2">
+                                <button class="btn btn-sm text-primary p-0" (click)="attivaModifica(rec)">✎</button>
+                                <button class="btn btn-sm p-0 fw-bold" [class.text-danger]="rec.inEliminazione" [class.text-muted]="!rec.inEliminazione" (click)="rimuoviRecensione(rec)">
+                                  {{ rec.inEliminazione ? 'Elimina?' : '✕' }}
+                                </button>
+                                <span class="badge rounded-pill"
+                                      [class.bg-success]="rec.voto >= 7"
+                                      [class.bg-warning]="rec.voto >= 5 && rec.voto < 7"
+                                      [class.bg-danger]="rec.voto < 5">{{rec.voto}}/10</span>
+                              </div>
+                            </div>
+                            <p class="small text-muted mb-0 mt-2">
+                              @if (rec.testo) { "{{ rec.testo }}" } @else { <span class="fst-italic opacity-50">Nessun commento inserito.</span> }
+                            </p>
+                          } @else {
+                            <div class="row g-2">
+                              <div class="col-3">
+                                <input type="number" class="form-control form-control-sm" min="1" max="10" [(ngModel)]="rec.editVoto">
+                              </div>
+                              <div class="col-9">
+                                <textarea class="form-control form-control-sm" [(ngModel)]="rec.editTesto"></textarea>
+                              </div>
+                              <div class="col-12 d-flex gap-2">
+                                <button class="btn btn-primary btn-sm px-3" (click)="salvaModifica(rec)">Salva</button>
+                                <button class="btn btn-light btn-sm px-3" (click)="annullaModifica(rec)">Annulla</button>
+                              </div>
+                            </div>
+                          }
                         </div>
                       </div>
                     </div>
                   }
                 }
-                @if (recensioniIds.length === 0) { <p class="text-muted small">Nessuna recensione trovata.</p> }
+              </div>
+            }
+
+            @if (activeTab === 'serie') {
+              <h6 class="fw-bold text-secondary mb-3 text-uppercase small ls-1">Recensioni Serie TV</h6>
+              <div class="row g-3">
+                @for (rec of recensioniIds; track (rec.id)) {
+                  @if (rec.tipo === 'SERIE_TV' || rec.tipo === 'SERIE TV') {
+                    <div class="col-12">
+                      <div class="card border-0 shadow-sm rounded-3 p-2"
+                           [class.bg-success-subtle]="rec.voto >= 7"
+                           [class.bg-warning-subtle]="rec.voto >= 5 && rec.voto < 7"
+                           [class.bg-danger-subtle]="rec.voto < 5">
+                        <div class="card-body">
+                          @if (!rec.isEditing) {
+                            <div class="d-flex justify-content-between align-items-center">
+                              <h6 class="fw-bold mb-1">{{rec.titolo}}</h6>
+                              <div class="d-flex align-items-center gap-2">
+                                <button class="btn btn-sm text-primary p-0" (click)="attivaModifica(rec)">✎</button>
+                                <button class="btn btn-sm p-0 fw-bold" [class.text-danger]="rec.inEliminazione" [class.text-muted]="!rec.inEliminazione" (click)="rimuoviRecensione(rec)">
+                                  {{ rec.inEliminazione ? 'Elimina?' : '✕' }}
+                                </button>
+                                <span class="badge rounded-pill"
+                                      [class.bg-success]="rec.voto >= 7"
+                                      [class.bg-warning]="rec.voto >= 5 && rec.voto < 7"
+                                      [class.bg-danger]="rec.voto < 5">{{rec.voto}}/10</span>
+                              </div>
+                            </div>
+                            <p class="small text-muted mb-0 mt-2">"{{ rec.testo || 'Nessun commento inserito.' }}"</p>
+                          } @else {
+                            <div class="row g-2">
+                              <div class="col-3"><input type="number" class="form-control form-control-sm" [(ngModel)]="rec.editVoto"></div>
+                              <div class="col-9"><textarea class="form-control form-control-sm" [(ngModel)]="rec.editTesto"></textarea></div>
+                              <div class="col-12 d-flex gap-2">
+                                <button class="btn btn-primary btn-sm px-3" (click)="salvaModifica(rec)">Salva</button>
+                                <button class="btn btn-light btn-sm px-3" (click)="annullaModifica(rec)">Annulla</button>
+                              </div>
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    </div>
+                  }
+                }
+              </div>
+            }
+
+            @if (activeTab === 'film') {
+              <h6 class="fw-bold text-secondary mb-3 text-uppercase small ls-1">Recensioni Film</h6>
+              <div class="row g-3">
+                @for (rec of recensioniIds; track (rec.id)) {
+                  @if (rec.tipo === 'FILM') {
+                    <div class="col-12">
+                      <div class="card border-0 shadow-sm rounded-3 p-2"
+                           [class.bg-success-subtle]="rec.voto >= 7"
+                           [class.bg-warning-subtle]="rec.voto >= 5 && rec.voto < 7"
+                           [class.bg-danger-subtle]="rec.voto < 5">
+                        <div class="card-body">
+                          @if (!rec.isEditing) {
+                            <div class="d-flex justify-content-between align-items-center">
+                              <h6 class="fw-bold mb-1">{{rec.titolo}}</h6>
+                              <div class="d-flex align-items-center gap-2">
+                                <button class="btn btn-sm text-primary p-0" (click)="attivaModifica(rec)">✎</button>
+                                <button class="btn btn-sm p-0 fw-bold" [class.text-danger]="rec.inEliminazione" [class.text-muted]="!rec.inEliminazione" (click)="rimuoviRecensione(rec)">
+                                  {{ rec.inEliminazione ? 'Elimina?' : '✕' }}
+                                </button>
+                                <span class="badge rounded-pill"
+                                      [class.bg-success]="rec.voto >= 7"
+                                      [class.bg-warning]="rec.voto >= 5 && rec.voto < 7"
+                                      [class.bg-danger]="rec.voto < 5">{{rec.voto}}/10</span>
+                              </div>
+                            </div>
+                            <p class="small text-muted mb-0 mt-2">"{{ rec.testo || 'Nessun commento inserito.' }}"</p>
+                          } @else {
+                            <div class="row g-2">
+                              <div class="col-3"><input type="number" class="form-control form-control-sm" [(ngModel)]="rec.editVoto"></div>
+                              <div class="col-9"><textarea class="form-control form-control-sm" [(ngModel)]="rec.editTesto"></textarea></div>
+                              <div class="col-12 d-flex gap-2">
+                                <button class="btn btn-primary btn-sm px-3" (click)="salvaModifica(rec)">Salva</button>
+                                <button class="btn btn-light btn-sm px-3" (click)="annullaModifica(rec)">Annulla</button>
+                              </div>
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    </div>
+                  }
+                }
               </div>
             }
           </div>
@@ -71,36 +192,51 @@
           <hr class="border-secondary opacity-10 my-5">
 
           <h5 class="fw-bold text-dark mb-4">Tutte le recensioni</h5>
-          @for (rec of recensioniIds; track rec) {
-            <div class="card border-0 shadow-sm rounded-3 mb-3 bg-white">
+          @for (rec of recensioniIds; track (rec.id)) {
+            <div class="card border-0 shadow-sm rounded-3 mb-3"
+                 [class.bg-success-subtle]="rec.voto >= 7"
+                 [class.bg-warning-subtle]="rec.voto >= 5 && rec.voto < 7"
+                 [class.bg-danger-subtle]="rec.voto < 5">
               <div class="card-body p-4">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                  <div class="d-flex align-items-center gap-3">
-                    @if (rec.voto >= 7) {
-                      <span class="badge bg-success-subtle text-success border border-success-subtle rounded-3 p-2 fs-6 fw-bold" style="min-width: 60px;">{{rec.voto}}/10</span>
-                    } @else if (rec.voto >= 5) {
-                      <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle rounded-3 p-2 fs-6 fw-bold" style="min-width: 60px;">{{rec.voto}}/10</span>
-                    } @else {
-                      <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-3 p-2 fs-6 fw-bold" style="min-width: 60px;">{{rec.voto}}/10</span>
-                    }
-                    <div>
-                      <h6 class="fw-bold mb-0 text-dark">{{rec.titolo || rec.contenuto?.titolo || rec.oggetto}}</h6>
-                      <small class="text-muted d-block" style="font-size: 0.7rem;">{{rec.contenuto?.tipo || rec.categoria}}</small>
+                @if (!rec.isEditing) {
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="d-flex align-items-center gap-3">
+                      <span class="badge rounded-3 p-2 fs-6 fw-bold"
+                            [class.bg-success]="rec.voto >= 7" [class.text-white]="rec.voto >= 7"
+                            [class.bg-warning]="rec.voto >= 5 && rec.voto < 7" [class.text-dark]="rec.voto >= 5 && rec.voto < 7"
+                            [class.bg-danger]="rec.voto < 5" [class.text-white]="rec.voto < 5"
+                            style="min-width: 60px;">{{rec.voto}}/10</span>
+                      <div>
+                        <h6 class="fw-bold mb-0 text-dark">{{rec.titolo}}</h6>
+                        <small class="text-muted d-block" style="font-size: 0.7rem;">{{rec.tipo}}</small>
+                      </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                      <button class="btn btn-sm text-primary fw-bold" (click)="attivaModifica(rec)">✎</button>
+                      <button class="btn btn-sm fw-bold" [class.btn-danger]="rec.inEliminazione" [class.text-white]="rec.inEliminazione" [class.text-muted]="!rec.inEliminazione" (click)="rimuoviRecensione(rec)">
+                        {{ rec.inEliminazione ? 'Elimina?' : '✕' }}
+                      </button>
                     </div>
                   </div>
-
-                  <button class="btn btn-sm fw-bold"
-                          [class.btn-danger]="rec.inEliminazione"
-                          [class.text-white]="rec.inEliminazione"
-                          [class.text-muted]="!rec.inEliminazione"
-                          (click)="rimuoviRecensione(rec)">
-                    {{ rec.inEliminazione ? 'Elimina?' : '✕' }}
-                  </button>
-
-                </div>
-                <p class="text-muted mt-2 mb-0 small">
-                  @if (rec.testo || rec.descrizione) { "{{ rec.testo || rec.descrizione }}" } @else { <span class="fst-italic opacity-50">Nessun commento inserito.</span> }
-                </p>
+                  <p class="text-muted mt-2 mb-0 small">
+                    @if (rec.testo) { "{{ rec.testo }}" } @else { <span class="fst-italic opacity-50">Nessun commento inserito.</span> }
+                  </p>
+                } @else {
+                  <div class="row g-3">
+                    <div class="col-md-3">
+                      <label class="small fw-bold text-muted mb-1">VALUTAZIONE (1-10)</label>
+                      <input type="number" class="form-control bg-light border-0" min="1" max="10" [(ngModel)]="rec.editVoto">
+                    </div>
+                    <div class="col-12">
+                      <label class="small fw-bold text-muted mb-1">COMMENTO</label>
+                      <textarea class="form-control bg-light border-0" rows="3" [(ngModel)]="rec.editTesto"></textarea>
+                    </div>
+                    <div class="col-12 d-flex gap-2 mt-2">
+                      <button class="btn btn-primary btn-sm rounded-pill px-4 fw-bold" (click)="salvaModifica(rec)">Salva</button>
+                      <button class="btn btn-light btn-sm rounded-pill px-4" (click)="annullaModifica(rec)">Annulla</button>
+                    </div>
+                  </div>
+                }
               </div>
             </div>
           }
@@ -123,15 +259,9 @@
                         <span class="text-muted" style="font-size: 0.7rem;">Preferito</span>
                       </div>
                     </div>
-
-                    <button class="btn btn-sm fw-bold"
-                            [class.btn-danger]="id.inEliminazione"
-                            [class.text-white]="id.inEliminazione"
-                            [class.text-secondary]="!id.inEliminazione"
-                            (click)="rimuoviPreferito(id)">
+                    <button class="btn btn-sm fw-bold" [class.btn-danger]="id.inEliminazione" [class.text-white]="id.inEliminazione" [class.text-secondary]="!id.inEliminazione" (click)="rimuoviPreferito(id)">
                       {{ id.inEliminazione ? 'Elimina?' : '✕' }}
                     </button>
-
                   </div>
                 }
               </div>

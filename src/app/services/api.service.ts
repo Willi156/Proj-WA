@@ -273,6 +273,46 @@ export class ApiService {
     year?: number
   ): Observable<string | null> {
 
+
+//Chiamata API per l'aggiunta di una recensione
+  addRecensione(idContenuto: number, idUtente: number, voto: number, testo: string, titolo: string, data?: Date) {
+    return this.http.post<{ id: number }>(`${this.baseUrl}/api/recensione/new`, { idContenuto, idUtente, voto, testo, titolo, data }, { withCredentials: true });
+  }
+
+//Chiamata API per l'aggiornamento di una recensione
+  updateRecensione(id: number, voto: number, testo: string, titolo: string, data?: Date) {
+    return this.http.put<{ success: boolean }>(`${this.baseUrl}/api/recensioni/update/${id}`, { voto, testo, titolo, data }, { withCredentials: true });
+  }
+
+  createContenuto(titolo: string, descrizione: string, genere: string, link: string, tipo: string, annoPubblicazione: number, imageLink: string, casaProduzione?: string, casaEditrice?: string, inCorso?: boolean, stagioni?: number, piattaformaIds?: number[]) {
+    return this.http.post<{ id: number }>(`${this.baseUrl}/api/newContenuto`,
+      { titolo, descrizione, genere, link, tipo, annoPubblicazione, casaProduzione, casaEditrice, inCorso, stagioni, imageLink, piattaformaIds },
+      { withCredentials: true }
+    );
+  }
+
+  getPiattaformeWithIds() {
+    return this.http.get<any[]>(`${this.baseUrl}/api/piattaforme/complete`, { withCredentials: true });
+  }
+
+  deleteContenuto(id: number) {
+    return this.http.delete(`${this.baseUrl}/api/contenuti/${id}`, { withCredentials: true });
+  }
+
+  // Aggiungi questo insieme agli altri metodi
+  getContenutoById(id: number) {
+    return this.http.get<any>(`${this.baseUrl}/api/contenuti/${id}`, { withCredentials: true });
+  }
+
+  updateContenuto(id: number, dati: any) {
+    return this.http.put<any>(`${this.baseUrl}/api/contenuti/${id}`, dati, { withCredentials: true });
+  }
+
+  // Esempio per futuri endpoint:
+  // getItems() { return this.http.get<Item[]>(`${this.baseUrl}/api/items`); }
+  // createItem(payload: ItemCreateDto) { return this.http.post(`${this.baseUrl}/api/items`, payload); }
+}
+
     const params = new HttpParams()
       .set('kind', kind)
       .set('q', q)
