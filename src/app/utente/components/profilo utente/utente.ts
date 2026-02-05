@@ -15,6 +15,8 @@ import { empty } from 'rxjs';
 export class UtenteComponent implements OnInit {
 
   userId = 0;
+  isAdmin: boolean = false;
+
   preferitiIds: any[] = [];
   recensioniIds: any[] = [];
   user: any = { nome: '', cognome: '', username: '', email: '', immagineProfilo: '' };
@@ -34,22 +36,23 @@ export class UtenteComponent implements OnInit {
     this.saluto = (ora >= 6 && ora < 18) ? 'Buongiorno' : 'Buonasera';
 
     if (isPlatformBrowser(this.platformId)) {
-
-
       const storedUser = localStorage.getItem('datiUtente');
 
       if (!storedUser) {
         this.router.navigate(['/login']);
-        return; // Fermiamo tutto qui.
+        return;
       }
 
       try {
         this.user = JSON.parse(storedUser);
         if (this.user.id) this.userId = this.user.id;
-        this.cd.detectChanges(); // Aggiorna la grafica SUBITO (risolve il flash)
+
+        // CONTROLLO RUOLO DA MEMORIA
+        this.checkAdminStatus();
+
+        this.cd.detectChanges();
       } catch(e) { console.error(e); }
 
-      // 3. Verifichiamo col server che sia tutto vero
       this.connettiAlDatabase();
     }
   }
@@ -61,29 +64,36 @@ export class UtenteComponent implements OnInit {
         if (dati.id) this.userId = dati.id;
         this.user = dati;
 
-        // Aggiorniamo i dati freschi
+        this.checkAdminStatus();
+
         localStorage.setItem('datiUtente', JSON.stringify(this.user));
         if (this.userId) localStorage.setItem('userId', this.userId.toString());
 
         this.impostaDati();
       },
-
       error: () => this.logout()
     });
   }
 
 
+  checkAdminStatus() {
+    if (this.user.ruolo === 'ADMIN') {
+      this.isAdmin = true;
+    } else {
+      this.isAdmin = false;
+    }
+
+    console.log(`UTENTE: ${this.user.username} | RUOLO: ${this.user.ruolo} | ADMIN: ${this.isAdmin}`);
+  }
+
   logout() {
-    // 1. Cancelliamo tutto
     localStorage.removeItem('datiUtente');
     localStorage.removeItem('userId');
 
-    // 2. Puliamo la cache interna
     if (this.api.datiCache && this.api.clearCache) {
       this.api.clearCache();
     }
 
-    // 3. Via al login
     this.router.navigate(['/login']);
   }
 
