@@ -1,0 +1,132 @@
+<div class="page-container">
+
+  <!-- HEADER -->
+  <header class="page-header">
+    <h1 class="page-title">
+      <ng-container *ngIf="!isYearFilterActive; else filteredTitle">
+        I migliori film di sempre
+      </ng-container>
+      <ng-template #filteredTitle>
+        Migliori film del {{ selectedYear }}
+      </ng-template>
+    </h1>
+
+    <p class="page-subtitle">
+      <ng-container *ngIf="!isYearFilterActive; else filteredSubtitle">
+        I film più apprezzati dalla critica 🎬
+      </ng-container>
+      <ng-template #filteredSubtitle>
+        Film usciti nel {{ selectedYear }}.
+      </ng-template>
+    </p>
+  </header>
+
+  <div class="page-content">
+
+    <!-- FILTERS -->
+    <aside class="filters">
+
+      <div class="filters-header">Filtri</div>
+
+      <!-- YEAR -->
+      <div class="filter-header-row">
+        <h4 class="filter-title">Anno di rilascio</h4>
+        <button
+          class="filter-reset"
+          *ngIf="isYearFilterActive"
+          (click)="resetYearFilter()">
+          RESET
+        </button>
+      </div>
+
+      <div class="year-slider">
+        <div
+          class="year-tooltip"
+          *ngIf="isDraggingYear"
+          [style.left.%]="((selectedYear - minYear) / (maxYear - minYear)) * 100">
+          {{ selectedYear }}
+        </div>
+
+        <input
+          type="range"
+          [min]="minYear"
+          [max]="maxYear"
+          [ngModel]="selectedYear"
+          (ngModelChange)="changeYear($event)"
+          (mousedown)="onYearDragStart()"
+          (mouseup)="onYearDragEnd()"
+          (mouseleave)="onYearDragEnd()"
+        />
+
+        <div class="year-range">
+          <span>{{ minYear }}</span>
+          <span>{{ maxYear }}</span>
+        </div>
+      </div>
+
+      <!-- GENRES -->
+      <div class="filter-block">
+        <div class="filter-header-row">
+          <h4 class="filter-title">Generi</h4>
+          <button
+            class="filter-reset"
+            *ngIf="(selectedGenres$ | async)?.size"
+            (click)="resetGenreFilter()">
+            RESET
+          </button>
+        </div>
+
+        <label *ngFor="let genre of availableGenres">
+          <input
+            type="checkbox"
+            #cb
+            [checked]="(selectedGenres$ | async)?.has(genre)"
+            (change)="toggleGenre(genre, cb.checked)" />
+          {{ genre }}
+        </label>
+      </div>
+
+    </aside>
+
+    <!-- RESULTS -->
+    <section class="results">
+
+      <ng-container *ngIf="movies$ | async as movies">
+
+        <div class="results-header">
+          <span class="results-count">
+            {{ movies.length }} risultati
+          </span>
+        </div>
+
+        <!-- GRID -->
+        <div class="games-grid" *ngIf="movies.length > 0">
+          <app-film-card
+            *ngFor="let movie of movies"
+            [film]="movie"
+            mode="score">
+          </app-film-card>
+        </div>
+
+        <!-- EMPTY -->
+        <p *ngIf="movies.length === 0" class="no-results">
+          Nessun film trovato.
+        </p>
+
+        <!-- PAGINATION -->
+        <div class="pagination" *ngIf="pages.length > 1">
+          <button
+            *ngFor="let page of pages"
+            class="page-btn"
+            [class.active]="page === (currentPage$ | async)"
+            (click)="changePage(page)">
+            {{ page }}
+          </button>
+        </div>
+
+      </ng-container>
+
+    </section>
+
+  </div>
+</div>

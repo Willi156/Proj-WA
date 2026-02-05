@@ -97,9 +97,9 @@
   </header>
 
   <ng-container *ngIf="games$ | async as g">
-    <app-games-section title="New Releases" [games]="g.newReleases"></app-games-section>
-    <app-games-section title="Upcoming Games" [games]="g.upcoming"></app-games-section>
-    <app-games-section title="Best Games" [games]="g.best"></app-games-section>
+    <app-games-section title="New Releases" [games]="g.newReleases"  seeAllPath="/games/new-releases"></app-games-section>
+    <app-games-section title="Upcoming Games" [games]="g.upcoming" seeAllPath="/games/upcoming"></app-games-section>
+    <app-games-section title="Best Games" [games]="g.best" seeAllPath="/games/best-games"></app-games-section>
   </ng-container>
 
 

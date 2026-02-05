@@ -1,7 +1,7 @@
 export interface Film {
   id: number;
   titolo: string;
-  anno_pubblicazione?: number;
+  annoPubblicazione?: number;
   descrizione?: string;
   genere?: string;
   link?: string;
@@ -9,3 +9,4 @@ export interface Film {
   imageLink?: string;
   mediaVoti?: number;
 }
+

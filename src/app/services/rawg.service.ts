@@ -184,30 +184,32 @@ export class RawgService {
   }
 
   getBestGames(options: {
+    page?: number;
     pageSize?: number;
     fromYear?: number;
     toYear?: number;
   } = {}) {
 
     const {
-      pageSize = 100,
-      fromYear,
-      toYear
+      page = 1,
+      pageSize = 40,
+      fromYear = 1990,
+      toYear = new Date().getFullYear()
     } = options;
 
-    const params: any = {
-      key: this.RAWG_KEY,
-      ordering: '-rating',
-      page_size: pageSize.toString()
-    };
-
-    if (fromYear && toYear) {
-      params.dates = `${fromYear}-01-01,${toYear}-12-31`;
-    }
-
-    return this.http.get<any>(this.BASE_URL, { params }).pipe(
-      map(res => res.results ?? [])
+    return this.http.get<any>(this.BASE_URL, {
+      params: {
+        key: this.RAWG_KEY,
+        ordering: '-metacritic',
+        page: page.toString(),
+        page_size: pageSize.toString(),
+        dates: `${fromYear}-01-01,${toYear}-12-31`
+      }
+    }).pipe(
+      map(res => res.results ?? []),
+      catchError(() => of([]))
     );
   }
+
 
 }

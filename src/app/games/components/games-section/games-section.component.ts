@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { GameCardComponent } from '../game-cards/game-card.component';
 import { Game } from '../../models/game.model';
 import { RawgService } from '../../../services/rawg.service';
+import {Router} from '@angular/router';
+import * as path from 'node:path';
 
 @Component({
   selector: 'app-games-section',
@@ -12,15 +14,15 @@ import { RawgService } from '../../../services/rawg.service';
   styleUrl: './games-section.component.css'
 })
 export class GamesSectionComponent implements OnInit {
-
   @Input() title!: string;
+  @Input() seeAllPath!: string;
   @Input() games: Game[] = [];
 
   visibleCount = 5;
   startIndex = 0;
   visibleGames: Game[] = [];
 
-  constructor(private rawgService: RawgService) {}
+  constructor(private rawgService: RawgService, private router: Router) {}
 
   ngOnInit(): void {
     this.updateVisibleGames();
@@ -65,5 +67,10 @@ export class GamesSectionComponent implements OnInit {
 
   trackById(index: number, game: Game): number {
     return game.id;
+  }
+
+  openSeeAll() {
+    if(!this.seeAllPath) return;
+    this.router.navigate([this.seeAllPath])
   }
 }

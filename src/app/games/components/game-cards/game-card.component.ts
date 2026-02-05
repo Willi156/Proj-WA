@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Game } from '../../models/game.model';
 import {RawgGame} from '../../models/rawg-game.model';
@@ -11,10 +12,11 @@ import {RawgGame} from '../../models/rawg-game.model';
   styleUrl: './game-card.component.css'
 })
 export class GameCardComponent {
+  constructor(private router: Router) {}
+
   @Input() game!: Game | RawgGame;
   @Input() mode: 'date' | 'score' = 'date';
   @Input() variant: 'default' | 'upcoming' = 'default';
-  currentMode: 'year' | 'allTime' = 'year';
 
 
   get scoreValue(): number | null {
@@ -33,5 +35,16 @@ export class GameCardComponent {
     if (this.scoreValue >= 8) return 'Generally Favorable';
     if (this.scoreValue >= 6) return 'Mixed or Average';
     return 'Generally Unfavorable';
+  }
+
+  openDetails() {
+    this.router.navigate(
+      ['/details', 'GAME', this.game.id],
+      {
+        state: {
+          contenuto: this.game
+        }
+      }
+    );
   }
 }

@@ -7,22 +7,7 @@ import { RawgService } from '../../../../services/rawg.service';
 import { RawgGame } from '../../../models/rawg-game.model';
 import { GameCardComponent } from '../../game-cards/game-card.component';
 import { mapRawgPlatformToKey, PlatformKey } from '../../../utils/rawg-platform.util';
-
-const GOTY_TITLES: string[] = [
-  'The Last of Us',
-  'Dragon Age: Inquisition',
-  'The Witcher 3: Wild Hunt',
-  'Overwatch',
-  'The Legend of Zelda: Breath of the Wild',
-  'God of War',
-  'Sekiro: Shadows Die Twice',
-  'The Last of Us Part II',
-  'It Takes Two',
-  'Elden Ring',
-  'Baldur’s Gate 3',
-  'Astro Bot',
-  'Clair Obscur: Expedition 33'
-];
+import {GOTY_TITLES} from '../../../utils/goty.util';
 
 @Component({
   selector: 'app-games-best',
@@ -64,12 +49,23 @@ export class GamesBestComponent implements OnInit {
 
         /* GOTY */
         if (this.showGotyOnly) {
-          filtered = filtered.filter(g =>
-            GOTY_TITLES.some(title =>
-              g.titolo.toLowerCase().includes(title.toLowerCase())
-            )
+          filtered = filtered
+            .filter(g => GOTY_TITLES.some(x => x.id === g.id))
+            .map(g => ({
+              ...g,
+              gotyYear: GOTY_TITLES.find(x => x.id === g.id)?.year
+            }))
+            .sort((a, b) => (b.gotyYear ?? 0) - (a.gotyYear ?? 0));
+        }
+
+        if (this.showGotyOnly) {
+          filtered = [...filtered].sort(
+            (a, b) => (b.annoPubblicazione ?? 0) - (a.annoPubblicazione ?? 0)
           );
         }
+
+
+
         if (platforms.size > 0) {
           filtered = filtered.filter(g =>
             g.platformKeys.some(pk => platforms.has(pk))
@@ -88,22 +84,36 @@ export class GamesBestComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.rawg.getBestGames()
+    const requests = [];
+
+    for (let page = 1; page <= 5; page++) {
+      requests.push(
+        this.rawg.getBestGames({
+          page,
+          fromYear: 1990,
+          toYear: new Date().getFullYear()
+        })
+      );
+    }
+
+    combineLatest(requests)
       .pipe(
-        map(raw => raw.map((g: any) => this.mapRawgGame(g)))
+        map(pages => pages.flat()),
+        map(rawGames => rawGames.map(g => this.mapRawgGame(g))),
+        map(games => games.slice(0, 100))
       )
       .subscribe(games => {
         this.allGames$.next(games);
+
+        // 🎮 generi dinamici
         const genreSet = new Set<string>();
-        games.forEach((g: { genres: any; }) => {
-          (g.genres ?? []).forEach((gen: string) => genreSet.add(gen));
-        });
+        games.forEach(g => g.genres.forEach(gen => genreSet.add(gen)));
         this.availableGenres = Array.from(genreSet).sort();
-        this.selectedGenres$.next(new Set());
-        this.selectedPlatforms$.next(new Set());
+
         this.currentPage$.next(1);
       });
   }
+
   toggleGoty(): void {
     this.showGotyOnly = !this.showGotyOnly;
     this.currentPage$.next(1);
@@ -171,6 +181,7 @@ export class GamesBestComponent implements OnInit {
     if (score >= 70) return 5;
     return 4;
   }
+
 
 
 }

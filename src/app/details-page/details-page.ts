@@ -3,14 +3,11 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-
 import { RawgService } from '../services/rawg.service';
 import { ApiService } from '../services/api.service';
 import { TmdbService } from '../services/tmdb.service';
-
 import { switchMap, map } from 'rxjs/operators';
 import { finalize, timeout, catchError, of } from 'rxjs';
-
 import { MockContent, MockKind, findMockContent } from '../mock/dati-mock-sample';
 import { IContenuto } from '../features/home/pages/home-page/IContenuto';
 

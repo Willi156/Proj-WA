@@ -58,4 +58,6 @@ export class SerieSectionComponent implements OnChanges {
   trackById(index: number, serie: SerieTv): number {
     return serie.id;
   }
+
+    protected readonly open = open;
 }

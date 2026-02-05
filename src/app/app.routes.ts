@@ -14,6 +14,9 @@ import { GamesBestComponent } from './games/components/pages/games-best-games/ga
 
 import {NuovoContenutoComponent} from './nuovo-contenuto/aggiungi_contenuto';
 import {GestioneContenutiComponent} from './gestione-admin/gestione-contenuti.component';
+import {MoviesReleasedComponent} from './film/components/pages/movies-released/movies-released.component';
+import {MoviesUpcomingComponent} from './film/components/pages/movies-upcoming/movies-upcoming.component';
+import {MoviesBestComponent} from './film/components/pages/best-movies/movies-best.component';
 
 export const routes: Routes = [
   {
@@ -27,6 +30,9 @@ export const routes: Routes = [
   { path: 'games/upcoming', component: GamesUpcomingComponent },
   { path: 'games/best-games', component: GamesBestComponent },
   { path: 'movies', component: FilmPageComponent },
+  { path: 'movies/released', component: MoviesReleasedComponent},
+  { path: 'movies/upcoming', component: MoviesUpcomingComponent},
+  { path: 'movies/best-films', component: MoviesBestComponent},
   { path: 'series', component: SeriePageComponent },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },

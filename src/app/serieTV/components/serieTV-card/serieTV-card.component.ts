@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SerieTv } from '../../model/serie-tv.model';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-serie-tv-card',
@@ -10,6 +11,8 @@ import { SerieTv } from '../../model/serie-tv.model';
   styleUrls: ['./serieTV-card.component.css']
 })
 export class SerieTvCardComponent {
+  constructor(private router:Router) {
+  }
   @Input() serie!: SerieTv;
 
   get scoreClass(): string {
@@ -24,5 +27,16 @@ export class SerieTvCardComponent {
     if (this.serie.mediaVoti >= 8) return 'Generally Favorable';
     if (this.serie.mediaVoti >= 6) return 'Mixed or Average';
     return 'Generally Unfavorable';
+  }
+
+  openDetails() {
+    this.router.navigate(
+      ['/details', 'SERIES', this.serie.id],
+      {
+        state: {
+          contenuto: this.serie
+        }
+      }
+    );
   }
 }

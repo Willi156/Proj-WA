@@ -293,4 +293,67 @@ export class TmdbService {
     );
   }
 
+  getUpcomingMovies(pageSize = 40): Observable<any[]> {
+    return this.http.get<any>(`${this.BASE}/movie/upcoming`, {
+      params: {
+        api_key: this.API_KEY,
+        language: 'it-IT',
+        region: 'IT',
+        page: 1,
+      },
+    }).pipe(
+      map(res => res?.results ?? [])
+    );
+  }
+  getBestMovies(options?: {
+    minVote?: number;
+    minVotes?: number;
+    fromYear?: number;
+    toYear?: number;
+    page?: number;
+  }): Observable<any[]> {
+
+    const {
+      minVote = 7,
+      minVotes = 500,
+      fromYear = 1980,
+      toYear = new Date().getFullYear(),
+      page = 1
+    } = options ?? {};
+
+    return this.http.get<any>(`${this.BASE}/discover/movie`, {
+      params: {
+        api_key: this.API_KEY,
+        language: 'it-IT',
+        sort_by: 'vote_average.desc',
+        'vote_average.gte': minVote.toString(),
+        'vote_count.gte': minVotes.toString(),
+        'primary_release_date.gte': `${fromYear}-01-01`,
+        'primary_release_date.lte': `${toYear}-12-31`,
+        page: page.toString()
+      }
+    }).pipe(
+      map(res => res?.results ?? []),
+      catchError(() => of([]))
+    );
+  }
+  getMovieGenres(): Observable<Record<number, string>> {
+    return this.http
+      .get<any>(`${this.BASE}/genre/movie/list`, {
+        params: {
+          api_key: this.API_KEY,
+          language: 'it-IT'
+        }
+      })
+      .pipe(
+        map(res => {
+          const map: Record<number, string> = {};
+          (res.genres ?? []).forEach((g: any) => {
+            map[g.id] = g.name;
+          });
+          return map;
+        })
+      );
+  }
+
 }

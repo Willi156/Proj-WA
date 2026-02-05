@@ -1,28 +1,34 @@
-<div class="film-card">
+<div class="film-card" (click)="openDetails()">
 
-  <ng-container *ngIf="film.imageLink; else placeholder">
-    <img
-      class="poster"
-      [src]="film.imageLink"
-      alt="{{ film.titolo }}"
-    />
-  </ng-container>
+  <img
+    class="poster"
+    [src]="film.imageLink || 'assets/placeholders/movie-placeholder.svg'"
+    alt="{{ film.titolo }}"
+  />
 
-  <ng-template #placeholder>
-    <div class="poster placeholder"></div>
-  </ng-template>
+  <div class="card-body">
+    <h3 class="title">{{ film.titolo }}</h3>
 
-  <div class="info">
-    <div class="title">{{ film.titolo }}</div>
+    <span *ngIf="mode === 'date'" class="release-date">
+  {{ film.annoPubblicazione || 'TBA' }}
+</span>
 
     <div class="meta">
-      <span class="score" [ngClass]="scoreClass">
-        {{ film.mediaVoti ?? '-' }}
-      </span>
-      <span class="label">
-        {{ scoreLabel }}
-      </span>
+      <ng-container *ngIf="mode === 'score'">
+  <span class="score" [ngClass]="scoreClass">
+    {{ scoreValue ?? '-' }}
+  </span>
+        <span class="label">
+    {{ scoreLabel }}
+  </span>
+      </ng-container>
     </div>
-  </div>
 
+    <ng-container *ngIf="variant === 'upcoming'">
+      <span class="badge-coming">COMING SOON</span>
+      <p class="release-date">
+        Release: {{ film.annoPubblicazione || 'TBA' }}
+      </p>
+    </ng-container>
+  </div>
 </div>
