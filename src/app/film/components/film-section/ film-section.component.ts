@@ -1,7 +1,8 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FilmCardComponent } from '../film-card/film-card.component';
 import { Film } from '../../model/film.model';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-film-section',
@@ -10,8 +11,8 @@ import { Film } from '../../model/film.model';
   templateUrl: './film-section.component.html',
   styleUrls: ['./film-section.component.css']
 })
-export class FilmSectionComponent implements OnChanges {
-
+export class FilmSectionComponent implements OnInit,OnChanges {
+  @Input() seeAllPath!: string;
   @Input() title!: string;
   @Input() films: Film[] = [];
 
@@ -19,8 +20,14 @@ export class FilmSectionComponent implements OnChanges {
   startIndex = 0;
   visibleFilms: Film[] = [];
 
+  constructor(private router: Router) {}
+
+  ngOnInit(): void {
+    this.updateVisibleFilms();
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['films'] && this.films.length > 0) {
+    if (changes['films']) {
       this.startIndex = 0;
       this.updateVisibleFilms();
     }
@@ -57,5 +64,9 @@ export class FilmSectionComponent implements OnChanges {
 
   trackById(index: number, film: Film): number {
     return film.id;
+  }
+  openSeeAll() {
+    if(!this.seeAllPath) return;
+    this.router.navigate([this.seeAllPath])
   }
 }

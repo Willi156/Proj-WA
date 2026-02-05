@@ -1,7 +1,7 @@
 export interface SerieTv {
   id: number;
   titolo: string;
-  anno_pubblicazione?: number;
+  annoPubblicazione?: number;
   descrizione?: string;
   genere?: string;
   link?: string;

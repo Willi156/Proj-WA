@@ -99,9 +99,9 @@
   </header>
 
   <ng-container *ngIf="films$ | async as f">
-    <app-film-section title="New Releases" [films]="f.newReleases"></app-film-section>
-    <app-film-section title="Upcoming" [films]="f.upcoming"></app-film-section>
-    <app-film-section title="Best Movies" [films]="f.best"></app-film-section>
+    <app-film-section title="New Releases" [films]="f.newReleases" seeAllPath="/movies/released"></app-film-section>
+    <app-film-section title="Upcoming" [films]="f.upcoming" seeAllPath="/movies/upcoming"></app-film-section>
+    <app-film-section title="Best Movies" [films]="f.best" seeAllPath="/movies/best-films"></app-film-section>
   </ng-container>
 
 

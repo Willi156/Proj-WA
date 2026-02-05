@@ -4,7 +4,7 @@ import { GameCardComponent } from '../game-cards/game-card.component';
 import { Game } from '../../models/game.model';
 import { RawgService } from '../../../services/rawg.service';
 import {Router} from '@angular/router';
-import * as path from 'node:path';
+
 
 @Component({
   selector: 'app-games-section',

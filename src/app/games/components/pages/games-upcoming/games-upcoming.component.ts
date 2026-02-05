@@ -7,6 +7,7 @@ import { RawgService } from '../../../../services/rawg.service';
 import { RawgGame } from '../../../models/rawg-game.model';
 import { GameCardComponent } from '../../game-cards/game-card.component';
 
+
 export const PLATFORM_LABELS: Record<PlatformKey, string> = {
   pc: 'PC',
   playstation: 'PlayStation',
@@ -157,6 +158,7 @@ export class GamesUpcomingComponent implements OnInit {
 
   private mapRawgGame(raw: any): RawgGame {
     return {
+      slug: '',
       id: raw.id,
       titolo: raw.name,
       annoPubblicazione: raw.released

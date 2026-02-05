@@ -1,28 +1,28 @@
 <div class="serie-tv-card" (click)="openDetails()">
 
-  <ng-container *ngIf="serie.imageLink; else placeholder">
-    <img
-      class="poster"
-      [src]="serie.imageLink"
-      alt="{{ serie.titolo }}"
-    />
-  </ng-container>
+  <img
+    class="poster"
+    [src]="serie.imageLink || 'assets/placeholders/series-placeholder.svg'"
+    alt="{{ serie.titolo }}"
+  />
 
-  <ng-template #placeholder>
-    <div class="poster placeholder"></div>
-  </ng-template>
+  <div class="card-body">
+    <h3 class="title">{{ serie.titolo }}</h3>
 
-  <div class="info">
-    <div class="title">{{ serie.titolo }}</div>
+    <!-- DATE -->
+    <span *ngIf="mode === 'date'" class="release-date">
+      {{ serie.annoPubblicazione || 'TBA' }}
+    </span>
 
-    <div class="meta">
+    <!-- SCORE -->
+    <ng-container *ngIf="mode === 'score'">
       <span class="score" [ngClass]="scoreClass">
-        {{ serie.mediaVoti ?? '-' }}
+        {{ displayScore }}
       </span>
       <span class="label">
         {{ scoreLabel }}
       </span>
-    </div>
-  </div>
+    </ng-container>
 
+  </div>
 </div>

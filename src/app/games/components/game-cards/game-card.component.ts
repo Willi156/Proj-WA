@@ -18,6 +18,11 @@ export class GameCardComponent {
   @Input() mode: 'date' | 'score' = 'date';
   @Input() variant: 'default' | 'upcoming' = 'default';
 
+  isGoty(game: any): game is RawgGame {
+    return typeof game?.gotyYear === 'number';
+  }
+
+
 
   get scoreValue(): number | null {
     return typeof this.game.mediaVoti === 'number'

@@ -20,6 +20,8 @@ export class GamesBestComponent implements OnInit {
   readonly platformKeys: PlatformKey[] = ['pc', 'playstation', 'xbox', 'switch'];
 
   showGotyOnly = false;
+  private baseGames: RawgGame[] = [];
+
 
   /* ===== FILTERS ===== */
   selectedPlatforms$ = new BehaviorSubject<Set<PlatformKey>>(new Set());
@@ -47,16 +49,20 @@ export class GamesBestComponent implements OnInit {
 
         let filtered = games;
 
-        /* GOTY */
+
         if (this.showGotyOnly) {
           filtered = filtered
-            .filter(g => GOTY_TITLES.some(x => x.id === g.id))
+            .filter(g => GOTY_TITLES.some(x => x.slug === g.slug))
             .map(g => ({
               ...g,
-              gotyYear: GOTY_TITLES.find(x => x.id === g.id)?.year
+              gotyYear: GOTY_TITLES.find(x => x.slug === g.slug)?.year
             }))
             .sort((a, b) => (b.gotyYear ?? 0) - (a.gotyYear ?? 0));
         }
+
+
+
+
 
         if (this.showGotyOnly) {
           filtered = [...filtered].sort(
@@ -103,9 +109,9 @@ export class GamesBestComponent implements OnInit {
         map(games => games.slice(0, 100))
       )
       .subscribe(games => {
+        this.baseGames = games;
         this.allGames$.next(games);
 
-        // 🎮 generi dinamici
         const genreSet = new Set<string>();
         games.forEach(g => g.genres.forEach(gen => genreSet.add(gen)));
         this.availableGenres = Array.from(genreSet).sort();
@@ -113,12 +119,6 @@ export class GamesBestComponent implements OnInit {
         this.currentPage$.next(1);
       });
   }
-
-  toggleGoty(): void {
-    this.showGotyOnly = !this.showGotyOnly;
-    this.currentPage$.next(1);
-  }
-
   togglePlatform(platform: PlatformKey, checked: boolean): void {
     const set = new Set(this.selectedPlatforms$.value);
     checked ? set.add(platform) : set.delete(platform);
@@ -158,6 +158,7 @@ export class GamesBestComponent implements OnInit {
   private mapRawgGame(raw: any): RawgGame {
     return {
       id: raw.id,
+      slug: raw.slug,
       titolo: raw.name,
       annoPubblicazione: raw.released
         ? new Date(raw.released).getFullYear()
@@ -171,6 +172,7 @@ export class GamesBestComponent implements OnInit {
     };
   }
 
+
   private normalizeScore(score: number | null): number | null {
     if (!score) return null;
     if (score >= 97) return 10;
@@ -181,6 +183,42 @@ export class GamesBestComponent implements OnInit {
     if (score >= 70) return 5;
     return 4;
   }
+  toggleGoty(): void {
+    this.showGotyOnly = !this.showGotyOnly;
+    this.currentPage$.next(1);
+
+    // 🔙 SHOW ALL → ripristina lista completa
+    if (!this.showGotyOnly) {
+      this.allGames$.next(this.baseGames);
+      return;
+    }
+
+    // 🏆 GOTY → costruisci lista dedicata
+    const requests = GOTY_TITLES.map(goty =>
+      this.rawg.getGameBySlug(goty.slug).pipe(
+        map(raw =>
+          raw
+            ? {
+              ...this.mapRawgGame(raw),
+              gotyYear: goty.year
+            }
+            : null
+        )
+      )
+    );
+
+    combineLatest(requests).subscribe(list => {
+      const games = list
+        .filter(g => g !== null)
+        .map(g => g as RawgGame)
+        .sort((a, b) => (b.gotyYear ?? 0) - (a.gotyYear ?? 0));
+
+      this.allGames$.next(games);
+    });
+
+  }
+
+
 
 
 

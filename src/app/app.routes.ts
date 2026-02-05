@@ -17,6 +17,7 @@ import {GestioneContenutiComponent} from './gestione-admin/gestione-contenuti.co
 import {MoviesReleasedComponent} from './film/components/pages/movies-released/movies-released.component';
 import {MoviesUpcomingComponent} from './film/components/pages/movies-upcoming/movies-upcoming.component';
 import {MoviesBestComponent} from './film/components/pages/best-movies/movies-best.component';
+import {SeriesReleasedComponent} from './serieTV/components/pages/serieTV-released/series-released.component';
 
 export const routes: Routes = [
   {
@@ -33,7 +34,8 @@ export const routes: Routes = [
   { path: 'movies/released', component: MoviesReleasedComponent},
   { path: 'movies/upcoming', component: MoviesUpcomingComponent},
   { path: 'movies/best-films', component: MoviesBestComponent},
-  { path: 'series', component: SeriePageComponent },
+  { path: 'series', component:SeriePageComponent},
+  { path: 'series/released', component: SeriesReleasedComponent },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'user', component: UtenteComponent },

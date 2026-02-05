@@ -210,6 +210,15 @@ export class RawgService {
       catchError(() => of([]))
     );
   }
+  getGameBySlug(slug: string): Observable<any | null> {
+    return this.http.get<any>(
+      `https://api.rawg.io/api/games/${slug}`,
+      { params: { key: this.RAWG_KEY } }
+    ).pipe(
+      catchError(() => of(null))
+    );
+  }
+
 
 
 }
