@@ -84,9 +84,11 @@ export class ApiService {
     return this.http.get<any[]>(`${this.baseUrl}/api/contenuti`);
   }
 
+
   getContenutoById(id: number) {
-    return this.http.get<any>(`${this.baseUrl}/api/contenuto/${id}`, { withCredentials: true });
+    return this.http.get<any>(`${this.baseUrl}/api/contenuto/update/${id}`, { withCredentials: true });
   }
+
 
   getGiochi() {
     return this.http.get<Game[]>(`${this.baseUrl}/api/contenuti/giochi`);

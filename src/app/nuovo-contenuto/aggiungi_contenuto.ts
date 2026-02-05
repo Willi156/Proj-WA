@@ -16,6 +16,8 @@ export class NuovoContenutoComponent implements OnInit {
   listaPiattaformeApi: any[] = [];
   idModifica: number | null = null;
 
+  successMessage: string = '';
+
   nuovoContenuto: any = {
     titolo: '',
     anno: 2026,
@@ -34,48 +36,47 @@ export class NuovoContenutoComponent implements OnInit {
     private api: ApiService,
     private router: Router,
     private route: ActivatedRoute
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
-
     this.api.getPiattaformeWithIds().subscribe({
       next: (res) => this.listaPiattaformeApi = res.filter(p => p.nome.toLowerCase() !== 'mobile')
     });
-
 
     const id = this.route.snapshot.paramMap.get('id');
 
     if (id) {
       this.idModifica = +id;
-      console.log("Modalità Modifica attivata per ID:", this.idModifica);
-      this.caricaDatiPerModifica(this.idModifica);
+      this.caricaDatiDaMemoriaLocale();
     }
   }
 
-  caricaDatiPerModifica(id: number) {
-    this.api.getContenutoById(id).subscribe({
-      next: (dati) => {
-        // Riempiamo il modulo con i dati scaricati
-        console.log("Dati scaricati:", dati);
+  caricaDatiDaMemoriaLocale() {
+    const datiSalvafi = localStorage.getItem('contenutoDaModificare');
 
-        this.tipoSelezionato = dati.tipo.toLowerCase() === 'serie_tv' ? 'serie' : dati.tipo.toLowerCase();
+    if (!datiSalvafi) {
+      this.router.navigate(['/admin/gestione']);
+      return;
+    }
 
-        this.nuovoContenuto = {
-          titolo: dati.titolo,
-          anno: dati.annoPubblicazione,
-          descrizione: dati.descrizione,
-          genere: dati.genere,
-          link: dati.link,
-          immagine: dati.imageLink || dati.immagine,
-          casaEditrice: dati.casaEditrice,
-          casaProduttrice: dati.casaProduzione, // Attenzione al nome del campo nel DB
-          piattaformeIds: dati.piattaforme ? dati.piattaforme.map((p: any) => p.id) : [],
-          inCorso: dati.inCorso,
-          stagioni: dati.stagioni || 1
-        };
-      },
-      error: (err) => alert("Errore nel caricamento dei dati da modificare.")
-    });
+    const dati = JSON.parse(datiSalvafi);
+
+    this.tipoSelezionato = dati.tipo.toLowerCase() === 'serie_tv' ? 'serie' : dati.tipo.toLowerCase();
+
+    this.nuovoContenuto = {
+      titolo: dati.titolo,
+      anno: dati.annoPubblicazione,
+      descrizione: dati.descrizione,
+      genere: dati.genere,
+      link: dati.link,
+      immagine: dati.imageLink || dati.immagine,
+      casaEditrice: dati.casaEditrice,
+      casaProduttrice: dati.casaProduzione || dati.casaProduttrice,
+      piattaformeIds: dati.piattaforme ? dati.piattaforme.map((p: any) => p.id || p) : [],
+      inCorso: dati.inCorso,
+      stagioni: dati.stagioni || 1
+    };
   }
 
   togglePiattaforma(id: number) {
@@ -90,6 +91,35 @@ export class NuovoContenutoComponent implements OnInit {
   salvaContenuto() {
     const tipoDb = this.tipoSelezionato === 'serie' ? 'SERIE_TV' : this.tipoSelezionato.toUpperCase();
 
+
+    localStorage.removeItem('contenutoDaModificare');
+
+
+    const gestisciSuccesso = (messaggio: string) => {
+      this.successMessage = messaggio;
+      setTimeout(() => {
+        this.router.navigate(['/admin/gestione']);
+      }, 2000);
+    };
+
+    const piattaformeSafe = (this.tipoSelezionato === 'gioco' || this.tipoSelezionato === 'game')
+      ? this.nuovoContenuto.piattaformeIds
+      : [];
+
+    const casaProdSafe = this.tipoSelezionato === 'film' ? this.nuovoContenuto.casaProduttrice : null;
+    const casaEditriceSafe = (this.tipoSelezionato === 'gioco' || this.tipoSelezionato === 'game') ? this.nuovoContenuto.casaEditrice : null;
+    const inCorsoSafe = this.tipoSelezionato === 'serie' ? this.nuovoContenuto.inCorso : false;
+    const stagioniSafe = this.tipoSelezionato === 'serie' ? this.nuovoContenuto.stagioni : 0;
+
+    console.log("STO INVIANDO AL SERVER:", {
+      id: this.idModifica,
+      titolo: this.nuovoContenuto.titolo,
+      tipo: tipoDb,
+      piattaforme: piattaformeSafe,
+      casaProd: casaProdSafe,
+      casaEd: casaEditriceSafe
+    });
+
     if (this.idModifica) {
       this.api.updateContenuto(
         this.idModifica,
@@ -100,19 +130,16 @@ export class NuovoContenutoComponent implements OnInit {
         tipoDb,
         this.nuovoContenuto.anno,
         this.nuovoContenuto.immagine,
-        this.tipoSelezionato === 'film' ? this.nuovoContenuto.casaProduttrice : undefined,
-        this.tipoSelezionato === 'gioco' ? this.nuovoContenuto.casaEditrice : undefined,
-        this.tipoSelezionato === 'serie' ? this.nuovoContenuto.inCorso : undefined,
-        this.tipoSelezionato === 'serie' ? this.nuovoContenuto.stagioni : undefined,
-        this.tipoSelezionato === 'gioco' ? this.nuovoContenuto.piattaformeIds : undefined
+        casaProdSafe,
+        casaEditriceSafe,
+        inCorsoSafe,
+        stagioniSafe,
+        piattaformeSafe
       ).subscribe({
-        next: () => {
-          alert("Modifica salvata con successo!");
-          this.router.navigate(['/admin/gestione']);
-        },
+        next: () => gestisciSuccesso("Modifica salvata con successo!"),
         error: (err) => {
-          console.error(err);
-          alert("Errore durante la modifica.");
+          console.error("ERRORE SERVER:", err);
+          alert("Errore 500: Il server ha rifiutato i dati. Controlla la console per i dettagli.");
         }
       });
 
@@ -125,17 +152,17 @@ export class NuovoContenutoComponent implements OnInit {
         tipoDb,
         this.nuovoContenuto.anno,
         this.nuovoContenuto.immagine,
-        this.tipoSelezionato === 'film' ? this.nuovoContenuto.casaProduttrice : undefined,
-        this.tipoSelezionato === 'gioco' ? this.nuovoContenuto.casaEditrice : undefined,
-        this.tipoSelezionato === 'serie' ? this.nuovoContenuto.inCorso : undefined,
-        this.tipoSelezionato === 'serie' ? this.nuovoContenuto.stagioni : undefined,
-        this.tipoSelezionato === 'gioco' ? this.nuovoContenuto.piattaformeIds : undefined
+        casaProdSafe,
+        casaEditriceSafe,
+        inCorsoSafe,
+        stagioniSafe,
+        piattaformeSafe
       ).subscribe({
-        next: () => {
-          alert("Nuovo contenuto creato!");
-          this.router.navigate(['/admin/gestione']);
-        },
-        error: () => alert("Errore durante la creazione.")
+        next: () => gestisciSuccesso("Nuovo contenuto creato!"),
+        error: (err) => {
+          console.error(err);
+          alert("Errore durante la creazione.");
+        }
       });
     }
   }

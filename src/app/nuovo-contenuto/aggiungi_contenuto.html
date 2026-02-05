@@ -1,3 +1,11 @@
+@if (successMessage) {
+  <div class="position-fixed top-0 start-50 translate-middle-x mt-4 p-3 shadow-lg rounded-pill bg-success text-white fw-bold d-flex align-items-center gap-3"
+       style="z-index: 9999; min-width: 300px; justify-content: center; animation: slideDown 0.5s ease-out;">
+    <span style="font-size: 1.5rem;">✅</span>
+    <span style="font-size: 1.1rem;">{{ successMessage }}</span>
+  </div>
+}
+
 <div class="container py-4 py-md-5 font-sans">
   <div class="row justify-content-center">
     <div class="col-12 col-md-8">

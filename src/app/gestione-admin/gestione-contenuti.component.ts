@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../services/api.service';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router'; // Aggiungi Router qui
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -17,7 +17,8 @@ export class GestioneContenutiComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private router: Router // Serve per navigare via codice
   ) {}
 
   ngOnInit() {
@@ -43,13 +44,16 @@ export class GestioneContenutiComponent implements OnInit {
     );
   }
 
+  vaiAModifica(item: any) {
+    localStorage.setItem('contenutoDaModificare', JSON.stringify(item));
+
+    this.router.navigate(['/modifica-contenuto', item.id]);
+  }
 
   elimina(item: any) {
     if (!item.inEliminazione) {
       this.contenuti.forEach(c => c.inEliminazione = false);
-
       item.inEliminazione = true;
-
       setTimeout(() => {
         item.inEliminazione = false;
         this.cd.detectChanges();
@@ -61,7 +65,6 @@ export class GestioneContenutiComponent implements OnInit {
       next: () => {
         this.caricaContenuti();
       },
-
       error: (err) => {
         console.error("Errore eliminazione:", err);
         item.inEliminazione = false;

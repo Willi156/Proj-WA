@@ -48,10 +48,10 @@
               <td class="text-muted d-none d-md-table-cell">{{ item.annoPubblicazione }}</td>
 
               <td class="text-end pe-4">
-                <a [routerLink]="['/modifica-contenuto', item.id]"
-                   class="btn btn-sm btn-light text-primary fw-bold rounded-pill px-3 me-2 shadow-sm border-0">
+                <button class="btn btn-sm btn-light text-primary fw-bold rounded-pill px-3 me-2 shadow-sm border-0"
+                        (click)="vaiAModifica(item)">
                    Modifica
-                </a>
+                </button>
 
                 <button class="btn btn-sm rounded-pill px-3 fw-bold shadow-sm border-0 transition-all"
                         [class.btn-danger]="item.inEliminazione"
