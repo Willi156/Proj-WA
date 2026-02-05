@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environment/environment';
 import { Observable, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, tap } from 'rxjs/operators';
 
 import { Game } from '../games/models/game.model';
 import { Film } from '../film/model/film.model';
@@ -10,7 +10,20 @@ import { Film } from '../film/model/film.model';
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   private baseUrl = environment.apiBaseUrl;
+
+  // --- MEMORIA CACHE ---
+  public datiCache: any = {
+    recensioni: null,
+    preferiti: null
+  };
+
   constructor(private http: HttpClient) {}
+
+  // Funzione per pulire la cache
+  clearCache() {
+    this.datiCache.recensioni = null;
+    this.datiCache.preferiti = null;
+  }
 
   authenticate(username: string, password: string) {
     return this.http.post<any>(
@@ -26,6 +39,7 @@ export class ApiService {
       { withCredentials: true }
     );
   }
+
   getCheckUsername(username: string) {
     return this.http.get<{ available: boolean }>(
       `${this.baseUrl}/api/utente/checkUsernameExists`,
@@ -64,12 +78,14 @@ export class ApiService {
     );
   }
 
+  // --- GESTIONE CONTENUTI ---
+
   getContenuti() {
     return this.http.get<any[]>(`${this.baseUrl}/api/contenuti`);
   }
 
   getContenutoById(id: number) {
-    return this.http.get<any>(`${this.baseUrl}/api/contenuti/${id}`);
+    return this.http.get<any>(`${this.baseUrl}/api/contenuto/${id}`, { withCredentials: true });
   }
 
   getGiochi() {
@@ -82,6 +98,36 @@ export class ApiService {
 
   getSerieTv() {
     return this.http.get<any[]>(`${this.baseUrl}/api/contenuti/serie_tv`);
+  }
+
+  updateContenuto(
+    id: number,
+    titolo: string,
+    descrizione: string,
+    genere: string,
+    link: string,
+    tipo: string,
+    annoPubblicazione: number,
+    imageLink?: string,
+    casaProduzione?: string,
+    casaEditrice?: string,
+    inCorso?: boolean,
+    stagioni?: number,
+    piattaformaIds?: number[]
+  ) {
+    return this.http.put<{ success: boolean }>(
+      `${this.baseUrl}/api/contenuto/update/${id}`,
+      { titolo, descrizione, genere, link, tipo, annoPubblicazione, casaProduzione, casaEditrice, inCorso, stagioni, imageLink, piattaformaIds },
+      { withCredentials: true }
+    );
+  }
+
+
+  deleteContenutoById(id: number) {
+    return this.http.delete<{ success: boolean }>(
+      `${this.baseUrl}/api/contenuto/delete/${id}`,
+      { withCredentials: true }
+    );
   }
 
   createContenuto(
@@ -144,6 +190,8 @@ export class ApiService {
     );
   }
 
+  // --- GESTIONE RECENSIONI ---
+
   getRecensioniByContenutoId(contenutoId: number) {
     return this.http.get<any[]>(
       `${this.baseUrl}/api/recensioni/contenuto`,
@@ -163,7 +211,7 @@ export class ApiService {
       `${this.baseUrl}/api/recensione/new`,
       { idContenuto, idUtente, voto, testo, titolo, data },
       { withCredentials: true }
-    );
+    ).pipe(tap(() => this.clearCache()));
   }
 
   updateRecensione(id: number, voto: number, testo: string, titolo: string, data?: Date) {
@@ -171,15 +219,18 @@ export class ApiService {
       `${this.baseUrl}/api/recensioni/update/${id}`,
       { voto, testo, titolo, data },
       { withCredentials: true }
-    );
+    ).pipe(tap(() => this.clearCache()));
   }
 
   deleteRecensione(id: number) {
     return this.http.delete<{ success: boolean }>(
       `${this.baseUrl}/api/recensioni/delete/${id}`,
       { withCredentials: true }
-    );
+    ).pipe(tap(() => this.clearCache()));
   }
+
+  // --- GESTIONE PREFERITI ---
+
   getFavouritesMediaByUserId(userId: number) {
     return this.http.get<any[]>(
       `${this.baseUrl}/api/utente/${userId}/preferiti`,
@@ -192,7 +243,7 @@ export class ApiService {
       `${this.baseUrl}/api/utente/${userId}/addPreferito`,
       { contenutoId },
       { withCredentials: true }
-    );
+    ).pipe(tap(() => this.clearCache()));
   }
 
   removeMediaFromFavourites(userId: number, contenutoId: number) {
@@ -202,7 +253,7 @@ export class ApiService {
         body: { contenutoId },
         withCredentials: true
       }
-    );
+    ).pipe(tap(() => this.clearCache()));
   }
 
   getTrailerEmbed(

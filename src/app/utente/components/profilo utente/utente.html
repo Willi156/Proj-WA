@@ -1,7 +1,8 @@
 <div class="container-fluid bg-light min-vh-100 font-sans">
-  <div class="row flex-nowrap">
+  <div class="row">
 
-    <div class="col-auto col-md-3 col-xl-2 px-0 bg-white border-end vh-100 sticky-top d-flex flex-column pt-5 shadow-sm" style="z-index: 1000;">
+    <div class="col-12 col-md-3 col-xl-2 px-0 bg-white border-end sticky-md-top d-flex flex-column pt-4 pt-md-5 shadow-sm"
+         style="z-index: 1000; min-height: auto; height: auto; max-height: none;">
       <div class="d-flex flex-column align-items-center w-100 px-3 text-center">
         <div class="mb-3 position-relative">
           @if (user.immagineProfilo) {
@@ -19,21 +20,19 @@
           <div class="text-break small fw-medium text-dark lh-sm">{{user.email}}</div>
         </div>
 
-        <div class="d-grid gap-2 w-100 mt-auto mb-4 px-2">
-
+        <div class="d-grid gap-2 w-100 mt-2 mb-4 px-2">
           <a routerLink="/admin/gestione" class="btn btn-primary btn-sm rounded-3 d-flex align-items-center justify-content-center gap-2 fw-bold shadow-sm mb-2">
             <span style="font-size: 1.1rem;"></span> Gestione App
           </a>
-
           <a routerLink="/settings" class="btn btn-outline-secondary btn-sm rounded-3 d-flex align-items-center justify-content-center gap-2">Impostazioni</a>
           <button class="btn btn-danger-subtle text-danger btn-sm rounded-3 d-flex align-items-center justify-content-center gap-2">Esci</button>
         </div>
       </div>
     </div>
 
-    <div class="col py-5 px-4 overflow-auto h-100">
-      <div class="d-flex justify-content-between align-items-center mb-5">
-        <div>
+    <div class="col-12 col-md-9 col-xl-10 py-5 px-3 px-md-4 overflow-auto">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-5 gap-3">
+        <div class="text-center text-md-start">
           <h2 class="fw-bold text-dark mb-1">{{ saluto }}, {{ user.nome ? user.nome : 'Utente' }}!</h2>
           <p class="text-muted small">Ecco il riepilogo delle tue recensioni.</p>
         </div>
@@ -41,8 +40,8 @@
 
       <div class="row g-5">
         <div class="col-lg-8">
-          <div class="bg-white p-1 rounded-3 border mb-4 d-inline-flex">
-            <ul class="nav nav-pills" id="pills-tab">
+          <div class="bg-white p-1 rounded-3 border mb-4 d-inline-flex mw-100 overflow-auto">
+            <ul class="nav nav-pills flex-nowrap" id="pills-tab">
               <li class="nav-item"><a class="nav-link rounded-3 px-3 py-2 small fw-bold" [class.active]="activeTab === 'games'" (click)="setActiveTab('games')" href="javascript:void(0)">Games</a></li>
               <li class="nav-item"><a class="nav-link rounded-3 px-3 py-2 small fw-bold" [class.active]="activeTab === 'serie'" (click)="setActiveTab('serie')" href="javascript:void(0)">Serie TV</a></li>
               <li class="nav-item"><a class="nav-link rounded-3 px-3 py-2 small fw-bold" [class.active]="activeTab === 'film'" (click)="setActiveTab('film')" href="javascript:void(0)">Film</a></li>
@@ -63,8 +62,8 @@
                         <div class="card-body">
                           @if (!rec.isEditing) {
                             <div class="d-flex justify-content-between align-items-center">
-                              <h6 class="fw-bold mb-1">{{rec.titolo}}</h6>
-                              <div class="d-flex align-items-center gap-2">
+                              <h6 class="fw-bold mb-1 text-truncate pe-2">{{rec.titolo}}</h6>
+                              <div class="d-flex align-items-center gap-2 flex-shrink-0">
                                 <button class="btn btn-sm text-primary p-0" (click)="attivaModifica(rec)">✎</button>
                                 <button class="btn btn-sm p-0 fw-bold" [class.text-danger]="rec.inEliminazione" [class.text-muted]="!rec.inEliminazione" (click)="rimuoviRecensione(rec)">
                                   {{ rec.inEliminazione ? 'Elimina?' : '✕' }}
@@ -75,7 +74,7 @@
                                       [class.bg-danger]="rec.voto < 5">{{rec.voto}}/10</span>
                               </div>
                             </div>
-                            <p class="small text-muted mb-0 mt-2">
+                            <p class="small text-muted mb-0 mt-2 text-break">
                               @if (rec.testo) { "{{ rec.testo }}" } @else { <span class="fst-italic opacity-50">Nessun commento inserito.</span> }
                             </p>
                           } @else {
@@ -113,8 +112,8 @@
                         <div class="card-body">
                           @if (!rec.isEditing) {
                             <div class="d-flex justify-content-between align-items-center">
-                              <h6 class="fw-bold mb-1">{{rec.titolo}}</h6>
-                              <div class="d-flex align-items-center gap-2">
+                              <h6 class="fw-bold mb-1 text-truncate pe-2">{{rec.titolo}}</h6>
+                              <div class="d-flex align-items-center gap-2 flex-shrink-0">
                                 <button class="btn btn-sm text-primary p-0" (click)="attivaModifica(rec)">✎</button>
                                 <button class="btn btn-sm p-0 fw-bold" [class.text-danger]="rec.inEliminazione" [class.text-muted]="!rec.inEliminazione" (click)="rimuoviRecensione(rec)">
                                   {{ rec.inEliminazione ? 'Elimina?' : '✕' }}
@@ -125,7 +124,7 @@
                                       [class.bg-danger]="rec.voto < 5">{{rec.voto}}/10</span>
                               </div>
                             </div>
-                            <p class="small text-muted mb-0 mt-2">"{{ rec.testo || 'Nessun commento inserito.' }}"</p>
+                            <p class="small text-muted mb-0 mt-2 text-break">"{{ rec.testo || 'Nessun commento inserito.' }}"</p>
                           } @else {
                             <div class="row g-2">
                               <div class="col-3"><input type="number" class="form-control form-control-sm" [(ngModel)]="rec.editVoto"></div>
@@ -157,8 +156,8 @@
                         <div class="card-body">
                           @if (!rec.isEditing) {
                             <div class="d-flex justify-content-between align-items-center">
-                              <h6 class="fw-bold mb-1">{{rec.titolo}}</h6>
-                              <div class="d-flex align-items-center gap-2">
+                              <h6 class="fw-bold mb-1 text-truncate pe-2">{{rec.titolo}}</h6>
+                              <div class="d-flex align-items-center gap-2 flex-shrink-0">
                                 <button class="btn btn-sm text-primary p-0" (click)="attivaModifica(rec)">✎</button>
                                 <button class="btn btn-sm p-0 fw-bold" [class.text-danger]="rec.inEliminazione" [class.text-muted]="!rec.inEliminazione" (click)="rimuoviRecensione(rec)">
                                   {{ rec.inEliminazione ? 'Elimina?' : '✕' }}
@@ -169,7 +168,7 @@
                                       [class.bg-danger]="rec.voto < 5">{{rec.voto}}/10</span>
                               </div>
                             </div>
-                            <p class="small text-muted mb-0 mt-2">"{{ rec.testo || 'Nessun commento inserito.' }}"</p>
+                            <p class="small text-muted mb-0 mt-2 text-break">"{{ rec.testo || 'Nessun commento inserito.' }}"</p>
                           } @else {
                             <div class="row g-2">
                               <div class="col-3"><input type="number" class="form-control form-control-sm" [(ngModel)]="rec.editVoto"></div>
@@ -218,7 +217,7 @@
                       </button>
                     </div>
                   </div>
-                  <p class="text-muted mt-2 mb-0 small">
+                  <p class="text-muted mt-2 mb-0 small text-break">
                     @if (rec.testo) { "{{ rec.testo }}" } @else { <span class="fst-italic opacity-50">Nessun commento inserito.</span> }
                   </p>
                 } @else {
@@ -243,24 +242,24 @@
         </div>
 
         <div class="col-lg-4">
-          <div class="card border-0 shadow-sm rounded-4 sticky-top bg-white" style="top: 20px;">
+          <div class="card border-0 shadow-sm rounded-4 sticky-lg-top bg-white" style="top: 20px;">
             <div class="card-body p-4">
               <h6 class="fw-bold mb-4 text-dark">Preferiti (ID)</h6>
               <div class="input-group mb-4">
                 <input type="text" class="form-control bg-light border-0 py-2 small" placeholder="Cerca ID..." [(ngModel)]="searchText">
               </div>
-              <div class="d-flex flex-column gap-2">
+              <div class="d-flex flex-column gap-2" style="max-height: 400px; overflow-y: auto;">
                 @for (id of preferitiIds; track id) {
                   <div class="d-flex align-items-center justify-content-between p-2 rounded-3 border-bottom border-light">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width: 8px; height: 8px;"></div>
-                      <div class="d-flex flex-column">
-                        <span class="fw-bold text-dark small">{{ id.titolo || id.contenuto?.titolo || ('Media ID: ' + id.id) }}</span>
+                    <div class="d-flex align-items-center gap-3 overflow-hidden">
+                      <div class="rounded-circle bg-primary flex-shrink-0" style="width: 8px; height: 8px;"></div>
+                      <div class="d-flex flex-column text-truncate">
+                        <span class="fw-bold text-dark small text-truncate">{{ id.titolo || id.contenuto?.titolo || ('Media ID: ' + id.id) }}</span>
                         <span class="text-muted" style="font-size: 0.7rem;">Preferito</span>
                       </div>
                     </div>
-                    <button class="btn btn-sm fw-bold" [class.btn-danger]="id.inEliminazione" [class.text-white]="id.inEliminazione" [class.text-secondary]="!id.inEliminazione" (click)="rimuoviPreferito(id)">
-                      {{ id.inEliminazione ? 'Elimina?' : '✕' }}
+                    <button class="btn btn-sm fw-bold px-2" [class.btn-danger]="id.inEliminazione" [class.text-white]="id.inEliminazione" [class.text-secondary]="!id.inEliminazione" (click)="rimuoviPreferito(id)">
+                      {{ id.inEliminazione ? 'Del' : '✕' }}
                     </button>
                   </div>
                 }

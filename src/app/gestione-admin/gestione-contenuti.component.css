@@ -75,3 +75,29 @@ td {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
 }
+/* ... altri stili ... */
+
+.search-bar-custom {
+  background-color: white;
+  border-radius: 50px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 2px 5px;
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+}
+
+/* SU PC: Larghezza fissa minima */
+@media (min-width: 768px) {
+  .search-bar-custom {
+    min-width: 300px;
+  }
+}
+
+/* SU MOBILE: Nessun bordo blu quando clicchi */
+.search-bar-custom .form-control:focus {
+  box-shadow: none;
+}
+
+.search-bar-custom .input-group-text {
+  background-color: transparent !important;
+}
