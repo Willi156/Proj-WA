@@ -234,4 +234,13 @@ export class ApiService {
   getCurrentUserInfo() {
     return this.http.get<any>(`${this.baseUrl}/api/auth/me`, { withCredentials: true });
   }
+
+  //controlla se l'utente è autenticato
+  isAuthenticated(): Observable<boolean> {
+    return this.me().pipe(
+      map(() => true),
+      catchError(() => of(false))
+    );
+  }
+
 }
