@@ -30,10 +30,8 @@
         <thead class="bg-light text-muted small fw-bold">
         <tr>
           <th class="ps-4 py-3">TITOLO</th>
-
           <th class="py-3 d-none d-md-table-cell">CATEGORIA</th>
           <th class="py-3 d-none d-md-table-cell">ANNO</th>
-
           <th class="text-end pe-4 py-3">AZIONI</th>
         </tr>
         </thead>
@@ -43,7 +41,7 @@
               <td class="ps-4 fw-bold text-dark">{{ item.titolo }}</td>
 
               <td class="d-none d-md-table-cell">
-                <span class="badge rounded-pill bg-light text-dark border px-3">
+                <span class="badge rounded-pill bg-light text-dark border px-3 text-uppercase">
                   {{ item.tipo }}
                 </span>
               </td>
@@ -51,9 +49,21 @@
 
               <td class="text-end pe-4">
                 <a [routerLink]="['/modifica-contenuto', item.id]"
-                   class="btn btn-sm btn-outline-primary rounded-pill px-3 me-2">Modifica</a>
-                <button class="btn btn-sm btn-outline-danger rounded-pill px-3"
-                        (click)="elimina(item.id)">Elimina</button>
+                   class="btn btn-sm btn-light text-primary fw-bold rounded-pill px-3 me-2 shadow-sm border-0">
+                   Modifica
+                </a>
+
+                <button class="btn btn-sm rounded-pill px-3 fw-bold shadow-sm border-0 transition-all"
+                        [class.btn-danger]="item.inEliminazione"
+                        [class.btn-light]="!item.inEliminazione"
+                        [class.text-danger]="!item.inEliminazione"
+                        (click)="elimina(item)">
+                  @if (item.inEliminazione) {
+                    Conferma?
+                  } @else {
+                     Elimina
+                  }
+                </button>
               </td>
             </tr>
           }

@@ -25,7 +25,11 @@
             <span style="font-size: 1.1rem;"></span> Gestione App
           </a>
           <a routerLink="/settings" class="btn btn-outline-secondary btn-sm rounded-3 d-flex align-items-center justify-content-center gap-2">Impostazioni</a>
-          <button class="btn btn-danger-subtle text-danger btn-sm rounded-3 d-flex align-items-center justify-content-center gap-2">Esci</button>
+
+          <button class="btn btn-danger-subtle text-danger btn-sm rounded-3 d-flex align-items-center justify-content-center gap-2"
+                  (click)="logout()">
+            Esci
+          </button>
         </div>
       </div>
     </div>
@@ -98,7 +102,6 @@
                 }
               </div>
             }
-
             @if (activeTab === 'serie') {
               <h6 class="fw-bold text-secondary mb-3 text-uppercase small ls-1">Recensioni Serie TV</h6>
               <div class="row g-3">
@@ -142,7 +145,6 @@
                 }
               </div>
             }
-
             @if (activeTab === 'film') {
               <h6 class="fw-bold text-secondary mb-3 text-uppercase small ls-1">Recensioni Film</h6>
               <div class="row g-3">

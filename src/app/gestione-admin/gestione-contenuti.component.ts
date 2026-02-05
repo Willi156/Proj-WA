@@ -1,6 +1,6 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // AGGIUNTO ChangeDetectorRef
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ApiService } from '../services/api.service'; // Controlla che il percorso sia '../services/api.service' o '../../services/api.service' a seconda delle cartelle
+import { ApiService } from '../services/api.service';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
@@ -17,7 +17,7 @@ export class GestioneContenutiComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private cd: ChangeDetectorRef // INIEZIONE PER AGGIORNAMENTO GRAFICO
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -27,14 +27,13 @@ export class GestioneContenutiComponent implements OnInit {
   caricaContenuti() {
     this.api.getContenuti().subscribe({
       next: (res) => {
-        this.contenuti = res;
-        this.cd.detectChanges(); // MAGIA: Forza la grafica ad aggiornarsi SUBITO
+        this.contenuti = res.map(item => ({ ...item, inEliminazione: false }));
+        this.cd.detectChanges();
       },
       error: (err) => console.error("Errore caricamento", err)
     });
   }
 
-  // Filtro di ricerca in tempo reale
   get contenutiFiltrati() {
     if (!this.searchText) {
       return this.contenuti;
@@ -44,16 +43,29 @@ export class GestioneContenutiComponent implements OnInit {
     );
   }
 
-  // Funzione ELIMINA collegata all'API
-  elimina(id: number) {
-    if (confirm('Sei sicuro di voler eliminare questo contenuto?')) {
-      this.api.deleteContenutoById(id).subscribe({
-        next: () => {
-          alert("Contenuto eliminato con successo!");
-          this.caricaContenuti(); // Ricarica la lista aggiornata
-        },
-        error: (err) => alert("Errore durante l'eliminazione: " + err.message)
-      });
+
+  elimina(item: any) {
+    if (!item.inEliminazione) {
+      this.contenuti.forEach(c => c.inEliminazione = false);
+
+      item.inEliminazione = true;
+
+      setTimeout(() => {
+        item.inEliminazione = false;
+        this.cd.detectChanges();
+      }, 3000);
+      return;
     }
+
+    this.api.deleteContenutoById(item.id).subscribe({
+      next: () => {
+        this.caricaContenuti();
+      },
+
+      error: (err) => {
+        console.error("Errore eliminazione:", err);
+        item.inEliminazione = false;
+      }
+    });
   }
 }

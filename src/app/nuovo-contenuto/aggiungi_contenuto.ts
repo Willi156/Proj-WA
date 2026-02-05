@@ -8,13 +8,13 @@ import { Router, ActivatedRoute } from '@angular/router';
   selector: 'app-nuovo-contenuto',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './aggiungi_contenuto.html', // Controlla che il nome del file sia giusto
+  templateUrl: './aggiungi_contenuto.html',
   styleUrl: './aggiungi_contenuto.css'
 })
 export class NuovoContenutoComponent implements OnInit {
   tipoSelezionato: string = '';
   listaPiattaformeApi: any[] = [];
-  idModifica: number | null = null; // Se diverso da null, siamo in modifica!
+  idModifica: number | null = null;
 
   nuovoContenuto: any = {
     titolo: '',
@@ -33,20 +33,19 @@ export class NuovoContenutoComponent implements OnInit {
   constructor(
     private api: ApiService,
     private router: Router,
-    private route: ActivatedRoute // <--- Ci serve per capire su che pagina siamo
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
-    // 1. Carichiamo le piattaforme (sempre utile)
+
     this.api.getPiattaformeWithIds().subscribe({
       next: (res) => this.listaPiattaformeApi = res.filter(p => p.nome.toLowerCase() !== 'mobile')
     });
 
-    // 2. CONTROLLO MAGICO: C'è un ID nell'indirizzo?
+
     const id = this.route.snapshot.paramMap.get('id');
 
     if (id) {
-      // SIAMO IN MODALITÀ MODIFICA!
       this.idModifica = +id;
       console.log("Modalità Modifica attivata per ID:", this.idModifica);
       this.caricaDatiPerModifica(this.idModifica);
@@ -92,7 +91,6 @@ export class NuovoContenutoComponent implements OnInit {
     const tipoDb = this.tipoSelezionato === 'serie' ? 'SERIE_TV' : this.tipoSelezionato.toUpperCase();
 
     if (this.idModifica) {
-      // --- LOGICA DI AGGIORNAMENTO (UPDATE) ---
       this.api.updateContenuto(
         this.idModifica,
         this.nuovoContenuto.titolo,
@@ -119,7 +117,6 @@ export class NuovoContenutoComponent implements OnInit {
       });
 
     } else {
-      // --- LOGICA DI CREAZIONE (NUOVO) ---
       this.api.createContenuto(
         this.nuovoContenuto.titolo,
         this.nuovoContenuto.descrizione,

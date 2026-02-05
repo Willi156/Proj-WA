@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 import { ApiService } from '../../../services/api.service';
 import { empty } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-utente',
@@ -18,7 +17,6 @@ export class UtenteComponent implements OnInit {
   userId = 0;
   preferitiIds: any[] = [];
   recensioniIds: any[] = [];
-
   user: any = { nome: '', cognome: '', username: '', email: '', immagineProfilo: '' };
   activeTab: string = 'games';
   searchText: string = '';
@@ -36,32 +34,57 @@ export class UtenteComponent implements OnInit {
     this.saluto = (ora >= 6 && ora < 18) ? 'Buongiorno' : 'Buonasera';
 
     if (isPlatformBrowser(this.platformId)) {
+
+
+      const storedUser = localStorage.getItem('datiUtente');
+
+      if (!storedUser) {
+        this.router.navigate(['/login']);
+        return; // Fermiamo tutto qui.
+      }
+
+      try {
+        this.user = JSON.parse(storedUser);
+        if (this.user.id) this.userId = this.user.id;
+        this.cd.detectChanges(); // Aggiorna la grafica SUBITO (risolve il flash)
+      } catch(e) { console.error(e); }
+
+      // 3. Verifichiamo col server che sia tutto vero
       this.connettiAlDatabase();
     }
   }
 
   connettiAlDatabase() {
-    // 1. Cerchiamo di prendere l'utente dalla memoria locale se c'è, per essere più veloci
-    const storedUser = localStorage.getItem('datiUtente');
-    if (storedUser) {
-      this.user = JSON.parse(storedUser);
-      if (this.user.id) this.userId = this.user.id;
-    }
-
     this.api.me().subscribe({
       next: (res: any) => {
         const dati = res.user || res;
         if (dati.id) this.userId = dati.id;
         this.user = dati;
 
+        // Aggiorniamo i dati freschi
         localStorage.setItem('datiUtente', JSON.stringify(this.user));
         if (this.userId) localStorage.setItem('userId', this.userId.toString());
 
-        // CHIAMATA IMMEDIATA (Nessun setTimeout!)
         this.impostaDati();
       },
-      error: () => this.router.navigate(["/login"])
+
+      error: () => this.logout()
     });
+  }
+
+
+  logout() {
+    // 1. Cancelliamo tutto
+    localStorage.removeItem('datiUtente');
+    localStorage.removeItem('userId');
+
+    // 2. Puliamo la cache interna
+    if (this.api.datiCache && this.api.clearCache) {
+      this.api.clearCache();
+    }
+
+    // 3. Via al login
+    this.router.navigate(['/login']);
   }
 
   impostaDati() {
@@ -71,18 +94,11 @@ export class UtenteComponent implements OnInit {
 
   scaricaRecensioni() {
     if (!this.userId) return;
-
-    // --- MAGIA DELLA CACHE ---
-    // Se il Service ha già i dati in memoria, usiamo quelli senza chiedere al server!
     if (this.api.datiCache && this.api.datiCache.recensioni) {
-      console.log("Recupero recensioni dalla CACHE (Istantaneo)");
       this.recensioniIds = this.api.datiCache.recensioni;
       this.cd.detectChanges();
       return;
     }
-    // -------------------------
-
-    console.log("Scarico recensioni dal SERVER...");
     this.api.getRecensioniByUserId(this.userId).subscribe({
       next: (recs: any[]) => {
         this.recensioniIds = recs.map(item => {
@@ -98,11 +114,7 @@ export class UtenteComponent implements OnInit {
             isEditing: false
           };
         });
-
-        // SALVIAMO NELLA CACHE PER LA PROSSIMA VOLTA
-        if (this.api.datiCache) {
-          this.api.datiCache.recensioni = this.recensioniIds;
-        }
+        if (this.api.datiCache) this.api.datiCache.recensioni = this.recensioniIds;
         this.cd.detectChanges();
       },
       error: (err) => console.error("Errore recupero recensioni:", err)
@@ -111,24 +123,15 @@ export class UtenteComponent implements OnInit {
 
   scaricaPreferiti() {
     if (!this.userId) return;
-
-    // --- MAGIA DELLA CACHE ---
     if (this.api.datiCache && this.api.datiCache.preferiti) {
-      console.log("Recupero preferiti dalla CACHE (Istantaneo)");
       this.preferitiIds = this.api.datiCache.preferiti;
       this.cd.detectChanges();
       return;
     }
-    // -------------------------
-
     this.api.getFavouriteMediaByUserIdComplete(this.userId).subscribe({
       next: (prefs) => {
         this.preferitiIds = prefs;
-
-        // SALVIAMO NELLA CACHE
-        if (this.api.datiCache) {
-          this.api.datiCache.preferiti = this.preferitiIds;
-        }
+        if (this.api.datiCache) this.api.datiCache.preferiti = this.preferitiIds;
         this.cd.detectChanges();
       },
       error: (err) => console.error("Errore recupero preferiti:", err)
@@ -140,21 +143,16 @@ export class UtenteComponent implements OnInit {
   rimuoviRecensione(rec: any) {
     const idReale = rec.recensione?.id || rec.id;
     if (!idReale) return;
-
     if (!rec.inEliminazione) {
       this.recensioniIds.forEach(r => r.inEliminazione = false);
       rec.inEliminazione = true;
       setTimeout(() => { rec.inEliminazione = false; this.cd.detectChanges(); }, 3000);
       return;
     }
-
     this.api.deleteRecensione(idReale).subscribe({
       next: () => {
         this.recensioniIds = this.recensioniIds.filter(r => (r.recensione?.id || r.id) !== idReale);
-
-        // AGGIORNIAMO ANCHE LA CACHE MANUALMENTE
         if(this.api.datiCache) this.api.datiCache.recensioni = this.recensioniIds;
-
         this.cd.detectChanges();
       },
       error: (err) => alert(`Errore Server: Impossibile eliminare.`)
@@ -164,21 +162,16 @@ export class UtenteComponent implements OnInit {
   rimuoviPreferito(item: any) {
     const idContenuto = item.id;
     if (!idContenuto) return;
-
     if (!item.inEliminazione) {
       this.preferitiIds.forEach(p => p.inEliminazione = false);
       item.inEliminazione = true;
       setTimeout(() => { item.inEliminazione = false; this.cd.detectChanges(); }, 3000);
       return;
     }
-
     this.api.removeMediaFromFavourites(this.userId, idContenuto).subscribe({
       next: () => {
         this.preferitiIds = this.preferitiIds.filter(p => p.id !== item.id);
-
-        // AGGIORNIAMO ANCHE LA CACHE MANUALMENTE
         if(this.api.datiCache) this.api.datiCache.preferiti = this.preferitiIds;
-
         this.cd.detectChanges();
       },
       error: (err) => alert(`Errore Server: Impossibile rimuovere preferito.`)
@@ -197,20 +190,13 @@ export class UtenteComponent implements OnInit {
 
   salvaModifica(rec: any) {
     const idReale = rec.id || (rec.recensione ? rec.recensione.id : null) || rec.idRecensione;
-
     if (!idReale) {
       alert("Errore: Impossibile identificare la recensione.");
       return;
     }
-
     const titoloInviato = rec.titolo || 'Recensione';
-
     this.api.updateRecensione(
-      idReale,
-      Number(rec.editVoto),
-      rec.editTesto,
-      titoloInviato,
-      new Date()
+      idReale, Number(rec.editVoto), rec.editTesto, titoloInviato, new Date()
     ).subscribe({
       next: (res) => {
         rec.voto = Number(rec.editVoto);
@@ -218,9 +204,7 @@ export class UtenteComponent implements OnInit {
         rec.isEditing = false;
         this.cd.detectChanges();
       },
-      error: (err) => {
-        alert("Errore nel salvataggio della modifica.");
-      }
+      error: (err) => alert("Errore nel salvataggio della modifica.")
     });
   }
 

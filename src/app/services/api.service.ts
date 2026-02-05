@@ -11,7 +11,7 @@ import { Film } from '../film/model/film.model';
 export class ApiService {
   private baseUrl = environment.apiBaseUrl;
 
-  // --- MEMORIA CACHE ---
+
   public datiCache: any = {
     recensioni: null,
     preferiti: null
@@ -19,7 +19,7 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
-  // Funzione per pulire la cache
+
   clearCache() {
     this.datiCache.recensioni = null;
     this.datiCache.preferiti = null;
@@ -78,7 +78,7 @@ export class ApiService {
     );
   }
 
-  // --- GESTIONE CONTENUTI ---
+
 
   getContenuti() {
     return this.http.get<any[]>(`${this.baseUrl}/api/contenuti`);
@@ -190,7 +190,6 @@ export class ApiService {
     );
   }
 
-  // --- GESTIONE RECENSIONI ---
 
   getRecensioniByContenutoId(contenutoId: number) {
     return this.http.get<any[]>(
@@ -229,7 +228,6 @@ export class ApiService {
     ).pipe(tap(() => this.clearCache()));
   }
 
-  // --- GESTIONE PREFERITI ---
 
   getFavouritesMediaByUserId(userId: number) {
     return this.http.get<any[]>(
