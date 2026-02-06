@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api.service';
-import { catchError, of } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { catchError, filter, of, take } from 'rxjs';
 
 type SearchType = 'GAME' | 'MOVIE' | 'SERIES';
 
@@ -38,34 +37,39 @@ export class NavbarComponent {
   searchQuery = '';
   isLoggedIn = false;
 
+  // ✅ true quando sei nella pagina signin/signup
+  isAuthPage = false;
+
   @ViewChild('overlaySearchInput')
   overlaySearchInput!: ElementRef<HTMLInputElement>;
 
   private searchData: SearchItem[] = [];
 
   constructor(private router: Router, private api: ApiService) {
-    // Carico contenuti per ricerca
-    this.api
-      .getContenuti()
-      .pipe(
-        catchError((err) => {
-          console.error('[Navbar] getContenuti error', err);
-          return of([] as any[]);
-        })
-      )
-      .subscribe((res: any) => {
-        const all = this.extractArray(res);
-        this.searchData = all
-          .map((x) => this.toSearchItem(x))
-          .filter((x) => !!x && !!x.id && !!x.title);
-      });
+    this.loadSearchData();
 
-    // Stato auth iniziale
+    // ✅ inizializza anche in caso di refresh diretto su /login
+    this.updateAuthPageFromUrl(this.router.url);
     this.refreshAuthState();
+
+    // ✅ aggiorna tutto a ogni cambio route (login/logout/redirect)
+    this.router.events
+      .pipe(filter((e) => e instanceof NavigationEnd))
+      .subscribe((e) => {
+        const nav = e as NavigationEnd;
+        const url = nav.urlAfterRedirects || nav.url;
+
+        this.updateAuthPageFromUrl(url);
+        this.refreshAuthState();
+
+        // se navighi, chiudi menu/overlay aperti (evita overlay "bloccati")
+        this.closeMenu();
+        this.closeSearch();
+      });
   }
 
-  /** Ricalcola stato login (serve per nascondere Register) */
-  private refreshAuthState() {
+  /** ================= AUTH ================= */
+  refreshAuthState() {
     this.api
       .me()
       .pipe(
@@ -75,6 +79,18 @@ export class NavbarComponent {
       .subscribe((res) => {
         this.isLoggedIn = !!res;
       });
+  }
+
+  private updateAuthPageFromUrl(url: string) {
+    const clean = (url || '').split('?')[0].split('#')[0];
+    this.isAuthPage = clean.startsWith('/login');
+  }
+
+  /** ================= NAV ================= */
+  goTo(route: string) {
+    this.closeSearch();
+    this.closeMenu();
+    this.router.navigateByUrl(route);
   }
 
   toggleMenu() {
@@ -91,24 +107,23 @@ export class NavbarComponent {
     this.mobileOpen = this.mobileOpen === section ? null : section;
   }
 
+  /** ================= SEARCH ================= */
   openSearch() {
+    // ✅ se sei su pagina login, non aprire search (coerente con “non mostrare nulla”)
+    if (this.isAuthPage) return;
+
     this.isSearchOpen = true;
     this.isMenuOpen = false;
     this.searchQuery = '';
 
+    // ✅ focus input quando la modale è renderizzata
     setTimeout(() => {
-      this.overlaySearchInput?.nativeElement.focus();
+      this.overlaySearchInput?.nativeElement?.focus();
     }, 0);
   }
 
   closeSearch() {
     this.isSearchOpen = false;
-  }
-
-  goTo(route: string) {
-    this.closeSearch();
-    this.closeMenu();
-    this.router.navigateByUrl(route);
   }
 
   openDetailsFromSearch(item: SearchItem) {
@@ -120,13 +135,16 @@ export class NavbarComponent {
     });
   }
 
-  private normalize(s: string) {
-    return (s || '').trim().toLowerCase();
-  }
-
-  private extractArray(res: any): any[] {
-    if (Array.isArray(res)) return res;
-    return res?.data ?? res?.content ?? res?.results ?? res?.result ?? [];
+  private loadSearchData() {
+    this.api
+      .getContenuti()
+      .pipe(catchError(() => of([])))
+      .subscribe((res: any) => {
+        const all: any[] = Array.isArray(res) ? res : res?.data ?? res?.content ?? res?.results ?? [];
+        this.searchData = all
+          .map((x: any) => this.toSearchItem(x))
+          .filter((x: any) => !!x && !!x.id && !!x.title);
+      });
   }
 
   private normalizeImageUrl(raw: any): string {
@@ -142,15 +160,15 @@ export class NavbarComponent {
       .trim();
 
     if (t.includes('GIOCO') || t.includes('GAME')) return 'GAME';
-    if (t.includes('FILM') || t.includes('MOVIE')) return 'MOVIE';
     if (t.includes('SERIE')) return 'SERIES';
+    if (t.includes('FILM') || t.includes('MOVIE')) return 'MOVIE';
 
     return 'MOVIE';
   }
 
   private toSearchItem(src: any): SearchItem {
     const id = Number(src?.id ?? 0);
-    const title = String(src?.titolo ?? src?.title ?? src?.name ?? 'Senza titolo').trim();
+    const title = String(src?.titolo ?? src?.title ?? src?.name ?? '').trim();
     const type = this.detectType(src);
 
     const thumbUrl = this.normalizeImageUrl(
@@ -161,6 +179,10 @@ export class NavbarComponent {
     const score = Math.max(0, Math.min(10, rawScore));
 
     return { id, title, type, thumbUrl, score, raw: src };
+  }
+
+  private normalize(s: string) {
+    return (s || '').trim().toLowerCase();
   }
 
   get groupedResults(): SearchGroup[] {
@@ -186,22 +208,5 @@ export class NavbarComponent {
   onEsc() {
     if (this.isSearchOpen) this.closeSearch();
     if (this.isMenuOpen) this.closeMenu();
-  }
-
-  /** ✅ Click profilo: se loggato -> /user, altrimenti -> /login */
-  onProfileClick() {
-    this.closeSearch();
-    this.closeMenu();
-
-    this.api.me().pipe(take(1)).subscribe({
-      next: () => {
-        this.isLoggedIn = true;
-        this.router.navigateByUrl('/user'); // ✅ QUESTA è la tua route corretta
-      },
-      error: () => {
-        this.isLoggedIn = false;
-        this.router.navigateByUrl('/login');
-      },
-    });
   }
 }

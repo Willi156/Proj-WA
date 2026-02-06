@@ -7,7 +7,6 @@ html, body {
   height: 100%;
 }
 
-/* ✅ NON mettere flex sul body: può rompere sticky in alcuni layout */
 body {
   overflow-x: hidden;
 }
@@ -20,7 +19,6 @@ app-root {
   width: 100%;
 }
 
-/* main cresce e spinge il footer giù */
 main.app-main {
   flex: 1 0 auto;
   width: 100%;
@@ -31,7 +29,7 @@ main.app-main {
 /* footer resta in basso */
 app-footer {
   flex: 0 0 auto;
-  margin-top: auto;      /* ✅ spinge giù */
+  margin-top: auto;
 }
 
 /* spazio prima del footer */
