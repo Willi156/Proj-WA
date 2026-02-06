@@ -96,6 +96,10 @@ export class UtenteComponent implements OnInit {
 
     // --- MODIFICA QUI: Reindirizza alla Home ('/') invece che al Login ---
     this.router.navigate(['/']);
+    this.api.logout().subscribe({
+      next: () => console.log("Logout effettuato con successo."),
+      error: (err) => console.error("Errore durante il logout:", err)
+    });
   }
 
   impostaDati() {
