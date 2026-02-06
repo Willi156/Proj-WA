@@ -24,7 +24,7 @@ export class SerieSectionComponent implements OnChanges, OnInit {
   visibleSeries: SerieTv[] = [];
 
   ngOnInit(): void {
-    this.updateVisibleSeries(); // Aggiungi questa linea
+    this.updateVisibleSeries();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -71,5 +71,4 @@ export class SerieSectionComponent implements OnChanges, OnInit {
     if(!this.seeAllPath) return;
     this.router.navigate([this.seeAllPath])
   }
-
 }

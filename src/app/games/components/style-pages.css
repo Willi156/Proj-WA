@@ -234,3 +234,98 @@
   color: #666;
   text-align: center;
 }
+@media (max-width: 1200px) {
+  .page-container {
+    padding: 24px 16px 48px;
+  }
+
+  .page-content {
+    gap: 24px;
+  }
+
+  .games-grid {
+    gap: 20px;
+  }
+}
+@media (max-width: 1024px) {
+
+  .page-content {
+    grid-template-columns: 220px 1fr;
+  }
+
+  .filters {
+    padding-right: 16px;
+  }
+
+  .games-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 768px) {
+
+  .page-content {
+    grid-template-columns: 1fr;
+  }
+
+  .filters {
+    border-right: none;
+    border-bottom: 1px solid #e5e5e5;
+    padding-right: 0;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+  }
+
+  .results-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .sort-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .games-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+@media (max-width: 480px) {
+
+  .page-container {
+    padding: 16px 12px 40px;
+  }
+
+  .filters-header {
+    font-size: 12px;
+  }
+
+  .filter-block label {
+    font-size: 13px;
+  }
+
+  .year-tooltip {
+    font-size: 10px;
+  }
+
+  .games-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .pagination {
+    margin-top: 24px;
+  }
+
+  .page-btn {
+    min-width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+}
+@media (hover: none) {
+  .arrow-wrapper:hover .arrow-tooltip {
+    opacity: 0;
+  }
+}

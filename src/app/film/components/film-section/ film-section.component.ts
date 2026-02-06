@@ -48,7 +48,7 @@ export class FilmSectionComponent implements OnChanges, OnInit {
   }
 
   prev() {
-    if (this.startIndex - this.visibleCount > 0) {
+    if (this.startIndex > 0) {
       this.startIndex -= this.visibleCount;
       this.updateVisibleFilms();
     }
