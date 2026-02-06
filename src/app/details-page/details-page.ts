@@ -750,7 +750,7 @@ export class DetailsPageComponent {
 
   goToAuth() {
     // salva la posizione
-    this.router.navigate(['/auth'], {
+    this.router.navigate(['/login'], {
       queryParams: { redirect: this.router.url }
     });
   }
