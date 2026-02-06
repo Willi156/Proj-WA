@@ -355,5 +355,35 @@ export class TmdbService {
         })
       );
   }
+  getUpcomingSeries(page = 1): Observable<any[]> {
+    return this.http.get<any>(`${this.BASE}/tv/on_the_air`, {
+      params: {
+        api_key: this.API_KEY,
+        language: 'it-IT',
+        page: page.toString()
+      }
+    }).pipe(
+      map(res => res?.results ?? [])
+    );
+  }
+  getTvGenres(): Observable<Record<number, string>> {
+    return this.http
+      .get<any>(`${this.BASE}/genre/tv/list`, {
+        params: {
+          api_key: this.API_KEY,
+          language: 'it-IT'
+        }
+      })
+      .pipe(
+        map(res => {
+          const map: Record<number, string> = {};
+          (res.genres ?? []).forEach((g: any) => {
+            map[g.id] = g.name;
+          });
+          return map;
+        })
+      );
+  }
+
 
 }
