@@ -1,4 +1,3 @@
-<!-- navbar.html -->
 <nav class="navbar">
   <div class="navbar-container">
 
@@ -16,7 +15,6 @@
     <div class="center desktop-only">
       <ul class="menu">
 
-        <!-- GAMES -->
         <li class="menu-item has-dropdown">
           <a class="menu-link" routerLink="/games">
             Games <i class="bi bi-chevron-down"></i>
@@ -28,7 +26,6 @@
           </div>
         </li>
 
-        <!-- MOVIES -->
         <li class="menu-item has-dropdown">
           <a class="menu-link" routerLink="/movies">
             Movies <i class="bi bi-chevron-down"></i>
@@ -40,7 +37,6 @@
           </div>
         </li>
 
-        <!-- TV SHOWS -->
         <li class="menu-item has-dropdown">
           <a class="menu-link" routerLink="/series">
             TV Shows <i class="bi bi-chevron-down"></i>
@@ -58,40 +54,42 @@
     <!-- RIGHT -->
     <div class="right">
 
-      <!-- DESKTOP -->
+      <!-- SEARCH DESKTOP (non in /login) -->
       <button
+        *ngIf="!isAuthPage"
         class="search-pill desktop-only"
         type="button"
         (click)="openSearch()"
-        aria-label="Open search"
       >
         <i class="bi bi-search"></i>
         <span class="search-pill-text">Search Games, Movies or Series</span>
       </button>
 
-      <!-- ✅ PROFILE: click -> decide dove andare (me() -> /user oppure /login) -->
+      <!-- ✅ PROFILE DESKTOP: SOLO SE LOGGATO e NON in /login -->
       <button
-        style="background-color: transparent;"
+        *ngIf="isLoggedIn && !isAuthPage"
         class="profile desktop-only"
         type="button"
-        (click)="onProfileClick()"
-        aria-label="Go to profile"
+        (click)="goTo('/user')"
+        aria-label="Profile"
+        style="background: transparent"
       >
         <i class="bi bi-person"></i>
       </button>
 
-      <!-- ✅ Register si vede SOLO se NON loggato -->
+      <!-- ✅ SIGN IN DESKTOP: SOLO SE NON LOGGATO e NON in /login -->
       <button
-        *ngIf="!isLoggedIn"
+        *ngIf="!isLoggedIn && !isAuthPage"
         class="register desktop-only"
         routerLink="/login"
         type="button"
       >
-        Register
+        SIGN IN
       </button>
 
-      <!-- MOBILE -->
+      <!-- MOBILE ICONS (non in /login) -->
       <button
+        *ngIf="!isAuthPage"
         class="search-icon mobile-only"
         type="button"
         (click)="openSearch()"
@@ -108,14 +106,12 @@
       >
         <i class="bi bi-list"></i>
       </button>
-
     </div>
 
     <!-- MOBILE MENU -->
     <div class="mobile-menu" *ngIf="isMenuOpen">
 
-      <!-- GAMES -->
-      <button class="mobile-accordion" type="button" (click)="toggleMobileSection('games')">
+      <button class="mobile-accordion" (click)="toggleMobileSection('games')">
         <span>Games</span>
         <i class="bi" [ngClass]="mobileOpen === 'games' ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
       </button>
@@ -125,8 +121,7 @@
         <a routerLink="/games/best-games" (click)="closeMenu()">Best Games</a>
       </div>
 
-      <!-- MOVIES -->
-      <button class="mobile-accordion" type="button" (click)="toggleMobileSection('movies')">
+      <button class="mobile-accordion" (click)="toggleMobileSection('movies')">
         <span>Movies</span>
         <i class="bi" [ngClass]="mobileOpen === 'movies' ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
       </button>
@@ -136,8 +131,7 @@
         <a routerLink="/movies/best-films" (click)="closeMenu()">Best Films</a>
       </div>
 
-      <!-- TV SHOWS -->
-      <button class="mobile-accordion" type="button" (click)="toggleMobileSection('series')">
+      <button class="mobile-accordion" (click)="toggleMobileSection('series')">
         <span>TV Shows</span>
         <i class="bi" [ngClass]="mobileOpen === 'series' ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
       </button>
@@ -147,31 +141,33 @@
         <a routerLink="/series/best-series" (click)="closeMenu()">Best Series</a>
       </div>
 
-      <!-- ACCOUNT -->
       <div class="mobile-divider"></div>
 
-      <!-- ✅ PROFILE MOBILE: click -> decide dove andare -->
-      <button class="mobile-link" type="button" (click)="onProfileClick()">
+      <!-- ✅ PROFILE MOBILE: SOLO SE LOGGATO e NON in /login -->
+      <button
+        *ngIf="isLoggedIn && !isAuthPage"
+        class="mobile-link"
+        (click)="goTo('/user')"
+      >
         <i class="bi bi-person"></i>
         <span>Profile</span>
       </button>
 
-      <!-- ✅ Register MOBILE solo se non loggato -->
+      <!-- ✅ SIGN IN MOBILE: SOLO SE NON LOGGATO e NON in /login -->
       <button
-        *ngIf="!isLoggedIn"
+        *ngIf="!isLoggedIn && !isAuthPage"
         class="mobile-register"
-        type="button"
         routerLink="/login"
         (click)="closeMenu()"
       >
-        Register
+        SIGN IN
       </button>
-
     </div>
+
   </div>
 </nav>
 
-<!-- SEARCH OVERLAY -->
+<!-- SEARCH OVERLAY (serve per far “apparire” la search) -->
 <div class="search-overlay" *ngIf="isSearchOpen" (click)="closeSearch()">
   <div class="search-modal" (click)="$event.stopPropagation()">
 
@@ -197,7 +193,6 @@
       />
     </div>
 
-    <!-- RESULTS -->
     <ng-container *ngIf="groupedResults.length; else noResultsTpl">
       <div class="search-results">
         <div class="search-list">
@@ -223,7 +218,6 @@
 
               <div class="sr-score">{{ it.score }}</div>
             </button>
-
           </ng-container>
 
         </div>
