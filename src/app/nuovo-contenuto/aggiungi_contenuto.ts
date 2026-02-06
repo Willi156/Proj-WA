@@ -15,8 +15,7 @@ export class NuovoContenutoComponent implements OnInit {
   tipoSelezionato: string = '';
   listaPiattaformeApi: any[] = [];
   idModifica: number | null = null;
-
-  successMessage: string = '';
+  successMessage: string = ''; // Variabile per il banner verde
 
   nuovoContenuto: any = {
     titolo: '',
@@ -36,8 +35,7 @@ export class NuovoContenutoComponent implements OnInit {
     private api: ApiService,
     private router: Router,
     private route: ActivatedRoute
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     this.api.getPiattaformeWithIds().subscribe({
@@ -62,7 +60,14 @@ export class NuovoContenutoComponent implements OnInit {
 
     const dati = JSON.parse(datiSalvafi);
 
-    this.tipoSelezionato = dati.tipo.toLowerCase() === 'serie_tv' ? 'serie' : dati.tipo.toLowerCase();
+    // Mappiamo il tipo per il frontend (il select box)
+    if (dati.tipo === 'SERIE_TV' || dati.tipo === 'SERIE TV') {
+      this.tipoSelezionato = 'serie';
+    } else if (dati.tipo === 'GIOCO' || dati.tipo === 'GAME') {
+      this.tipoSelezionato = 'gioco';
+    } else {
+      this.tipoSelezionato = 'film';
+    }
 
     this.nuovoContenuto = {
       titolo: dati.titolo,
@@ -73,6 +78,7 @@ export class NuovoContenutoComponent implements OnInit {
       immagine: dati.imageLink || dati.immagine,
       casaEditrice: dati.casaEditrice,
       casaProduttrice: dati.casaProduzione || dati.casaProduttrice,
+      // Se le piattaforme arrivano come oggetti, prendiamo solo gli ID
       piattaformeIds: dati.piattaforme ? dati.piattaforme.map((p: any) => p.id || p) : [],
       inCorso: dati.inCorso,
       stagioni: dati.stagioni || 1
@@ -89,11 +95,18 @@ export class NuovoContenutoComponent implements OnInit {
   }
 
   salvaContenuto() {
-    const tipoDb = this.tipoSelezionato === 'serie' ? 'SERIE_TV' : this.tipoSelezionato.toUpperCase();
+    // 1. PREPARIAMO IL TIPO ESATTO (Come vuole William nello screen)
+    let tipoDb = this.tipoSelezionato.toUpperCase();
 
+    if (this.tipoSelezionato === 'serie') {
+      tipoDb = 'SERIE_TV';
+    } else if (this.tipoSelezionato === 'gioco') {
+      tipoDb = 'GIOCO'; // Rimettiamo GIOCO come da tua richiesta
+    } else {
+      tipoDb = 'FILM';
+    }
 
     localStorage.removeItem('contenutoDaModificare');
-
 
     const gestisciSuccesso = (messaggio: string) => {
       this.successMessage = messaggio;
@@ -102,23 +115,19 @@ export class NuovoContenutoComponent implements OnInit {
       }, 2000);
     };
 
-    const piattaformeSafe = (this.tipoSelezionato === 'gioco' || this.tipoSelezionato === 'game')
-      ? this.nuovoContenuto.piattaformeIds
-      : [];
+    // 2. PULIZIA DATI (Fondamentale per evitare crash 500)
 
-    const casaProdSafe = this.tipoSelezionato === 'film' ? this.nuovoContenuto.casaProduttrice : null;
-    const casaEditriceSafe = (this.tipoSelezionato === 'gioco' || this.tipoSelezionato === 'game') ? this.nuovoContenuto.casaEditrice : null;
-    const inCorsoSafe = this.tipoSelezionato === 'serie' ? this.nuovoContenuto.inCorso : false;
-    const stagioniSafe = this.tipoSelezionato === 'serie' ? this.nuovoContenuto.stagioni : 0;
+    // Se è un gioco, mandiamo gli ID delle piattaforme. Se no, array vuoto.
+    const piattaformeSafe = (this.tipoSelezionato === 'gioco') ? this.nuovoContenuto.piattaformeIds : [];
 
-    console.log("STO INVIANDO AL SERVER:", {
-      id: this.idModifica,
-      titolo: this.nuovoContenuto.titolo,
-      tipo: tipoDb,
-      piattaforme: piattaformeSafe,
-      casaProd: casaProdSafe,
-      casaEd: casaEditriceSafe
-    });
+    // Campi esclusivi: mandiamo NULL se non servono (non undefined)
+    const casaProdSafe = (this.tipoSelezionato === 'film') ? this.nuovoContenuto.casaProduttrice : null;
+    const casaEditriceSafe = (this.tipoSelezionato === 'gioco') ? this.nuovoContenuto.casaEditrice : null;
+
+    const inCorsoSafe = (this.tipoSelezionato === 'serie') ? (!!this.nuovoContenuto.inCorso) : false;
+    const stagioniSafe = (this.tipoSelezionato === 'serie') ? (Number(this.nuovoContenuto.stagioni) || 1) : 0;
+
+    console.log("INVIO AL SERVER:", { id: this.idModifica, tipo: tipoDb, piattaforme: piattaformeSafe });
 
     if (this.idModifica) {
       this.api.updateContenuto(
@@ -139,7 +148,8 @@ export class NuovoContenutoComponent implements OnInit {
         next: () => gestisciSuccesso("Modifica salvata con successo!"),
         error: (err) => {
           console.error("ERRORE SERVER:", err);
-          alert("Errore 500: Il server ha rifiutato i dati. Controlla la console per i dettagli.");
+          // Se crasha ancora qui, è colpa del backend che non gestisce l'array piattaformeSafe
+          alert("Errore 500: Il server ha rifiutato i dati (probabilmente le piattaforme).");
         }
       });
 

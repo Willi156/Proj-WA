@@ -119,7 +119,7 @@ export class ApiService {
   ) {
     return this.http.put<{ success: boolean }>(
       `${this.baseUrl}/api/contenuto/update/${id}`,
-      { titolo, descrizione, genere, link, tipo, annoPubblicazione, casaProduzione, casaEditrice, inCorso, stagioni, imageLink, piattaformaIds },
+      { id, titolo, descrizione, genere, link, tipo, annoPubblicazione, casaProduzione, casaEditrice, inCorso, stagioni, imageLink, piattaformaIds },
       { withCredentials: true }
     );
   }
@@ -286,12 +286,11 @@ export class ApiService {
     return this.http.get<any>(`${this.baseUrl}/api/auth/me`, { withCredentials: true });
   }
 
-  //controlla se l'utente è autenticato
+
   isAuthenticated(): Observable<boolean> {
     return this.me().pipe(
       map(() => true),
       catchError(() => of(false))
     );
   }
-
 }

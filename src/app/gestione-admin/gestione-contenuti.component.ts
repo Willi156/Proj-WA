@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../services/api.service';
-import { RouterLink, Router } from '@angular/router'; // Aggiungi Router qui
+import { RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -18,7 +18,7 @@ export class GestioneContenutiComponent implements OnInit {
   constructor(
     private api: ApiService,
     private cd: ChangeDetectorRef,
-    private router: Router // Serve per navigare via codice
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -44,8 +44,10 @@ export class GestioneContenutiComponent implements OnInit {
     );
   }
 
+
   vaiAModifica(item: any) {
     localStorage.setItem('contenutoDaModificare', JSON.stringify(item));
+
 
     this.router.navigate(['/modifica-contenuto', item.id]);
   }

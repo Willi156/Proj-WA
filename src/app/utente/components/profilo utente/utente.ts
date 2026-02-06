@@ -94,7 +94,8 @@ export class UtenteComponent implements OnInit {
       this.api.clearCache();
     }
 
-    this.router.navigate(['/login']);
+    // --- MODIFICA QUI: Reindirizza alla Home ('/') invece che al Login ---
+    this.router.navigate(['/']);
   }
 
   impostaDati() {

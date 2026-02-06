@@ -48,9 +48,10 @@
               <td class="text-muted d-none d-md-table-cell">{{ item.annoPubblicazione }}</td>
 
               <td class="text-end pe-4">
-                <button class="btn btn-sm btn-light text-primary fw-bold rounded-pill px-3 me-2 shadow-sm border-0"
+                <button type="button"
+                        class="btn btn-sm btn-light text-primary fw-bold rounded-pill px-3 me-2 shadow-sm border-0"
                         (click)="vaiAModifica(item)">
-                   Modifica
+                  Modifica
                 </button>
 
                 <button class="btn btn-sm rounded-pill px-3 fw-bold shadow-sm border-0 transition-all"
@@ -61,7 +62,7 @@
                   @if (item.inEliminazione) {
                     Conferma?
                   } @else {
-                     Elimina
+                    Elimina
                   }
                 </button>
               </td>
