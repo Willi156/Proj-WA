@@ -2,5 +2,5 @@
 export const environment = {
   production: false,
   apiBaseUrl: 'https://proj-wa-back-end-production.up.railway.app',
-  rawgApiKey: '05c5e73c769b48c79d667cc8f6d890b2'
+  rawgApiKey: 'f5cc2016e9bd45b1a6a197ee915ae72a'
 };
