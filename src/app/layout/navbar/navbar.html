@@ -1,3 +1,4 @@
+<!-- navbar.html -->
 <nav class="navbar">
   <div class="navbar-container">
 
@@ -68,17 +69,24 @@
         <span class="search-pill-text">Search Games, Movies or Series</span>
       </button>
 
+      <!-- ✅ PROFILE: click -> decide dove andare (me() -> /user oppure /login) -->
       <button
         style="background-color: transparent;"
         class="profile desktop-only"
         type="button"
-        routerLink="/login"
-        aria-label="Go to login"
+        (click)="onProfileClick()"
+        aria-label="Go to profile"
       >
         <i class="bi bi-person"></i>
       </button>
 
-      <button class="register desktop-only" routerLink="/login" type="button">
+      <!-- ✅ Register si vede SOLO se NON loggato -->
+      <button
+        *ngIf="!isLoggedIn"
+        class="register desktop-only"
+        routerLink="/login"
+        type="button"
+      >
         Register
       </button>
 
@@ -112,9 +120,9 @@
         <i class="bi" [ngClass]="mobileOpen === 'games' ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
       </button>
       <div class="mobile-submenu" *ngIf="mobileOpen === 'games'">
-        <a routerLink="/games/new-releases">New Releases</a>
-        <a routerLink="/games/trending" (click)="closeMenu()">Upcoming</a>
-        <a routerLink="/games/top" (click)="closeMenu()">Best Games</a>
+        <a routerLink="/games/new-releases" (click)="closeMenu()">New Releases</a>
+        <a routerLink="/games/upcoming" (click)="closeMenu()">Upcoming</a>
+        <a routerLink="/games/best-games" (click)="closeMenu()">Best Games</a>
       </div>
 
       <!-- MOVIES -->
@@ -123,9 +131,9 @@
         <i class="bi" [ngClass]="mobileOpen === 'movies' ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
       </button>
       <div class="mobile-submenu" *ngIf="mobileOpen === 'movies'">
-        <a routerLink="/movies/trending" (click)="closeMenu()">Trending</a>
-        <a routerLink="/movies/in-theaters" (click)="closeMenu()">In Theaters</a>
-        <a routerLink="/movies/top" (click)="closeMenu()">Top Rated</a>
+        <a routerLink="/movies/released" (click)="closeMenu()">Released</a>
+        <a routerLink="/movies/upcoming" (click)="closeMenu()">Upcoming</a>
+        <a routerLink="/movies/best-films" (click)="closeMenu()">Best Films</a>
       </div>
 
       <!-- TV SHOWS -->
@@ -134,20 +142,28 @@
         <i class="bi" [ngClass]="mobileOpen === 'series' ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
       </button>
       <div class="mobile-submenu" *ngIf="mobileOpen === 'series'">
-        <a routerLink="/series/trending" (click)="closeMenu()">Trending</a>
-        <a routerLink="/series/most-watched" (click)="closeMenu()">Most Watched</a>
-        <a routerLink="/series/top" (click)="closeMenu()">Top Rated</a>
+        <a routerLink="/series/released" (click)="closeMenu()">Released</a>
+        <a routerLink="/series/upcoming" (click)="closeMenu()">Upcoming</a>
+        <a routerLink="/series/best-series" (click)="closeMenu()">Best Series</a>
       </div>
 
       <!-- ACCOUNT -->
       <div class="mobile-divider"></div>
 
-      <a class="mobile-link" routerLink="/login" (click)="closeMenu()">
+      <!-- ✅ PROFILE MOBILE: click -> decide dove andare -->
+      <button class="mobile-link" type="button" (click)="onProfileClick()">
         <i class="bi bi-person"></i>
         <span>Profile</span>
-      </a>
+      </button>
 
-      <button class="mobile-register" type="button" routerLink="/login" (click)="closeMenu()">
+      <!-- ✅ Register MOBILE solo se non loggato -->
+      <button
+        *ngIf="!isLoggedIn"
+        class="mobile-register"
+        type="button"
+        routerLink="/login"
+        (click)="closeMenu()"
+      >
         Register
       </button>
 
@@ -155,7 +171,7 @@
   </div>
 </nav>
 
-<!-- SEARCH OVERLAY (LOGICA COME FILE 2) -->
+<!-- SEARCH OVERLAY -->
 <div class="search-overlay" *ngIf="isSearchOpen" (click)="closeSearch()">
   <div class="search-modal" (click)="$event.stopPropagation()">
 
@@ -181,7 +197,7 @@
       />
     </div>
 
-    <!-- RESULTS (COME FILE 2) -->
+    <!-- RESULTS -->
     <ng-container *ngIf="groupedResults.length; else noResultsTpl">
       <div class="search-results">
         <div class="search-list">

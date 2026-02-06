@@ -44,5 +44,5 @@ export const routes: Routes = [
   { path: 'modifica-contenuto/:id', component: NuovoContenutoComponent },
   { path: 'admin/gestione', component: GestioneContenutiComponent },
   { path: 'details/:kind/:id', component: DetailsPageComponent },
-  { path: '**', redirectTo: 'home' },
+  { path: '**', redirectTo: '' },
 ];

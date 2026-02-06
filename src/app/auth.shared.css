@@ -27,7 +27,7 @@
 /* ===== SHELLS (LOGIN / SIGNUP) ===== */
 .shell{
   width: min(900px, 90vw);
-  height: min(750px, 85vh);
+  height: min(700px, 85vh);
   background:#06A77D;
   border-radius:20px;
   overflow:hidden;
@@ -38,7 +38,7 @@
 
 .shell-signup{
   width: min(900px, 90vw);
-  height: min(950px, 88vh);
+  height: min(800px, 88vh);
   background:#06A77D;
   border-radius:20px;
   overflow:hidden;
@@ -203,7 +203,7 @@
   display:flex;
   flex-direction:column;
   gap: 1px;
-  margin-top: -30px;
+
 }
 
 .row{
@@ -211,7 +211,32 @@
   align-items:center;
   gap: 12px;
   border-bottom: 2px solid rgba(15, 0, 0, 0.959);
-  padding: 2px 2px;
+  padding:5px 2px 2px;
+}
+
+/* ✅ DESKTOP + MOBILE:*/
+.row{
+  display: flex;
+  flex-wrap: nowrap;     /* ✅ mai a capo */
+  align-items: center;   /* ✅ allineamento verticale */
+}
+
+/* ✅ icona: fissa e non si restringe */
+.row .ico{
+  flex: 0 0 50px;        /* ✅ desktop */
+}
+
+/* ✅ tutto ciò che non è l’icona prende lo spazio rimanente */
+.row > *:not(.ico){
+  flex: 1 1 auto;
+  min-width: 0;          /* ✅ fondamentale per evitare wrap/overflow */
+}
+
+/* ✅ input riempie la riga */
+.row input{
+  width: 100%;
+  min-width: 0;
+  display: block;
 }
 
 .row input::placeholder{
@@ -222,13 +247,16 @@
 .ico{
   width:50px;
   height:50px;
-  display:grid;
-  place-items:center;
+
+  /* ✅ migliore allineamento con placeholder */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
   color: rgb(0, 0, 0);
 }
 
 .row input{
-  width:100%;
   border:0;
   outline:none;
   background:transparent;
@@ -319,15 +347,12 @@
 /* ===== RESPONSIVE (MERGED) ===== */
 @media (max-width: 768px){
 
-  /* (blocchi duplicati: uniti e mantenuti con gli stessi valori) */
-
   html, body{
     width: 100%;
     overflow-x: hidden;
   }
 
   .auth{
-    /* valori presenti nei tuoi blocchi */
     padding: 16px;
     width: 100%;
     max-width: 100%;
@@ -353,7 +378,6 @@
   }
 
   .side{
-    /* valori presenti nei tuoi blocchi (alla fine vince questo set) */
     padding: 5px 5px 14px;
     min-height: unset;
 
@@ -365,7 +389,6 @@
   }
 
   .side-logo{
-    /* valori presenti nei tuoi blocchi (alla fine vince questo set) */
     width: 100%;
     height: 70px;
 
@@ -380,7 +403,6 @@
   }
 
   .side-logo img{
-    /* valori presenti nei tuoi blocchi (alla fine vince questo set) */
     width: 50px;
     height: auto;
     object-fit: contain;
@@ -394,7 +416,6 @@
   }
 
   .side-text{
-    /* valori presenti nei tuoi blocchi (alla fine vince questo set) */
     margin: 0;
     width: 100%;
     max-width: 340px;
@@ -409,7 +430,6 @@
   }
 
   .vtab{
-    /* unione valori presenti nei blocchi */
     width: 100%;
     height: 48px;
     font-size: 14px;
@@ -449,8 +469,6 @@
     width: 100%;
     max-width: 420px;
     margin-inline: auto;
-
-    /* dai tuoi blocchi: uno aveva margin-top, uno gap */
     margin-top: 2px;
     gap: 10px;
   }
@@ -460,14 +478,17 @@
     height: 42px;
   }
 
+  /* ✅ in mobile l'icona deve restare a 42px */
+  .row .ico{
+    flex: 0 0 42px;
+  }
+
   .row{
     padding: 10px 4px;
   }
 
   .pill{
     align-self: center;
-
-    /* dai tuoi blocchi: uno aveva solo align-self, uno aveva margin-top/width */
     margin-top: 16px;
     width: min(320px, 100%);
   }
@@ -479,30 +500,6 @@
   .panel{
     max-width: 100%;
     overflow-x: hidden;
-  }
-
-  /* forza la riga a non andare a capo */
-  .row{
-    display: flex;
-    flex-wrap: nowrap;     /* ✅ niente wrap */
-    align-items: center;
-  }
-
-  /* icona: non deve mai restringersi */
-  .row .ico{
-    flex: 0 0 42px;        /* ✅ larghezza fissa */
-  }
-
-  /* tutto ciò che non è l’icona deve poter occupare lo spazio rimanente */
-  .row > *:not(.ico){
-    flex: 1 1 auto;
-    min-width: 0;          /* ✅ fondamentale per evitare overflow e wrap */
-  }
-
-  /* l’input deve stare inline nella riga e prendere spazio */
-  .row input{
-    width: 100%;           /* ✅ riempie il contenitore flessibile */
-    min-width: 0;
   }
 }
 
