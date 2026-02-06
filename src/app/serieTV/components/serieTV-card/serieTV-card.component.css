@@ -3,6 +3,7 @@
   font-family: Arial, Helvetica, sans-serif;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
 }
 
 .serie-tv-card:hover {
@@ -35,9 +36,6 @@
 .serie-tv-card:hover::after {
   opacity: 0.25;
 }
-
-/* resto identico */
-
 
 .poster {
   width: 100%;
@@ -99,13 +97,84 @@
   background-color: #f00;
 }
 
-/* LABEL */
 .label {
   font-size: 12px;
   color: #555;
 }
 
-/* HOVER */
-.film-card:hover .title {
+.serie-tv-card:hover .title {
   text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+
+  .serie-tv-card {
+    width: 150px;
+  }
+
+  .title {
+    font-size: 12.5px;
+  }
+
+  .score {
+    width: 26px;
+    height: 26px;
+    font-size: 13px;
+  }
+
+  .label {
+    font-size: 11px;
+  }
+}
+@media (max-width: 600px) {
+
+  .serie-tv-card {
+    width: 140px;
+    flex-shrink: 0;
+  }
+
+  .poster {
+    border-radius: 6px;
+  }
+
+  .title {
+    font-size: 13px;
+    -webkit-line-clamp: 3;
+  }
+
+  .meta {
+    gap: 4px;
+  }
+
+  .score {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+
+  .label {
+    font-size: 11px;
+  }
+
+  .serie-tv-card:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 4px 10px rgba(0, 0, 0, 0.12);
+  }
+}
+@media (hover: none) {
+
+  .serie-tv-card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .serie-tv-card::after {
+    display: none;
+  }
+}
+@media (max-width: 600px) {
+  .serie-tv-card {
+    touch-action: manipulation;
+  }
 }
