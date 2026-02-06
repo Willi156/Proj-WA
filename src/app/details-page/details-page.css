@@ -1,5 +1,6 @@
 /* =========================
    LAYOUT PAGINA
+   - griglia principale: cover a sinistra + contenuti a destra
 ========================= */
 
 .page{
@@ -17,11 +18,13 @@
   align-items: start;
 }
 
+/* colonna sinistra “sticky” (cover resta visibile scrollando) */
 .left{
   position: sticky;
   top: 24px;
 }
 
+/* immagine di copertina */
 .cover{
   width: 100%;
   aspect-ratio: 2 / 3;
@@ -32,12 +35,14 @@
   margin-top: 30px;
 }
 
+/* colonna destra (evita overflow in griglia/flex) */
 .right{
   min-width: 0;
 }
 
 /* =========================
    HEADER DETTAGLI
+   - titolo, stella preferiti, score, meta
 ========================= */
 
 .head{
@@ -46,7 +51,7 @@
   gap: 14px;
 }
 
-/*   header: titolo+stella a sinistra, score a destra (desktop) */
+/* riga header desktop: titolo+stella a sinistra, score a destra */
 .headRow{
   display: flex;
   align-items: flex-start;
@@ -55,7 +60,7 @@
   min-width: 0;
 }
 
-/*   wrapper titolo + stella */
+/* wrapper titolo + stella (stessa riga) */
 .titleWrap{
   display: inline-flex;
   align-items: center;
@@ -64,18 +69,17 @@
   flex: 1 1 auto;
 }
 
+/* titolo del contenuto */
 .title{
   font-size: 36px;
   line-height: 1.1;
   margin: 0 5px 0;
   letter-spacing: -0.02em;
-
-  /* per evitare overflow in flex */
   flex: 0 1 auto;
   min-width: 0;
 }
 
-/*   colonna destra dello score (desktop) */
+/* area score a destra (desktop) */
 .headRight{
   flex: 0 0 auto;
   display: inline-flex;
@@ -84,10 +88,11 @@
 
 /* =========================
    RATING BADGE
+   - pill con punteggio + colore in base al voto
 ========================= */
 
 .ratingBadge{
-  position: static; /*   non assoluto, così su mobile possiamo gestirlo meglio */
+  position: static;
   display: inline-flex;
   align-items: baseline;
   gap: 4px;
@@ -101,17 +106,20 @@
   transform: translateZ(0);
 }
 
+/* varianti colore badge */
 .score-green { background: #06A77D; }
 .score-yellow { background: #ffbd3f; }
 .score-orange { background: #fb7400; }
 .score-red { background: #ff4d4d; }
 .score-blue { background: #4d8bff; }
 
+/* numero del voto */
 .ratingValue{
   font-size: 23px;
   line-height: 1;
 }
 
+/* /10 */
 .ratingMax{
   font-size: 15px;
   opacity: .7;
@@ -119,6 +127,7 @@
 
 /* =========================
    ⭐ FAVORITES STAR (SVG)
+   - bottone preferiti vicino al titolo
 ========================= */
 
 .favStar{
@@ -132,6 +141,7 @@
   align-items: center;
 }
 
+/* icona stella */
 .favIcon{
   width: 40px;
   height: 40px;
@@ -143,16 +153,19 @@
   stroke-linejoin: round;
 }
 
+/* stato “attivo” (preferito) */
 .favStar.is-on .favIcon{
   fill: #ffd54a;
 }
 
+/* hover */
 .favStar:hover .favIcon{
   fill: #ffd54a;
 }
 
 /* =========================
    META / CHIPS
+   - pill per anno/genere ecc.
 ========================= */
 
 .meta{
@@ -180,6 +193,7 @@
   background: rgba(255,255,255,.08);
 }
 
+/* label chip (Anno/Genere) */
 .label{
   opacity: .7;
   font-size: 12px;
@@ -187,6 +201,7 @@
   letter-spacing: .08em;
 }
 
+/* valore chip */
 .value{
   font-weight: 600;
 }
@@ -195,6 +210,7 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* descrizione contenuto */
 .desc{
   margin: 10px 5px 50px;
   opacity: .9;
@@ -203,6 +219,7 @@
 
 /* =========================
    WHERE TO WATCH
+   - box piattaforme / store link
 ========================= */
 
 .whereBox{
@@ -224,6 +241,7 @@
   background: rgba(255,255,255,.05);
 }
 
+/* label “Disponibile su / Guarda ora” */
 .whereLabel{
   opacity: .9;
   font-size: 12px;
@@ -236,12 +254,14 @@
   background: #f6b000;
 }
 
+/* contenitore bottoni piattaforme */
 .whereButtons{
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 }
 
+/* evita overflow in layout flessibili */
 .whereButtons,
 .whereBox,
 .right,
@@ -249,6 +269,7 @@
   min-width: 0;
 }
 
+/* bottone piattaforma */
 .whereBtn{
   padding: 10px 14px;
   border-radius: 999px;
@@ -282,6 +303,7 @@
 
 /* =========================
    STAGIONI / EPISODI STATS
+   - box con contatori serie
 ========================= */
 
 .seasonStats{
@@ -302,31 +324,31 @@
   gap: 4px;
 }
 
+/* label “Stagioni / Episodi” */
 .statsLabel{
   font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-
-  color: inherit;
   opacity: .75;
 }
 
+/* valore numerico */
 .statsValue{
   font-size: 32px;
   font-weight: 900;
   line-height: 1;
-
-  color: inherit;
 }
 
 @media (max-width: 768px){
+  /* compatta stats su schermi piccoli */
   .seasonStats{ gap: 28px; }
   .statsValue{ font-size: 28px; }
 }
 
 /* =========================
    ACCORDIONS
+   - sezioni: trailer, scrivi recensione, lista recensioni
 ========================= */
 
 .accordions{
@@ -335,11 +357,13 @@
   gap: 12px;
 }
 
+/* wrapper full-width sotto la griglia principale */
 .fullRow{
   max-width: 1200px;
   margin: 18px auto 0;
 }
 
+/* contenitore accordion */
 .acc{
   border-radius: 16px;
   border: 1px solid rgba(255,255,255,.14);
@@ -355,6 +379,7 @@
   background: rgba(255,255,255,.05);
 }
 
+/* header cliccabile dell’accordion */
 .accSum{
   cursor: pointer;
   list-style: none;
@@ -365,26 +390,30 @@
   font-weight: 600;
   font-size: 18px;
 
-  transition: background .12s ease;
   background-color: #06A77D;
+  transition: background .12s ease;
 }
 
 .accSum:hover{
   background: rgba(255,255,255,.04);
 }
 
+/* rimuove marker nativo di <details> */
 .accSum::-webkit-details-marker{ display:none; }
 
+/* icona freccia */
 .chev{
   opacity: .7;
   transition: transform .18s ease, opacity .18s ease;
 }
 
+/* rotazione freccia a pannello aperto */
 .acc[open] .chev{
   transform: rotate(180deg);
   opacity: .95;
 }
 
+/* contenuto interno accordion */
 .accBody{
   padding: 14px 16px 16px;
   border-top: 1px solid rgba(255,255,255,.12);
@@ -411,6 +440,7 @@
 
 /* =========================
    REVIEW FORM
+   - form per inserire recensione
 ========================= */
 
 .reviewForm{
@@ -427,15 +457,16 @@
   box-shadow: 0 12px 30px rgba(0,0,0,.10);
 }
 
+/* griglia opzionale a 2 colonne (campo + voto) */
 .grid2{
   display: grid;
   grid-template-columns: 1fr 180px;
   gap: 12px;
-
   align-items: start;
   grid-auto-rows: min-content;
 }
 
+/* wrapper di ogni campo */
 .field{
   display: grid;
   gap: 6px;
@@ -443,6 +474,7 @@
   font-size: 14px;
 }
 
+/* stile specifico titolo recensione */
 .field-title{
   min-height: 30px;
   padding: 6px 8px;
@@ -450,6 +482,7 @@
   line-height: 1.25;
 }
 
+/* label campi (una riga) */
 .field label{
   display: block;
   height: 18px;
@@ -459,6 +492,7 @@
   text-overflow: ellipsis;
 }
 
+/* label “Add my score” */
 .label-rev{
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-weight: 700;
@@ -472,6 +506,7 @@
   font-size: 18px;
 }
 
+/* input/select/textarea base */
 .field input,
 .field select,
 .field textarea{
@@ -483,6 +518,7 @@
   background: rgba(255,255,255,.06);
   color: inherit;
   box-sizing: border-box;
+
   background-color: #cdd4d0;
   font-size: 19px;
   line-height: 20px;
@@ -497,12 +533,14 @@
   resize: none;
 }
 
+/* hover campi */
 .field input:hover,
 .field select:hover,
 .field textarea:hover{
   background: rgba(255,255,255,.08);
 }
 
+/* focus campi */
 .field input:focus,
 .field select:focus,
 .field textarea:focus{
@@ -511,6 +549,7 @@
   outline: none;
 }
 
+/* textarea titolo bloccata ad altezza fissa */
 .field.field-title textarea{
   min-height: 52px;
   height: 52px;
@@ -520,6 +559,7 @@
   resize: none;
 }
 
+/* barra azioni (Pubblica / Annulla) */
 .actions{
   display: flex;
   gap: 10px;
@@ -527,6 +567,7 @@
   align-items: center;
 }
 
+/* bottone base */
 .btn{
   padding: 10px 14px;
   border-radius: 12px;
@@ -551,6 +592,7 @@
   transform: translateY(0);
 }
 
+/* variante trasparente */
 .btn.ghost{
   background: transparent;
 }
@@ -559,14 +601,38 @@
   background: rgba(255,255,255,.06);
 }
 
+/* stato disabilitato */
 .btn:disabled{
   opacity: .45;
   cursor: not-allowed;
   transform: none;
 }
 
+/* bottone “vai al login” (alert non loggato) */
+.btn-redirect{
+  padding: 10px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: #06A77D;
+  color: inherit;
+  cursor: pointer;
+  font-weight: 600;
+  margin-left: 10px;
+
+  transition: transform .12s ease, background .12s ease, border-color .12s ease, opacity .12s ease;
+  will-change: transform;
+}
+
+.btn-redirect:hover{
+  border-radius: 16px;
+  background: rgb(255,255,255,.18);
+  color: black;
+  border-color: #06A77D;
+}
+
 /* =========================
    LISTA RECENSIONI
+   - card recensione + rating + data
 ========================= */
 
 .reviews{
@@ -574,6 +640,7 @@
   gap: 10px;
 }
 
+/* card recensione */
 .rev{
   padding: 12px 12px;
   border-radius: 14px;
@@ -592,6 +659,7 @@
   background: rgba(255,255,255,.05);
 }
 
+/* riga interna card */
 .revRow{
   display: flex;
   justify-content: space-between;
@@ -599,6 +667,7 @@
   gap: 14px;
 }
 
+/* blocco sinistro: avatar + testo */
 .revLeft{
   display: flex;
   align-items: flex-start;
@@ -606,6 +675,7 @@
   min-width: 0;
 }
 
+/* avatar autore */
 .revAvatar{
   width: 38px;
   height: 38px;
@@ -616,18 +686,21 @@
   background: rgba(255,255,255,.06);
 }
 
+/* corpo testo recensione */
 .revBody{
   display: grid;
   gap: 6px;
   min-width: 0;
 }
 
+/* autore */
 .revAuthor{
   display: block;
   font-weight: 800;
   font-size: 18px;
 }
 
+/* titolo recensione */
 .revTitle{
   display: block;
   font-size: 16px;
@@ -635,6 +708,7 @@
   opacity: .95;
 }
 
+/* testo recensione */
 .revText{
   margin: 0;
   opacity: .9;
@@ -642,6 +716,7 @@
   font-size: 18px;
 }
 
+/* blocco destro: stelle + data */
 .revRight{
   display: grid;
   justify-items: end;
@@ -650,12 +725,14 @@
   white-space: nowrap;
 }
 
+/* score (numerico/stelle) */
 .revScore{
   opacity: .9;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
+/* layout stelle */
 .revScore.stars{
   display: inline-flex;
   gap: 2px;
@@ -664,17 +741,19 @@
   white-space: nowrap;
 }
 
+/* stelle vuote */
 .revScore.stars .star{
   font-size: 22px;
   opacity: .25;
-  transform: translateY(0);
   transition: opacity .12s ease, transform .12s ease;
 }
 
+/* stelle piene */
 .revScore.stars .star.filled{
   opacity: 1;
 }
 
+/* hover card: anima stelle */
 .rev:hover .revScore.stars .star{
   opacity: .35;
 }
@@ -684,19 +763,38 @@
   transform: translateY(-1px);
 }
 
+/* data recensione */
 .revDate{
   margin-top: 10px;
   font-size: 15px;
   opacity: .70;
 }
 
+/* bottone “mostra altre/meno recensioni” */
 .reviewsToggle{
   display: flex;
   justify-content: center;
   margin-top: 30px;
 }
 
-/* Responsive review row <=768px */
+/* alert: utente non loggato (blocca recensione) */
+.loginAlert{
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(0,0,0,0.20);
+  padding: 10px 10px 10px;
+  border-radius: 12px;
+}
+
+.loginAlertText{
+  margin: 0 10px 10px;
+}
+
+.loginAlertActions{
+  display: flex;
+  gap: 10px;
+}
+
+/* responsive card recensioni */
 @media (max-width: 768px){
   .revRow{
     flex-direction: column;
@@ -707,10 +805,33 @@
     justify-items: start;
     white-space: normal;
   }
+
+  /* bottone redirect mobile (posizionamento specifico) */
+  .btn-redirect{
+    padding: 10px 14px;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,.18);
+    background: #06A77D;
+    color: inherit;
+    cursor: pointer;
+    font-weight: 600;
+    margin-left: 65px;
+
+    transition: transform .12s ease, background .12s ease, border-color .12s ease, opacity .12s ease;
+    will-change: transform;
+  }
+
+  .btn-redirect:hover{
+    border-radius: 16px;
+    background: rgb(255,255,255,.18);
+    color: black;
+    border-color: #06A77D;
+  }
 }
 
 /* =========================
    RATING PICKER (FORM)
+   - stelle cliccabili + testo voto
 ========================= */
 
 .ratingPicker{
@@ -766,18 +887,21 @@
 }
 
 /* =========================
-   SCROLLBAR STYLING
+   SCROLLBAR
 ========================= */
 
 *{
   scrollbar-width: thin;
   scrollbar-color: rgba(255,255,255,.22) rgba(255,255,255,.06);
 }
+
 *::-webkit-scrollbar{ height: 10px; width: 10px; }
+
 *::-webkit-scrollbar-thumb{
   background: rgba(255,255,255,.22);
   border-radius: 999px;
 }
+
 *::-webkit-scrollbar-track{
   background: rgba(255,255,255,.06);
   border-radius: 999px;
@@ -785,26 +909,27 @@
 
 /* =========================
    MOBILE LAYOUT (<=920px)
-     struttura: cover -> rating -> title+star
+   - cover sopra, rating sotto, header adattato
 ========================= */
 
 .mobileRating{
-  display: none; /*   visibile solo su mobile */
+  display: none;
 }
 
 @media (max-width: 920px){
 
+  /* layout: una colonna */
   .wrap{
     grid-template-columns: 1fr;
   }
 
+  /* cover non sticky su mobile */
   .left{
     position: relative;
     margin: 10px 10px;
     top: auto;
   }
 
-  /* cover a tutta larghezza */
   .cover{
     width: 100%;
     max-width: 100%;
@@ -812,7 +937,7 @@
     margin-top: 0;
   }
 
-  /* mostra rating sotto immagine */
+  /* mostra rating sotto cover */
   .mobileRating{
     display: flex;
     justify-content: center;
@@ -829,12 +954,12 @@
     box-sizing: border-box;
   }
 
-  /*   nasconde lo score nel header su mobile */
+  /* nasconde score desktop nell’header */
   .headRightDesktop{
     display: none;
   }
 
-  /*   header: titolo+stella su una riga */
+  /* header: titolo+stella in colonna su mobile */
   .headRow{
     flex-direction: column;
     align-items: flex-start;
@@ -844,7 +969,7 @@
     width: 100%;
   }
 
-  /* where box sistemata come avevi */
+  /* where box: riadattamento righe/bottoni */
   .whereBox{
     flex-wrap: wrap;
     justify-content: center;
@@ -874,5 +999,23 @@
 
   .whereBtn{
     max-width: 100%;
+  }
+
+  /* alert login: spacing mobile */
+  .loginAlert{
+    border: 3px solid rgba(255,255,255,.18);
+    background: rgba(0,0,0,0.20);
+    padding: 10px 14px 10px;
+    border-radius: 12px;
+  }
+
+  .loginAlertText{
+    margin: 8px 22px 8px;
+  }
+
+  .loginAlertActions{
+    display: flex;
+    gap: 10px;
+    margin: 14px 22px 8px;
   }
 }

@@ -142,42 +142,71 @@
         <!-- TRAILER -->
         <section class="trailer">
           <div class="accBody">
-            <p class="muted" *ngIf="trailerLoading">Caricamento trailer...</p>
 
-            <!-- GAME: mp4 RAWG -->
-            <div class="videoWrap" *ngIf="!trailerLoading && kind === 'GAME' && trailerMp4Url">
-              <video class="video" [src]="trailerMp4Url" controls playsinline></video>
-            </div>
+            <!-- ✅ se loggato: form normale -->
+            <ng-template #reviewFormTpl>
+              <form class="reviewForm" (ngSubmit)="submitReview()" #f="ngForm">
 
-            <!-- GAME: embed YouTube (fallback) -->
-            <div class="videoWrap" *ngIf="!trailerLoading && kind === 'GAME' && !trailerMp4Url && trailerEmbed">
-              <iframe
-                class="video"
-                [src]="trailerEmbed"
-                title="Trailer"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen
-              ></iframe>
-            </div>
+                <!-- TITOLO RECENSIONE -->
+                <div class="field field-title">
+                <textarea
+                  name="reviewTitle"
+                  [(ngModel)]="reviewDraft.title"
+                  required
+                  rows="1"
+                  placeholder="Title of your review..."
+                ></textarea>
+                        </div>
 
-            <!-- MOVIE/SERIES: embed -->
-            <div class="videoWrap" *ngIf="!trailerLoading && kind !== 'GAME' && trailerEmbed">
-              <iframe
-                class="video"
-                [src]="trailerEmbed"
-                title="Trailer"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen
-              ></iframe>
-            </div>
+                <!-- VOTO -->
+                <div class="field">
+                  <div class="ratingPicker" role="radiogroup" aria-label="Seleziona un voto da 1 a 10">
+                    <p class="label-rev">Add my score:</p>
 
-            <p class="muted" *ngIf="!trailerLoading && !trailerMp4Url && !trailerEmbed">
-              {{ trailerError || 'Trailer non disponibile.' }}
-            </p>
+                    <button
+                      type="button"
+                      class="pickStar"
+                      *ngFor="let _ of stars; let i = index"
+                      [class.filled]="i < reviewDraft.rating"
+                      (click)="setRating(i + 1)"
+                      [attr.aria-checked]="(i + 1) === reviewDraft.rating"
+                      role="radio"
+                    >
+                      ★
+                    </button>
+
+                    <span class="ratingText">{{ reviewDraft.rating }}/10</span>
+                  </div>
+
+                  <input type="hidden" name="rating" [(ngModel)]="reviewDraft.rating" required />
+                </div>
+
+                <!-- TESTO RECENSIONE -->
+                <div class="field">
+        <textarea
+          name="reviewComment"
+          [(ngModel)]="reviewDraft.comment"
+          required
+          rows="4"
+          placeholder="Write your review here..."
+        ></textarea>
+                </div>
+
+                <div class="actions">
+                  <button type="submit" class="btn" [disabled]="f.invalid || reviewsPosting">
+                    {{ reviewsPosting ? 'Invio...' : 'Pubblica' }}
+                  </button>
+                  <button type="button" class="btn ghost" (click)="resetDraft()" [disabled]="reviewsPosting">
+                    Annulla
+                  </button>
+                </div>
+
+                <p class="muted" *ngIf="reviewsPostError">{{ reviewsPostError }}</p>
+              </form>
+            </ng-template>
 
           </div>
+
         </section>
 
         <!-- LASCIA RECENSIONE -->
@@ -188,64 +217,19 @@
           </summary>
 
           <div class="accBody">
-            <form class="reviewForm" (ngSubmit)="submitReview()" #f="ngForm">
 
-              <!-- TITOLO RECENSIONE -->
-              <div class="field field-title">
-                <textarea
-                  name="reviewTitle"
-                  [(ngModel)]="reviewDraft.title"
-                  required
-                  rows="1"
-                  placeholder="Title of your review..."
-                ></textarea>
-              </div>
+            <!-- ✅ NON loggato: vedo SOLO l'alert -->
+            <div *ngIf="!isLoggedIn; else reviewFormTpl" class="loginAlert">
+              <p class="loginAlertText">
+                Se vuoi lasciare la tua recensione fai <strong>Sign in</strong> / <strong>Sign up</strong> prima.
+              </p>
 
-              <!-- VOTO -->
-              <div class="field">
-                <div class="ratingPicker" role="radiogroup" aria-label="Seleziona un voto da 1 a 10">
-                  <p class="label-rev">Add my score:</p>
-
-                  <button
-                    type="button"
-                    class="pickStar"
-                    *ngFor="let _ of stars; let i = index"
-                    [class.filled]="i < reviewDraft.rating"
-                    (click)="setRating(i + 1)"
-                    [attr.aria-checked]="(i + 1) === reviewDraft.rating"
-                    role="radio"
-                  >
-                    ★
-                  </button>
-
-                  <span class="ratingText">{{ reviewDraft.rating }}/10</span>
-                </div>
-
-                <input type="hidden" name="rating" [(ngModel)]="reviewDraft.rating" required />
-              </div>
-
-              <!-- TESTO RECENSIONE -->
-              <div class="field">
-                <textarea
-                  name="reviewComment"
-                  [(ngModel)]="reviewDraft.comment"
-                  required
-                  rows="4"
-                  placeholder="Write your review here..."
-                ></textarea>
-              </div>
-
-              <div class="actions">
-                <button type="submit" class="btn" [disabled]="f.invalid || reviewsPosting">
-                  {{ reviewsPosting ? 'Invio...' : 'Pubblica' }}
-                </button>
-                <button type="button" class="btn ghost" (click)="resetDraft()" [disabled]="reviewsPosting">
-                  Annulla
+              <div class="loginAlertActions">
+                <button type="button" class="btn-redirect" (click)="goToAuth()">
+                  Vai a Sign in
                 </button>
               </div>
-
-              <p class="muted" *ngIf="reviewsPostError">{{ reviewsPostError }}</p>
-            </form>
+            </div>
           </div>
         </details>
 

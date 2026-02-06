@@ -20,6 +20,7 @@
             Games <i class="bi bi-chevron-down"></i>
           </a>
           <div class="dropdown">
+            <a routerLink="/games">Home Games</a>
             <a routerLink="/games/new-releases">New Releases</a>
             <a routerLink="/games/upcoming">Upcoming</a>
             <a routerLink="/games/best-games">Best Games</a>
@@ -31,6 +32,7 @@
             Movies <i class="bi bi-chevron-down"></i>
           </a>
           <div class="dropdown">
+            <a routerLink="/movies">Home Movies</a>
             <a routerLink="/movies/released">Released</a>
             <a routerLink="/movies/upcoming">Upcoming</a>
             <a routerLink="/movies/best-films">Best Films</a>
@@ -42,6 +44,7 @@
             TV Shows <i class="bi bi-chevron-down"></i>
           </a>
           <div class="dropdown">
+            <a routerLink="/series">Home Series</a>
             <a routerLink="/series/released">Released</a>
             <a routerLink="/series/upcoming">Upcoming</a>
             <a routerLink="/series/best-series">Best Series</a>
@@ -116,6 +119,7 @@
         <i class="bi" [ngClass]="mobileOpen === 'games' ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
       </button>
       <div class="mobile-submenu" *ngIf="mobileOpen === 'games'">
+        <a routerLink="/games" (click)="closeMenu()">Home Games</a>
         <a routerLink="/games/new-releases" (click)="closeMenu()">New Releases</a>
         <a routerLink="/games/upcoming" (click)="closeMenu()">Upcoming</a>
         <a routerLink="/games/best-games" (click)="closeMenu()">Best Games</a>
@@ -126,6 +130,7 @@
         <i class="bi" [ngClass]="mobileOpen === 'movies' ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
       </button>
       <div class="mobile-submenu" *ngIf="mobileOpen === 'movies'">
+        <a routerLink="/movies" (click)="closeMenu()">Home Movies</a>
         <a routerLink="/movies/released" (click)="closeMenu()">Released</a>
         <a routerLink="/movies/upcoming" (click)="closeMenu()">Upcoming</a>
         <a routerLink="/movies/best-films" (click)="closeMenu()">Best Films</a>
@@ -136,6 +141,7 @@
         <i class="bi" [ngClass]="mobileOpen === 'series' ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
       </button>
       <div class="mobile-submenu" *ngIf="mobileOpen === 'series'">
+        <a routerLink="/series" (click)="closeMenu()">Home Series</a>
         <a routerLink="/series/released" (click)="closeMenu()">Released</a>
         <a routerLink="/series/upcoming" (click)="closeMenu()">Upcoming</a>
         <a routerLink="/series/best-series" (click)="closeMenu()">Best Series</a>

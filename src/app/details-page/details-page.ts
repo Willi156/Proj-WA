@@ -747,4 +747,12 @@ export class DetailsPageComponent {
       .trim()
       .slice(0, 16);
   }
+
+  goToAuth() {
+    // salva la posizione
+    this.router.navigate(['/auth'], {
+      queryParams: { redirect: this.router.url }
+    });
+  }
+
 }

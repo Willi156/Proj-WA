@@ -45,26 +45,26 @@ export class NavbarComponent implements OnDestroy {
   private searchData: SearchItem[] = [];
   private subs = new Subscription();
 
-  // ✅ fallback: riallinea stato anche senza route change (logout fatto altrove)
+  //   fallback: riallinea stato anche senza route change (logout fatto altrove)
   private authPollId: any = null;
 
   constructor(private router: Router, private api: ApiService) {
     this.loadSearchData();
 
-    // ✅ init
+    //   init
     this.updateAuthPageFromUrl(this.router.url);
 
-    // ✅ stato iniziale (fa scattare auth$ dentro ApiService)
+    //   stato iniziale (fa scattare auth$ dentro ApiService)
     this.refreshAuthState();
 
-    // ✅ ascolta cambiamenti auth in real time (se qualcuno usa api.logout()/api.setAuthState())
+    //   ascolta cambiamenti auth in real time (se qualcuno usa api.logout()/api.setAuthState())
     this.subs.add(
       this.api.auth$.subscribe((logged) => {
         this.isLoggedIn = logged;
       })
     );
 
-    // ✅ route changes
+    //   route changes
     this.subs.add(
       this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe((e) => {
         const nav = e as NavigationEnd;
@@ -80,7 +80,7 @@ export class NavbarComponent implements OnDestroy {
       })
     );
 
-    // ✅ fallback leggero: ogni 3s riallinea lo stato (evita "resta Profile dopo logout")
+    //   fallback leggero: ogni 3s riallinea lo stato (evita "resta Profile dopo logout")
     this.authPollId = setInterval(() => {
       // evita chiamate inutili nella pagina login
       if (!this.isAuthPage) this.refreshAuthState();
@@ -106,7 +106,7 @@ export class NavbarComponent implements OnDestroy {
     this.isAuthPage = clean.startsWith('/login');
   }
 
-  // ✅ se perdi focus e torni (o tab cambia), riallinea auth
+  //   se perdi focus e torni (o tab cambia), riallinea auth
   @HostListener('window:focus')
   onWindowFocus() {
     this.refreshAuthState();

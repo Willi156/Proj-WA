@@ -12,7 +12,7 @@ html, body {
 /* .navbar: contenitore principale della navbar (altezza, colori, sticky, z-index) */
 .navbar {
   width: 100%;
-  height: 80px;
+  height: 88px;
   background: #000;
   color: #fff;
   padding: 0 0 60px;
@@ -320,7 +320,7 @@ html, body {
   transition: background-color 0.2s ease;
 
   position: relative;
-  z-index: 3001; /* ✅ sopra al menu */
+  z-index: 3001; /* sopra al menu */
 }
 
 /* .search-icon i: dimensione icona lente */
@@ -361,7 +361,7 @@ html, body {
   gap: 8px;
 
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
-  z-index: 3000; /* ✅ sopra navbar */
+  z-index: 3000;
 }
 
 /* .mobile-menu a: link nel pannello mobile */
@@ -693,10 +693,8 @@ html, body {
   box-shadow: 0 0 0 2px rgba(6,167,125,0.18);
 }
 
-/* .search-input-wrap i: icona dentro l’input */
 .search-input-wrap i { color: #06A77D; font-size: 18px; }
 
-/* .search-input-wrap input: input vero (reset bordi + tipografia) */
 .search-input-wrap input {
   border: 0;
   outline: none;
@@ -714,11 +712,10 @@ html, body {
 }
 
 /* =========================================
-   SEARCH RESULTS (ti lascio solo 1 versione)
-   - Lista risultati ricerca nella modale
+   SEARCH RESULTS
 ========================================= */
 
-/* .search-results: contenitore scrollabile risultati (sfondo, max-height, bordo superiore) */
+/* .search-results: contenitore scrollabile risultati */
 .search-results {
   margin-top: 12px;
   border-radius: 12px;
@@ -875,20 +872,20 @@ html, body {
 }
 
 
-/* ===== FIX MOBILE: navbar non tagliata ===== */
+/* ===== FIX MOBILE:===== */
 @media (max-width: 900px) {
 
   .navbar{
-    height: 80px;          /* o 72px se la vuoi più bassa */
-    padding: 0 !important; /* ✅ via quel padding 0 0 60px */
-    margin-top: 0 !important; /* ✅ via il -40px */
+    height: 80px;
+    padding: 0 !important;
+    margin-top: 0 !important;
     align-items: center;
   }
 
   .navbar-container{
-    margin-top: 0 !important;   /* ✅ via 17px/20px */
+    margin-top: 0 !important;
     height: 100%;
-    display: flex;              /* più stabile in mobile */
+    display: flex;
     align-items: center;
     justify-content: space-between;
 
