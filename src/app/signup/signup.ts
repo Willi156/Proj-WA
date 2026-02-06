@@ -30,23 +30,25 @@ export class SignupComponent  {
   }
 
   private validatePassword(pw: string) {
-    if (!pw || pw.length < 6) return 'La password deve contenere almeno 6 caratteri.';
-    const specialRe = /[^A-Za-z0-9]/;
-    if (!specialRe.test(pw)) return 'La password deve contenere almeno un carattere speciale.';
+    if (!pw || pw.length < 8) return 'La password deve contenere almeno 8 caratteri.';
+    if (!/[a-z]/.test(pw)) return 'La password deve contenere almeno una lettera minuscola.';
+    if (!/[A-Z]/.test(pw)) return 'La password deve contenere almeno una lettera maiuscola.';
+    if (!/\d/.test(pw)) return 'La password deve contenere almeno un numero.';
+    if (!/[^A-Za-z0-9]/.test(pw)) return 'La password deve contenere almeno un carattere speciale.';
     return '';
   }
 
+
   private async validateUsername(username: string): Promise<boolean> {
     try {
-      const response: any = await firstValueFrom(this.api.getCheckUsername(username));
-      const available = !response;
-      console.log('Username availability response:', available);
-      return available;
+      const response = await firstValueFrom(this.api.getCheckUsername(username));
+      return !!response?.available;
     } catch (err: any) {
       console.error('Errore nel recupero dello username:', err);
       return false;
     }
   }
+
 
   async onSubmit(event: Event, first: string, last: string, username: string, email: string, password: string) {
     event.preventDefault();
@@ -84,8 +86,6 @@ export class SignupComponent  {
 
     if (!valid) return;
 
-    // Here you would call your API to register the user.
-    // For now we'll just show a success message.
     this.api.createUser(first, last, username, password, email).subscribe({
       next: (response: any) => {
         console.log('User created with ID:', response.id);

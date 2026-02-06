@@ -1,7 +1,4 @@
-/* =========================
-   GLOBAL SAFE (anti “spazio a destra”)
-   - Queste regole “globali” evitano overflow orizzontale indesiderato
-========================= */
+
 html, body {
   width: 100%;
   overflow-x: hidden;
@@ -25,13 +22,13 @@ html, body {
   font-family: Helvetica, Arial, sans-serif;
   margin-top: -5px;
 
-  overflow-x: hidden; /* extra safety */
+  overflow-x: hidden;
   position: fixed; /* resta visibile durante lo scroll */
   top: 0;
   z-index: 4000;
 }
 
-/* .navbar-container: griglia interna della navbar (3 colonne: sinistra/centro/destra) + padding laterale */
+/* .navbar-container: griglia interna della navbar  */
 .navbar-container {
   width: 100%;
   max-width: 100%;
@@ -49,12 +46,7 @@ html, body {
   margin-top: 17px;
 }
 
-/* =========================
-   ZONE
-   - Aree logiche dentro la navbar: left / center / right
-========================= */
 
-/* .left, .center, .right: tre “zone” allineate verticalmente al centro */
 .left,
 .center,
 .right {
@@ -71,11 +63,10 @@ html, body {
 .right {
   justify-content: flex-end;
   gap: 10px;
-  margin-left: auto; /* ✅ spinge davvero a destra */
+  margin-left: auto;
 }
 
 /* =========================
-   LOGO
    - Area logo: icona + testo
 ========================= */
 
@@ -110,12 +101,18 @@ html, body {
   margin-left: 10px;
 }
 
+.logo-text:hover {
+  color: #06A77D;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
 /* =========================
    MENU DESKTOP + DROPDOWN
    - Menu orizzontale desktop e relativo dropdown su hover
 ========================= */
 
-/* .menu: lista orizzontale delle voci (ul) */
+/* menu orizzontale */
 .menu {
   list-style: none;
   display: flex;
@@ -225,7 +222,6 @@ html, body {
 
 /* =========================
    DESKTOP SEARCH + PROFILE + REGISTER
-   - Elementi della zona destra su desktop
 ========================= */
 
 /* .search-pill: “pill” cliccabile per la ricerca (stile input finto) */
@@ -280,8 +276,8 @@ html, body {
 
 /* .profile i: icona dentro il bottone profilo */
 .profile i {
-  font-size: 22px;
-  color: #fff;
+  font-size: 23px;
+  color: #06A77D;
 }
 
 /* .profile:hover: hover del bottone profilo */
@@ -303,7 +299,6 @@ html, body {
 
 /* =========================
    MOBILE ICON BUTTONS
-   - Pulsanti icona (search/burger) usati in mobile
 ========================= */
 
 /* .search-icon, .hamburger: bottoni icona (dimensione tappabile, hover, z-index alto) */
@@ -345,8 +340,7 @@ html, body {
 }
 
 /* =========================
-   MOBILE MENU (ancorato al container)
-   - Pannello menu mobile che compare sotto la navbar
+   MOBILE MENU
 ========================= */
 
 /* .mobile-menu: pannello menu mobile (posizione assoluta, box, ombra, z-index) */
@@ -442,7 +436,7 @@ html, body {
   align-items: center;
   gap: 10px;
 
-  color: #fff;
+  color: #100f0f;
   text-decoration: none;
   font-weight: 700;
   font-size: 16px;
@@ -459,11 +453,6 @@ html, body {
   opacity: 0.95;
 }
 
-/* .mobile-link:hover: hover link mobile */
-.mobile-link:hover {
-  background: rgba(6, 167, 125, 0.18);
-  color: #06A77D;
-}
 
 /* .mobile-register: bottone register nel menu mobile (full width) */
 .mobile-register {
@@ -501,14 +490,13 @@ html, body {
 .mobile-only  { display: none !important; }
 
 /* Media <= 900px: inverte visibilità (desktop-only off, mobile-only on) */
-@media (max-width: 900px) {
+@media (max-width: 1200px) {
   .desktop-only { display: none !important; }
   .mobile-only  { display: flex !important; }
 }
 
 /* =========================
-   RESPONSIVE PADDING (UNICO, NO DUPLICATI)
-   - Adatta padding navbar-container e posizione del menu mobile su diverse width
+   RESPONSIVE PADDING
 ========================= */
 
 /* <=1200px: riduce padding e allinea il mobile-menu al nuovo padding */
@@ -524,8 +512,6 @@ html, body {
     align-items: center;
     box-sizing: border-box;
     font-family: Helvetica, Arial, sans-serif;
-    margin-top: -40px;
-
     overflow-x: hidden; /* extra safety */
     position: sticky; /* resta visibile durante lo scroll */
     top: 0;
@@ -548,7 +534,7 @@ html, body {
     gap: 24px;
 
     overflow: visible;
-    margin-top: 12px;
+    margin-top: 20px;
   }
   .mobile-menu { right: 80px; }
 }
@@ -598,7 +584,6 @@ html, body {
 
 /* =========================
    SEARCH OVERLAY
-   - Overlay e modale di ricerca (apertura con animazioni)
 ========================= */
 
 /* .search-overlay: sfondo full-screen semitrasparente + blur dietro la modale */
@@ -869,7 +854,7 @@ html, body {
 
 /* =========================
    OVERRIDE MOBILE EXTRA
-   - Override finali specifici <=768px (forzano padding e micro-allineamenti)
+
 ========================= */
 @media (max-width: 768px){
   /* .navbar-container: override padding (con !important) per stringere ancora di più */
@@ -883,7 +868,7 @@ html, body {
     justify-content: flex-end;
   }
 
-  /* .hamburger: micro-spostamento a destra (negativo) per allineare visivamente */
+
   .hamburger{
     margin-right: -10px;
   }
