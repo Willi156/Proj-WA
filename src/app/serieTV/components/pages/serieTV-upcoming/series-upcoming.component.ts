@@ -58,9 +58,12 @@ export class SeriesUpcomingComponent implements OnInit {
         /* YEAR FILTER */
         if (this.isYearFilterActive) {
           filtered = filtered.filter(
-            s => s.annoPubblicazione === this.selectedYear
+            s =>
+              typeof s.annoPubblicazione === 'number' &&
+              s.annoPubblicazione >= this.selectedYear
           );
         }
+
 
         /* GENRE FILTER */
         if (genres.size > 0) {
@@ -94,18 +97,14 @@ export class SeriesUpcomingComponent implements OnInit {
         );
         this.availableGenres = Array.from(genreSet).sort();
 
-        /* YEAR INIT */
-        const years = series
-          .map(s => s.annoPubblicazione)
-          .filter((y): y is number => typeof y === 'number');
+        const currentYear = new Date().getFullYear();
 
-        if (years.length) {
-          this.selectedYear = Math.min(...years);
-          this.defaultYear = this.selectedYear;
-        } else {
-          this.selectedYear = this.minYear;
-          this.defaultYear = this.minYear;
-        }
+        this.minYear = currentYear;
+        this.maxYear = currentYear + 3;
+
+        this.selectedYear = currentYear;
+        this.defaultYear = currentYear;
+
 
         this.currentPage$.next(1);
       });
