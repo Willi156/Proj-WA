@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ApiService } from '../services/api.service';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-signup',
@@ -15,7 +15,7 @@ import { RouterLink } from '@angular/router';
 export class SignupComponent  {
   errors: { [key: string]: string } = { first: '', last: '', username: '', email: '', password: '' };
   successMessage = '';
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, private cdr: ChangeDetectorRef, private router: Router) {}
 
 
   private resetErrors() {
@@ -41,8 +41,9 @@ export class SignupComponent  {
 
   private async validateUsername(username: string): Promise<boolean> {
     try {
-      const response = await firstValueFrom(this.api.getCheckUsername(username));
-      return !!response?.available;
+      const res = await firstValueFrom(this.api.getCheckUsername(username));
+      console.log('Username availability response:', res);
+      return !res;
     } catch (err: any) {
       console.error('Errore nel recupero dello username:', err);
       return false;
@@ -84,12 +85,19 @@ export class SignupComponent  {
       valid = false;
     }
 
-    if (!valid) return;
+    if (!valid) {
+      // force immediate UI refresh when validation fails
+      this.cdr.detectChanges();
+      return;
+    }
 
     this.api.createUser(first, last, username, password, email).subscribe({
       next: (response: any) => {
         console.log('User created with ID:', response.id);
         this.successMessage = 'Registrazione completata con successo.';
+        this.cdr.detectChanges();
+        this.router.navigate(['/login']);
+        
       },
       error: (err: any) => {
         console.error('Errore durante la registrazione:', err);
