@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environment/environment';
-import { Observable, of } from 'rxjs';
+import { Observable, of, BehaviorSubject } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 
 import { Game } from '../games/models/game.model';
@@ -11,6 +11,8 @@ import { Film } from '../film/model/film.model';
 export class ApiService {
   private baseUrl = environment.apiBaseUrl;
 
+  private authSubject = new BehaviorSubject<boolean>(false);
+  public auth$ = this.authSubject.asObservable();
 
   public datiCache: any = {
     recensioni: null,
@@ -18,7 +20,6 @@ export class ApiService {
   };
 
   constructor(private http: HttpClient) {}
-
 
   clearCache() {
     this.datiCache.recensioni = null;
@@ -30,8 +31,41 @@ export class ApiService {
       `${this.baseUrl}/api/auth/login`,
       { username, password },
       { withCredentials: true }
+    ).pipe(
+      tap(() => this.authSubject.next(true))
     );
   }
+
+  private extractUserFromMeResponse(res: any): any | null {
+    if (!res) return null;
+
+    const u =
+      res.user ??
+      res.utente ??
+      res.data?.user ??
+      res.data?.utente ??
+      res.result?.user ??
+      res.result?.utente;
+
+    if (!u && typeof res === 'object' && (res.id || res.username || res.email)) return res;
+
+    return u ?? null;
+  }
+
+  logout() {
+    this.markLoggedOut();
+
+    return this.http.post<any>(
+      `${this.baseUrl}/api/auth/logout`,
+      {},
+      { withCredentials: true }
+    ).pipe(
+      catchError(() => {
+        return of(null);
+      })
+    );
+  }
+
 
   me() {
     return this.http.get<{ user: any }>(
@@ -39,6 +73,19 @@ export class ApiService {
       { withCredentials: true }
     );
   }
+
+  //aggiorna lo stato di auth
+  refreshAuthStateFromServer(): Observable<boolean> {
+    return this.me().pipe(
+      map((res) => !!this.extractUserFromMeResponse(res)),
+      tap((logged) => this.authSubject.next(logged)),
+      catchError(() => {
+        this.authSubject.next(false);
+        return of(false);
+      })
+    );
+  }
+
 
   getCheckUsername(username: string) {
     return this.http.get<{ available: boolean }>(
@@ -78,17 +125,13 @@ export class ApiService {
     );
   }
 
-
-
   getContenuti() {
     return this.http.get<any[]>(`${this.baseUrl}/api/contenuti`);
   }
 
-
   getContenutoById(id: number) {
     return this.http.get<any>(`${this.baseUrl}/api/contenuto/update/${id}`, { withCredentials: true });
   }
-
 
   getGiochi() {
     return this.http.get<Game[]>(`${this.baseUrl}/api/contenuti/giochi`);
@@ -123,7 +166,6 @@ export class ApiService {
       { withCredentials: true }
     );
   }
-
 
   deleteContenutoById(id: number) {
     return this.http.delete<{ success: boolean }>(
@@ -192,7 +234,6 @@ export class ApiService {
     );
   }
 
-
   getRecensioniByContenutoId(contenutoId: number) {
     return this.http.get<any[]>(
       `${this.baseUrl}/api/recensioni/contenuto`,
@@ -230,7 +271,6 @@ export class ApiService {
     ).pipe(tap(() => this.clearCache()));
   }
 
-
   getFavouritesMediaByUserId(userId: number) {
     return this.http.get<any[]>(
       `${this.baseUrl}/api/utente/${userId}/preferiti`,
@@ -256,22 +296,14 @@ export class ApiService {
     ).pipe(tap(() => this.clearCache()));
   }
 
-  getTrailerEmbed(
-    kind: 'GAME' | 'MOVIE' | 'SERIES',
-    q: string,
-    year?: number
-  ): Observable<string | null> {
-
+  getTrailerEmbed(kind: 'GAME' | 'MOVIE' | 'SERIES', q: string, year?: number): Observable<string | null> {
     const params = new HttpParams()
       .set('kind', kind)
       .set('q', q)
       .set('year', year ? String(year) : '');
 
     return this.http
-      .get<{ embedUrl: string | null }>(
-        `${this.baseUrl}/trailers/embed`,
-        { params }
-      )
+      .get<{ embedUrl: string | null }>(`${this.baseUrl}/trailers/embed`, { params })
       .pipe(
         map(res => res?.embedUrl ?? null),
         catchError(() => of(null))
@@ -279,19 +311,33 @@ export class ApiService {
   }
 
   getFavouriteMediaByUserIdComplete(userId: number) {
-    return this.http.get<any[]>(`${this.baseUrl}/api/utente/${userId}/preferitiCompleti`, { withCredentials: true });
+    return this.http.get<any[]>(
+      `${this.baseUrl}/api/utente/${userId}/preferitiCompleti`,
+      { withCredentials: true }
+    );
   }
 
   getCurrentUserInfo() {
     return this.http.get<any>(`${this.baseUrl}/api/auth/me`, { withCredentials: true });
   }
 
-  //controlla se l'utente è autenticato
+
   isAuthenticated(): Observable<boolean> {
     return this.me().pipe(
-      map(() => true),
+      map((res) => !!this.extractUserFromMeResponse(res)),
       catchError(() => of(false))
     );
   }
+
+
+  setAuthState(value: boolean) {
+    this.authSubject.next(value);
+  }
+
+  markLoggedOut() {
+    this.authSubject.next(false);
+    this.clearCache();
+  }
+
 
 }

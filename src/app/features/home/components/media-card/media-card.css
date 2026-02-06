@@ -121,3 +121,46 @@ img {
   opacity: 0.8;
 }
 
+@media (max-width: 480px) {
+  .card {
+    width: 120px;          /* ⬇⬇ molto più piccola */
+    gap: 6px;
+  }
+
+  .poster {
+    height: 170px;         /* ⬇⬇ */
+    border-radius: 8px;
+  }
+
+  .title {
+    font-size: 12px;       /* ⬇⬇ */
+    line-height: 1.1;
+  }
+
+  .meta {
+    gap: 6px;
+  }
+
+  .score {
+    width: 24px;           /* ⬇⬇ */
+    height: 24px;
+    font-size: 11px;
+    border-radius: 4px;
+  }
+
+  .label {
+    font-size: 10px;       /* ⬇⬇ */
+  }
+
+  .watch {
+    height: 28px;          /* ⬇⬇ */
+    font-size: 11px;
+    gap: 6px;
+    border-radius: 8px;
+    padding: 0 8px;
+  }
+
+  .no-img span {
+    font-size: 10px;
+  }
+}

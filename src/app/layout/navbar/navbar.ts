@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api.service';
-import { catchError, filter, of, take } from 'rxjs';
+import { catchError, filter, of, Subscription, take } from 'rxjs';
 
 type SearchType = 'GAME' | 'MOVIE' | 'SERIES';
 
@@ -29,7 +29,7 @@ type SearchGroup = {
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnDestroy {
   isMenuOpen = false;
   isSearchOpen = false;
   mobileOpen: 'games' | 'movies' | 'series' | null = null;
@@ -37,53 +37,84 @@ export class NavbarComponent {
   searchQuery = '';
   isLoggedIn = false;
 
-  // ✅ true quando sei nella pagina signin/signup
   isAuthPage = false;
 
   @ViewChild('overlaySearchInput')
   overlaySearchInput!: ElementRef<HTMLInputElement>;
 
   private searchData: SearchItem[] = [];
+  private subs = new Subscription();
+
+  // ✅ fallback: riallinea stato anche senza route change (logout fatto altrove)
+  private authPollId: any = null;
 
   constructor(private router: Router, private api: ApiService) {
     this.loadSearchData();
 
-    // ✅ inizializza anche in caso di refresh diretto su /login
+    // ✅ init
     this.updateAuthPageFromUrl(this.router.url);
+
+    // ✅ stato iniziale (fa scattare auth$ dentro ApiService)
     this.refreshAuthState();
 
-    // ✅ aggiorna tutto a ogni cambio route (login/logout/redirect)
-    this.router.events
-      .pipe(filter((e) => e instanceof NavigationEnd))
-      .subscribe((e) => {
+    // ✅ ascolta cambiamenti auth in real time (se qualcuno usa api.logout()/api.setAuthState())
+    this.subs.add(
+      this.api.auth$.subscribe((logged) => {
+        this.isLoggedIn = logged;
+      })
+    );
+
+    // ✅ route changes
+    this.subs.add(
+      this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe((e) => {
         const nav = e as NavigationEnd;
         const url = nav.urlAfterRedirects || nav.url;
 
         this.updateAuthPageFromUrl(url);
+
+        // riallinea auth (utile dopo redirect login/logout)
         this.refreshAuthState();
 
-        // se navighi, chiudi menu/overlay aperti (evita overlay "bloccati")
         this.closeMenu();
         this.closeSearch();
-      });
+      })
+    );
+
+    // ✅ fallback leggero: ogni 3s riallinea lo stato (evita "resta Profile dopo logout")
+    this.authPollId = setInterval(() => {
+      // evita chiamate inutili nella pagina login
+      if (!this.isAuthPage) this.refreshAuthState();
+    }, 3000);
+  }
+
+  ngOnDestroy(): void {
+    this.subs.unsubscribe();
+    if (this.authPollId) {
+      clearInterval(this.authPollId);
+      this.authPollId = null;
+    }
   }
 
   /** ================= AUTH ================= */
   refreshAuthState() {
-    this.api
-      .me()
-      .pipe(
-        take(1),
-        catchError(() => of(null))
-      )
-      .subscribe((res) => {
-        this.isLoggedIn = !!res;
-      });
+    // Questo NON rompe nulla: se me() dice "non loggato", auth$ diventa false e sparisce Profile
+    this.api.refreshAuthStateFromServer().pipe(take(1)).subscribe();
   }
 
   private updateAuthPageFromUrl(url: string) {
     const clean = (url || '').split('?')[0].split('#')[0];
     this.isAuthPage = clean.startsWith('/login');
+  }
+
+  // ✅ se perdi focus e torni (o tab cambia), riallinea auth
+  @HostListener('window:focus')
+  onWindowFocus() {
+    this.refreshAuthState();
+  }
+
+  @HostListener('document:visibilitychange')
+  onVisibilityChange() {
+    if (!document.hidden) this.refreshAuthState();
   }
 
   /** ================= NAV ================= */
@@ -109,14 +140,12 @@ export class NavbarComponent {
 
   /** ================= SEARCH ================= */
   openSearch() {
-    // ✅ se sei su pagina login, non aprire search (coerente con “non mostrare nulla”)
     if (this.isAuthPage) return;
 
     this.isSearchOpen = true;
     this.isMenuOpen = false;
     this.searchQuery = '';
 
-    // ✅ focus input quando la modale è renderizzata
     setTimeout(() => {
       this.overlaySearchInput?.nativeElement?.focus();
     }, 0);
@@ -155,14 +184,10 @@ export class NavbarComponent {
   }
 
   private detectType(src: any): SearchType {
-    const t = String(src?.tipo ?? src?.kind ?? src?.category ?? '')
-      .toUpperCase()
-      .trim();
-
+    const t = String(src?.tipo ?? src?.kind ?? src?.category ?? '').toUpperCase().trim();
     if (t.includes('GIOCO') || t.includes('GAME')) return 'GAME';
     if (t.includes('SERIE')) return 'SERIES';
     if (t.includes('FILM') || t.includes('MOVIE')) return 'MOVIE';
-
     return 'MOVIE';
   }
 
@@ -189,9 +214,7 @@ export class NavbarComponent {
     const q = this.normalize(this.searchQuery);
     if (!q) return [];
 
-    const results = this.searchData
-      .filter((x) => this.normalize(x.title).includes(q))
-      .slice(0, 18);
+    const results = this.searchData.filter((x) => this.normalize(x.title).includes(q)).slice(0, 18);
 
     const groups: Record<SearchType, SearchItem[]> = { GAME: [], MOVIE: [], SERIES: [] };
     for (const item of results) groups[item.type].push(item);
