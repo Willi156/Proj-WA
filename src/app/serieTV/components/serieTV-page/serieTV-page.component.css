@@ -4,7 +4,6 @@
   padding: 32px 0;
 }
 
-
 .serie-header {
   margin-bottom: 28px;
 }
@@ -38,7 +37,6 @@
 .e4 { transform: translate(4px, 4px); opacity: 0.65; }
 .e5 { transform: translate(5px, 5px); opacity: 0.55; }
 
-
 .serie-subtitle {
   margin-top: 14px;
   margin-left: 6px;
@@ -49,6 +47,7 @@
   position: relative;
   overflow: hidden;
 }
+
 .serie-subtitle::after {
   content: "";
   position: absolute;
@@ -56,14 +55,12 @@
   left: -150%;
   width: 60%;
   height: 100%;
-
   background: linear-gradient(
     120deg,
     transparent 20%,
     rgba(255, 255, 255, 0.6),
     transparent 80%
   );
-
   transform: skewX(-20deg);
   animation: subtitleShine 6s ease-in-out infinite;
   pointer-events: none;
@@ -73,4 +70,83 @@
   0%   { left: -150%; }
   40%  { left: 150%; }
   100% { left: 150%; }
+}
+
+@media (max-width: 1024px) {
+  .serie-page {
+    padding: 24px 16px;
+  }
+
+  .serie-title-text,
+  .extrude {
+    font-size: 96px;
+  }
+
+  .serie-subtitle {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .serie-header {
+    margin-bottom: 20px;
+  }
+
+  .serie-title-wrapper {
+    width: 100%;
+  }
+
+  .serie-title-svg {
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .serie-title-text,
+  .extrude {
+    font-size: 72px;
+  }
+
+  .serie-subtitle {
+    font-size: 0.95rem;
+    max-width: 100%;
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .serie-page {
+    padding: 20px 12px;
+  }
+
+  .serie-title-svg {
+    width: 100%;
+    height: auto;
+  }
+
+  .serie-title-text,
+  .extrude {
+    font-size: 54px;
+  }
+
+  .serie-subtitle {
+    font-size: 0.9rem;
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 360px) {
+  .serie-title-text,
+  .extrude {
+    font-size: 44px;
+  }
+
+  .serie-subtitle {
+    font-size: 0.85rem;
+  }
+}
+
+@media (hover: none) {
+  .serie-subtitle::after {
+    animation: none;
+  }
 }

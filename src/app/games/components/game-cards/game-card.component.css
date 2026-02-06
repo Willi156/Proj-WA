@@ -104,3 +104,70 @@
 .game-card:hover .title {
   text-decoration: underline;
 }
+@media (max-width: 900px) {
+
+  .game-card {
+    width: 150px;
+  }
+
+  .title {
+    font-size: 12.5px;
+  }
+
+  .score {
+    width: 26px;
+    height: 26px;
+    font-size: 13px;
+  }
+
+  .label {
+    font-size: 11px;
+  }
+}
+@media (max-width: 600px) {
+
+  .game-card {
+    width: 140px;
+    flex-shrink: 0;
+  }
+
+  .poster {
+    border-radius: 6px;
+  }
+
+  .title {
+    font-size: 13px;
+    -webkit-line-clamp: 3;
+  }
+
+  .meta {
+    gap: 4px;
+  }
+
+  .score {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+
+  .label {
+    font-size: 11px;
+  }
+
+  .game-card:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 4px 10px rgba(0, 0, 0, 0.12);
+  }
+}
+@media (hover: none) {
+
+  .game-card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .game-card::after {
+    display: none;
+  }
+}

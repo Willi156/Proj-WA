@@ -1,10 +1,8 @@
-/* ===== SECTION ===== */
 .section {
   margin-bottom: 48px;
   background: transparent;
 }
 
-/* ===== HEADER ===== */
 .section-header {
   display: flex;
   justify-content: space-between;
@@ -26,9 +24,6 @@
   margin: 0;
 }
 
-
-
-/* ===== ARROWS ===== */
 .arrows {
   display: flex;
   gap: 8px;
@@ -53,19 +48,16 @@
   cursor: not-allowed;
 }
 
-/* ===== DIVIDER ===== */
 .section-line {
   height: 1px;
   background-color: #dcdcdc;
   margin: 8px 0 16px;
 }
 
-/* ===== CARDS ===== */
 .cards-row {
   display: flex;
   gap: 16px;
 }
-
 
 .section-line {
   height: 2px;
@@ -87,7 +79,6 @@
   animation: rgbFlow 10s linear infinite alternate;
 }
 
-
 .see-all {
   font-size: 12px;
   font-weight: 500;
@@ -97,7 +88,6 @@
   letter-spacing: 0.3px;
   transition: color 0.25s ease;
 }
-
 
 .see-all:hover {
   background: linear-gradient(
@@ -130,3 +120,66 @@
     animation: none;
   }
 }
+@media (max-width: 900px) {
+
+  .section-header {
+    gap: 12px;
+  }
+
+  .section-title h2 {
+    font-size: 17px;
+  }
+
+  .see-all {
+    font-size: 11px;
+  }
+
+  .cards-row {
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scrollbar-width: none;
+  }
+
+  .cards-row::-webkit-scrollbar {
+    display: none;
+  }
+}
+@media (max-width: 600px) {
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .section-title {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .section-title h2 {
+    font-size: 16px;
+  }
+
+  .see-all {
+    font-size: 11px;
+  }
+
+  .arrows {
+    align-self: flex-end;
+  }
+
+  .arrows button {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .cards-row {
+    gap: 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+  }
+}
+
