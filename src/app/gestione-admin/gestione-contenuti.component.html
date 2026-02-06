@@ -1,35 +1,76 @@
 <div class="container py-5 font-sans">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="fw-bold text-dark">Gestione Catalogo</h2>
-    <a routerLink="/aggiungi-contenuto" class="btn btn-success rounded-pill px-4 fw-bold shadow-sm">
-      + Aggiungi Nuovo Contenuto
-    </a>
+
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
+
+    <h2 class="fw-bold text-dark mb-0 text-center text-md-start w-100 w-md-auto">
+      Gestione Catalogo
+    </h2>
+
+    <div class="d-flex flex-column flex-md-row gap-3 align-items-center w-100 justify-content-end">
+
+      <div class="input-group search-bar-custom w-100">
+        <span class="input-group-text border-0 bg-white ps-3 text-muted">
+          <span>🔍</span>
+        </span>
+        <input type="text"
+               class="form-control border-0 py-2 text-muted"
+               placeholder="Cerca titolo..."
+               [(ngModel)]="searchText">
+      </div>
+
+      <a routerLink="/aggiungi-contenuto" class="btn btn-success rounded-pill px-4 fw-bold shadow-sm text-nowrap w-100 w-md-auto">
+        + Nuovo
+      </a>
+    </div>
   </div>
 
   <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
     <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0">
+      <table class="table table-hover align-middle mb-0 text-nowrap">
         <thead class="bg-light text-muted small fw-bold">
-          <tr>
-            <th class="ps-4 py-3">TITOLO</th>
-            <th class="py-3">CATEGORIA</th>
-            <th class="py-3">ANNO</th>
-            <th class="text-end pe-4 py-3">AZIONI</th>
-          </tr>
+        <tr>
+          <th class="ps-4 py-3">TITOLO</th>
+          <th class="py-3 d-none d-md-table-cell">CATEGORIA</th>
+          <th class="py-3 d-none d-md-table-cell">ANNO</th>
+          <th class="text-end pe-4 py-3">AZIONI</th>
+        </tr>
         </thead>
         <tbody>
-          @for (item of contenuti; track item.id) {
+          @for (item of contenutiFiltrati; track item.id) {
             <tr>
               <td class="ps-4 fw-bold text-dark">{{ item.titolo }}</td>
-              <td>
-                <span class="badge rounded-pill bg-light text-dark border px-3">
+
+              <td class="d-none d-md-table-cell">
+                <span class="badge rounded-pill bg-light text-dark border px-3 text-uppercase">
                   {{ item.tipo }}
                 </span>
               </td>
-              <td class="text-muted">{{ item.annoPubblicazione }}</td>
+              <td class="text-muted d-none d-md-table-cell">{{ item.annoPubblicazione }}</td>
+
               <td class="text-end pe-4">
-                <button class="btn btn-sm btn-outline-primary rounded-pill px-3 me-2">Modifica</button>
-                <button class="btn btn-sm btn-outline-danger rounded-pill px-3" (click)="elimina(item.id)">Elimina</button>
+                <button class="btn btn-sm btn-light text-primary fw-bold rounded-pill px-3 me-2 shadow-sm border-0"
+                        (click)="vaiAModifica(item)">
+                   Modifica
+                </button>
+
+                <button class="btn btn-sm rounded-pill px-3 fw-bold shadow-sm border-0 transition-all"
+                        [class.btn-danger]="item.inEliminazione"
+                        [class.btn-light]="!item.inEliminazione"
+                        [class.text-danger]="!item.inEliminazione"
+                        (click)="elimina(item)">
+                  @if (item.inEliminazione) {
+                    Conferma?
+                  } @else {
+                     Elimina
+                  }
+                </button>
+              </td>
+            </tr>
+          }
+          @if (contenutiFiltrati.length === 0 && contenuti.length > 0) {
+            <tr>
+              <td colspan="4" class="text-center py-4 text-muted">
+                Nessun contenuto trovato per "{{ searchText }}"
               </td>
             </tr>
           }

@@ -1,6 +1,6 @@
 <div class="modal-backdrop fade show" style="background-color: rgba(0,0,0,0.5);"></div>
 
-<div class="modal d-block fade show" tabindex="-1">
+<div class="modal d-block fade show" tabindex="-1" style="overflow-y: auto;">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content border-0 shadow-lg rounded-4">
 
@@ -9,7 +9,7 @@
         <a routerLink="/user" class="btn-close me-2"></a>
       </div>
 
-      <div class="modal-body p-4 pt-2">
+      <div class="modal-body p-3 p-md-4 pt-2">
 
         @if (messaggioSuccesso) {
           <div class="alert alert-success d-flex align-items-center mb-3 rounded-3 shadow-sm animate__animated animate__fadeIn">
@@ -30,7 +30,7 @@
         }
 
         <h6 class="fw-bold text-primary mb-3 mt-2">Immagine Profilo</h6>
-        <div class="d-flex align-items-center gap-4 mb-4">
+        <div class="d-flex flex-column flex-sm-row align-items-center gap-3 gap-md-4 mb-4">
           <div class="position-relative">
             <img [src]="user.immagineProfilo || 'https://api.dicebear.com/9.x/adventurer-neutral/svg?seed=default'"
                  class="rounded-circle border border-3 border-light shadow-sm bg-white"
@@ -65,11 +65,11 @@
 
         <h6 class="fw-bold text-primary mb-3 mt-2">Dati Personali</h6>
         <div class="row g-3 mb-4">
-          <div class="col-md-6">
+          <div class="col-12 col-md-6">
             <label class="small fw-bold text-muted mb-1">NOME</label>
             <input type="text" class="form-control bg-light border-0 py-2" [(ngModel)]="user.nome">
           </div>
-          <div class="col-md-6">
+          <div class="col-12 col-md-6">
             <label class="small fw-bold text-muted mb-1">COGNOME</label>
             <input type="text" class="form-control bg-light border-0 py-2" [(ngModel)]="user.cognome">
           </div>
@@ -107,11 +107,11 @@
           <input type="password" class="form-control bg-light border-0 py-2" placeholder="Inserisci la password attuale per modifiche" [(ngModel)]="vecchiaPassword">
         </div>
         <div class="row g-3">
-          <div class="col-md-6">
+          <div class="col-12 col-md-6">
             <label class="small fw-bold text-muted mb-1">NUOVA PASSWORD</label>
             <input type="password" class="form-control bg-light border-0 py-2" placeholder="Nuova password" [(ngModel)]="nuovaPassword">
           </div>
-          <div class="col-md-6">
+          <div class="col-12 col-md-6">
             <label class="small fw-bold text-muted mb-1">CONFERMA PASSWORD</label>
             <input type="password" class="form-control bg-light border-0 py-2" placeholder="Ripeti nuova password" [(ngModel)]="confermaPassword">
           </div>
@@ -119,9 +119,9 @@
 
       </div>
 
-      <div class="modal-footer border-0 p-4 pt-0">
-        <a routerLink="/user" class="btn btn-light rounded-pill px-4">Annulla</a>
-        <button (click)="salva()" class="btn btn-primary rounded-pill px-4 fw-bold">Salva Modifiche</button>
+      <div class="modal-footer border-0 p-3 p-md-4 pt-0 d-flex flex-column flex-sm-row">
+        <a routerLink="/user" class="btn btn-light rounded-pill px-4 w-100 w-sm-auto mb-2 mb-sm-0 text-center">Annulla</a>
+        <button (click)="salva()" class="btn btn-primary rounded-pill px-4 fw-bold w-100 w-sm-auto">Salva Modifiche</button>
       </div>
 
     </div>

@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import {Router, RouterLink} from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../services/api.service';
-
 
 type Tab = 'signin' | 'signup';
 
@@ -16,23 +15,16 @@ type Tab = 'signin' | 'signup';
 })
 export class LoginComponent {
   tab: Tab = 'signin';
-
   form: FormGroup;
   submitted = false;
-
   error = '';
-
-  errors: Record<string, string> = {
-    first: '',
-    last: '',
-    username: '',
-    email: '',
-    password: '',
-  };
-
   successMessage = '';
 
-  constructor(private fb: FormBuilder, private router: Router, private api:ApiService) {
+  errors: Record<string, string> = {
+    first: '', last: '', username: '', email: '', password: '',
+  };
+
+  constructor(private fb: FormBuilder, private router: Router, private api: ApiService) {
     this.form = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
@@ -55,30 +47,31 @@ export class LoginComponent {
 
     const { username, password } = this.form.value;
 
-    this.api.authenticate(username, password ).subscribe({
-      next:(user:any)=>{this.router.navigate(["/user"],{state:{user}})}
-    })
-    console.log('LOGIN:', { username, password });
+    this.api.authenticate(username, password).subscribe({
+      next: (res: any) => {
+        const userToSave = res.user || res;
+        localStorage.setItem('datiUtente', JSON.stringify(userToSave));
+        if (userToSave.id) {
+          localStorage.setItem('userId', userToSave.id.toString());
+        }
 
-
-    // TODO: collega al backend
+        this.router.navigate(["/user"]);
+      },
+      error: (err) => {
+        this.error = "Username o Password errati.";
+        console.error(err);
+      }
+    });
   }
 
   onSubmit(
-    event: Event,
-    first: string,
-    last: string,
-    username: string,
-    email: string,
-    password: string
+    event: Event, first: string, last: string, username: string, email: string, password: string
   ) {
     event.preventDefault();
-
     this.successMessage = '';
     this.clearSignupErrors();
 
     let ok = true;
-
     if (!first?.trim()) { this.errors['first'] = 'Nome richiesto'; ok = false; }
     if (!last?.trim()) { this.errors['last'] = 'Cognome richiesto'; ok = false; }
     if (!username?.trim()) { this.errors['username'] = 'Username richiesto'; ok = false; }
@@ -87,11 +80,8 @@ export class LoginComponent {
 
     if (!ok) return;
 
-    console.log('SIGNUP:', { first, last, username, email, password });
-
-    this.successMessage = 'Registrazione completata!';
-    // opzionale: torna al login
-    // this.setTab('signin');
+    this.successMessage = 'Registrazione completata! Ora puoi accedere.';
+    setTimeout(() => this.setTab('signin'), 2000);
   }
 
   private clearSignupErrors() {
