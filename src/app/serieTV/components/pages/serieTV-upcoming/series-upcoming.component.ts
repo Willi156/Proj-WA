@@ -1,16 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
-
+import {BehaviorSubject, combineLatest, map, Observable, switchMap} from 'rxjs';
 import { TmdbService } from '../../../../services/tmdb.service';
 import { SerieTv } from '../../../model/serie-tv.model';
 import { SerieTvCardComponent } from '../../serieTV-card/serieTV-card.component';
-
-type SerieUpcomingView = SerieTv & {
-  annoPubblicazione?: number;
-  genres?: string[];
-};
 
 @Component({
   selector: 'app-series-upcoming',
@@ -21,54 +15,31 @@ type SerieUpcomingView = SerieTv & {
 })
 export class SeriesUpcomingComponent implements OnInit {
 
-  /* ===== YEAR FILTER ===== */
-  minYear = new Date().getFullYear();
-  maxYear = this.minYear + 3;
-
-  selectedYear!: number;
-  defaultYear!: number;
-
-  isYearFilterActive = false;
-  isDraggingYear = false;
-
-  /* ===== GENRES ===== */
   availableGenres: string[] = [];
   selectedGenres$ = new BehaviorSubject<Set<string>>(new Set());
 
-  /* ===== DATA ===== */
-  private allSeries$ = new BehaviorSubject<SerieUpcomingView[]>([]);
+  private allSeries$ = new BehaviorSubject<SerieTv[]>([]);
   currentPage$ = new BehaviorSubject<number>(1);
 
   itemsPerPage = 15;
   pages: number[] = [];
 
-  series$!: Observable<SerieUpcomingView[]>;
+  series$!: Observable<SerieTv[]>;
+
+  private genreMap: Record<number, string> = {};
 
   constructor(private tmdb: TmdbService) {
-
     this.series$ = combineLatest([
       this.allSeries$,
       this.currentPage$,
       this.selectedGenres$
     ]).pipe(
       map(([series, page, genres]) => {
-
         let filtered = series;
 
-        /* YEAR FILTER */
-        if (this.isYearFilterActive) {
-          filtered = filtered.filter(
-            s =>
-              typeof s.annoPubblicazione === 'number' &&
-              s.annoPubblicazione >= this.selectedYear
-          );
-        }
-
-
-        /* GENRE FILTER */
         if (genres.size > 0) {
           filtered = filtered.filter(s =>
-            s.genres?.some(g => genres.has(g))
+            s.genere && genres.has(s.genere)
           );
         }
 
@@ -80,52 +51,22 @@ export class SeriesUpcomingComponent implements OnInit {
     );
   }
 
-  /* ===== INIT ===== */
   ngOnInit(): void {
-    this.tmdb.getUpcomingSeries()
-      .pipe(
-        map(raw => raw.map(s => this.mapTmdbSeries(s)))
-      )
-      .subscribe(series => {
+    this.tmdb.getTvGenres().pipe(
+      switchMap(map => {
+        this.genreMap = map;
+        return this.tmdb.getUpcomingSeries();
+      }),
+      map(raw => raw.map(s => this.mapTmdbSeries(s)))
+    ).subscribe(series => {
+      this.allSeries$.next(series);
 
-        this.allSeries$.next(series);
+      const set = new Set<string>();
+      series.forEach(s => s.genere && set.add(s.genere));
+      this.availableGenres = Array.from(set).sort();
 
-        /* GENRES DINAMICI */
-        const genreSet = new Set<string>();
-        series.forEach(s =>
-          s.genres?.forEach(g => genreSet.add(g))
-        );
-        this.availableGenres = Array.from(genreSet).sort();
-
-        const currentYear = new Date().getFullYear();
-
-        this.minYear = currentYear;
-        this.maxYear = currentYear + 3;
-
-        this.selectedYear = currentYear;
-        this.defaultYear = currentYear;
-
-
-        this.currentPage$.next(1);
-      });
-  }
-
-  /* ===== ACTIONS ===== */
-
-  changeYear(year: number): void {
-    this.selectedYear = year;
-    this.isYearFilterActive = true;
-    this.currentPage$.next(1);
-  }
-
-  resetYearFilter(): void {
-    this.selectedYear = this.defaultYear;
-    this.isYearFilterActive = false;
-    this.currentPage$.next(1);
-  }
-
-  changePage(page: number): void {
-    this.currentPage$.next(page);
+      this.currentPage$.next(1);
+    });
   }
 
   toggleGenre(genre: string, checked: boolean): void {
@@ -140,39 +81,34 @@ export class SeriesUpcomingComponent implements OnInit {
     this.currentPage$.next(1);
   }
 
-  onYearDragStart(): void {
-    this.isDraggingYear = true;
+  changePage(page: number): void {
+    this.currentPage$.next(page);
   }
 
-  onYearDragEnd(): void {
-    this.isDraggingYear = false;
+  private getPages(list: SerieTv[]): number[] {
+    return Array.from(
+      { length: Math.ceil(list.length / this.itemsPerPage) },
+      (_, i) => i + 1
+    );
   }
 
-  /* ===== HELPERS ===== */
-
-  private getPages(list: SerieUpcomingView[]): number[] {
-    const total = Math.ceil(list.length / this.itemsPerPage);
-    return Array.from({ length: total }, (_, i) => i + 1);
-  }
-
-  private mapTmdbSeries(raw: any): SerieUpcomingView {
-    const firstAirYear = raw.first_air_date
-      ? new Date(raw.first_air_date).getFullYear()
-      : undefined;
-
+  private mapTmdbSeries(raw: any): SerieTv {
     return {
       id: raw.id,
       titolo: raw.name,
       descrizione: raw.overview,
-      annoPubblicazione: firstAirYear,
+      annoPubblicazione: raw.first_air_date
+        ? new Date(raw.first_air_date).getFullYear()
+        : undefined,
       imageLink: raw.poster_path
         ? `https://image.tmdb.org/t/p/w500${raw.poster_path}`
         : undefined,
       mediaVoti: raw.vote_average ?? undefined,
-      genere: raw.genre_ids?.[0]?.toString(),
-      genres: raw.genre_ids?.map((id: number) => id.toString()) ?? [],
-      link: `https://www.themoviedb.org/tv/${raw.id}`,
-      in_corso: raw.in_production
+      genere: raw.genre_ids?.length
+        ? this.genreMap[raw.genre_ids[0]]
+        : undefined,
+      in_corso: true
     };
   }
 }
+

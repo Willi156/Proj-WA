@@ -15,13 +15,16 @@ import {FilmSectionComponent} from '../film-section/ film-section.component';
 })
 export class FilmPageComponent {
   films$!: Observable<{ newReleases: Film[]; upcoming: Film[]; best: Film[] }>;
-
   constructor(private cache: MediaCacheService) {
     this.films$ = this.cache.films$.pipe(
-      map((films: Film[]) => ({
-        newReleases: films.slice(0,5),
-        upcoming:    films.slice(5,10),
-        best:        films.slice(10,15),
+      map(films => ({
+        newReleases: [...films].sort((a, b) => b.id - a.id),
+        upcoming: [...films].sort(
+          (a, b) => (a.annoPubblicazione ?? 0) - (b.annoPubblicazione ?? 0)
+        ),
+        best: [...films]
+          .filter(f => f.mediaVoti != null)
+          .sort((a, b) => (b.mediaVoti ?? 0) - (a.mediaVoti ?? 0)),
       }))
     );
   }

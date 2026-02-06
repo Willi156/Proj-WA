@@ -17,6 +17,7 @@ import {MoviesUpcomingComponent} from './film/components/pages/movies-upcoming/m
 import {MoviesBestComponent} from './film/components/pages/best-movies/movies-best.component';
 import {SeriesReleasedComponent} from './serieTV/components/pages/serieTV-released/series-released.component';
 import {SeriesUpcomingComponent} from './serieTV/components/pages/serieTV-upcoming/series-upcoming.component';
+import {SeriesBestTvComponent} from './serieTV/components/pages/best-serieTV/series-best-TV.component';
 
 export const routes: Routes = [
   {
@@ -36,6 +37,7 @@ export const routes: Routes = [
   { path: 'series', component:SeriePageComponent},
   { path: 'series/released', component: SeriesReleasedComponent },
   { path: 'series/upcoming', component: SeriesUpcomingComponent },
+  { path: 'series/best-series', component: SeriesBestTvComponent },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'user', component: UtenteComponent },

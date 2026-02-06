@@ -1,0 +1,124 @@
+<div class="page-container">
+  <header class="page-header">
+    <h1 class="page-title">
+      <ng-container *ngIf="!isYearFilterActive; else filteredTitle">
+        Le migliori serie TV di sempre
+      </ng-container>
+      <ng-template #filteredTitle>
+        Migliori serie TV del {{ selectedYear }}
+      </ng-template>
+    </h1>
+    <p class="page-subtitle">
+      <ng-container *ngIf="!isYearFilterActive; else filteredSubtitle">
+        Le serie TV più apprezzate dalla critica 🎬
+      </ng-container>
+      <ng-template #filteredSubtitle>
+        Serie TV uscite nel {{ selectedYear }}.
+      </ng-template>
+    </p>
+  </header>
+
+  <div class="page-content">
+    <aside class="filters">
+      <div class="filters-header">Filtri</div>
+      <div class="filter-header-row">
+        <h4 class="filter-title">Anno di uscita</h4>
+        <button
+          class="filter-reset"
+          *ngIf="isYearFilterActive"
+          (click)="resetYearFilter()">
+          RESET
+        </button>
+      </div>
+
+      <div class="year-slider">
+        <div
+          class="year-tooltip"
+          *ngIf="isDraggingYear"
+          [style.left.%]="((selectedYear - minYear) / (maxYear - minYear)) * 100">
+          {{ selectedYear }}
+        </div>
+
+        <input
+          type="range"
+          [min]="minYear"
+          [max]="maxYear"
+          [ngModel]="selectedYear"
+          (ngModelChange)="changeYear($event)"
+          (mousedown)="onYearDragStart()"
+          (mouseup)="onYearDragEnd()"
+          (mouseleave)="onYearDragEnd()"
+        />
+
+        <div class="year-range">
+          <span>{{ minYear }}</span>
+          <span>{{ maxYear }}</span>
+        </div>
+      </div>
+
+
+      <div class="filter-block">
+        <div class="filter-header-row">
+          <h4 class="filter-title">Generi</h4>
+          <button
+            class="filter-reset"
+            *ngIf="(selectedGenres$ | async)?.size"
+            (click)="resetGenreFilter()">
+            RESET
+          </button>
+        </div>
+
+        <label *ngFor="let genre of availableGenres">
+          <input
+            type="checkbox"
+            #cb
+            [checked]="(selectedGenres$ | async)?.has(genre)"
+            (change)="toggleGenre(genre, cb.checked)" />
+          {{ genre }}
+        </label>
+      </div>
+
+    </aside>
+
+
+    <section class="results">
+
+      <ng-container *ngIf="series$ | async as series">
+
+        <div class="results-header">
+          <span class="results-count">
+            {{ series.length }} risultati
+          </span>
+        </div>
+
+
+        <div class="games-grid" *ngIf="series.length > 0">
+          <app-serie-tv-card
+            *ngFor="let serie of series"
+            [serie]="serie"
+            mode="score">
+          </app-serie-tv-card>
+
+        </div>
+
+        <p *ngIf="series.length === 0" class="no-results">
+          Nessuna serie TV trovata.
+        </p>
+
+
+        <div class="pagination" *ngIf="pages.length > 1">
+          <button
+            *ngFor="let page of pages"
+            class="page-btn"
+            [class.active]="page === (currentPage$ | async)"
+            (click)="changePage(page)">
+            {{ page }}
+          </button>
+        </div>
+
+      </ng-container>
+
+    </section>
+
+  </div>
+</div>

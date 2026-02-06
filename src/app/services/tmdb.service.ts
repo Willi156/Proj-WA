@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../environment/environment';
-
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
@@ -12,10 +11,6 @@ export class TmdbService {
   private BASE = 'https://api.themoviedb.org/3';
 
   constructor(private http: HttpClient) {}
-
-  // -----------------------------
-  // ✅ Helper: cerca ID serie TV
-  // -----------------------------
   private searchTvId(title: string, language: string): Observable<number | null> {
     const q = (title ?? '').trim();
     if (!q) return of(null);
@@ -32,22 +27,15 @@ export class TmdbService {
       catchError(() => of(null))
     );
   }
-
-  // ---------------------------------------
-  // ✅ Metodo robusto: IT -> EN + varianti
-  // ---------------------------------------
   getTvStatsSmart(title: string) {
     const base = (title ?? '').trim();
     if (!base) return of({ seasons: 0, episodes: 0 });
-
-    // Varianti utili (non aggressive: evitiamo di togliere troppo)
     const variants = [
       base,
-      base.replace(/\s+-\s+/g, ': '),  // trattino -> due punti
-      base.replace(/:\s+/g, ' - '),    // anche viceversa, per sicurezza
+      base.replace(/\s+-\s+/g, ': '),
+      base.replace(/:\s+/g, ' - '),
     ];
 
-    // prova prima it-IT poi en-US, sulla prima variante che trova un id
     const tryFindId = (i: number): Observable<number | null> => {
       if (i >= variants.length) return of(null);
 
@@ -115,8 +103,6 @@ export class TmdbService {
             if (!it) return [] as { label: string; url: string }[];
 
             const link: string | null = it?.link ?? null;
-
-            // prendo flatrate + rent + buy (dedup)
             const list = [
               ...(it?.flatrate ?? []),
               ...(it?.rent ?? []),
@@ -133,9 +119,6 @@ export class TmdbService {
 
               const name = String(p?.provider_name ?? '').trim();
               if (!name) continue;
-
-              // Se TMDB fornisce link per paese lo uso come destinazione
-              // (è la pagina TMDB "watch" che rimanda ai provider)
               const url = link || `https://www.themoviedb.org/${isMovie ? 'movie' : 'tv'}/${id}/watch?locale=it-IT`;
 
               out.push({ label: name, url });
@@ -150,55 +133,12 @@ export class TmdbService {
     );
   }
 
-  /**
-   * ✅ Stats serie reali (IT):
-   * number_of_seasons + number_of_episodes
-   */
-  getTvStatsIT(title: string) {
-    const q = (title ?? '').trim();
-    if (!q) return of({ seasons: 0, episodes: 0 });
-
-    return this.http.get<any>(`${this.BASE}/search/tv`, {
-      params: {
-        api_key: this.API_KEY,
-        query: q,
-        language: 'it-IT',
-        page: 1,
-      },
-    }).pipe(
-      map(res => res?.results?.[0]?.id ?? null),
-      switchMap((id: number | null) => {
-        if (!id) return of({ seasons: 0, episodes: 0 });
-
-        return this.http.get<any>(`${this.BASE}/tv/${id}`, {
-          params: {
-            api_key: this.API_KEY,
-            language: 'it-IT',
-          },
-        }).pipe(
-          map(tv => ({
-            seasons: Number(tv?.number_of_seasons ?? 0),
-            episodes: Number(tv?.number_of_episodes ?? 0),
-          })),
-          catchError(() => of({ seasons: 0, episodes: 0 }))
-        );
-      }),
-      catchError(() => of({ seasons: 0, episodes: 0 }))
-    );
-  }
-
-
-  // ==============================
-// TRAILER (TMDB -> YouTube embed)
-// ==============================
   getTrailerEmbedSmart(kind: 'MOVIE' | 'SERIES', title: string, year?: number) {
     const q = (title ?? '').trim();
     if (!q) return of<string | null>(null);
 
     const isMovie = kind === 'MOVIE';
     const searchUrl = `${this.BASE}/search/${isMovie ? 'movie' : 'tv'}`;
-
-    // filtro anno per rendere la search più precisa
     const yearParamKey = isMovie ? 'primary_release_year' : 'first_air_date_year';
 
     const searchParams: any = {
@@ -220,8 +160,6 @@ export class TmdbService {
 
     const pickYoutubeKey = (res: any): string | null => {
       const list = (res?.results ?? []) as any[];
-
-      // preferenze: YouTube + Trailer, poi Teaser
       const yt = list.filter(v => (v?.site ?? '').toLowerCase() === 'youtube');
 
       const isTrailer = (v: any) => (v?.type ?? '').toLowerCase() === 'trailer';
@@ -240,10 +178,6 @@ export class TmdbService {
     };
 
     const toEmbed = (key: string) => `https://www.youtube.com/embed/${key}?rel=0`;
-
-    // 1) search IT -> id
-    // 2) videos IT -> se vuoto, videos EN
-    // 3) se ancora nulla, search EN -> videos EN
     return this.http.get<any>(searchUrl, { params: searchParams }).pipe(
       map(pickId),
       switchMap((id: number | null) => {
@@ -265,8 +199,6 @@ export class TmdbService {
       }),
       switchMap((embedItOrNull) => {
         if (embedItOrNull) return of(embedItOrNull);
-
-        // fallback: search EN
         const searchParamsEn: any = {
           api_key: this.API_KEY,
           query: q,
@@ -360,29 +292,59 @@ export class TmdbService {
       params: {
         api_key: this.API_KEY,
         language: 'it-IT',
+        page
+      }
+    }).pipe(
+      map(res => res?.results ?? []),
+      catchError(() => of([]))
+    );
+  }
+
+  getTvGenres(): Observable<Record<number, string>> {
+    return this.http.get<any>(`${this.BASE}/genre/tv/list`, {
+      params: {
+        api_key: this.API_KEY,
+        language: 'it-IT'
+      }
+    }).pipe(
+      map(res => {
+        const map: Record<number, string> = {};
+        res.genres?.forEach((g: any) => map[g.id] = g.name);
+        return map;
+      })
+    );
+  }
+
+  getBestSeries(options?: {
+    minVote?: number;
+    minVotes?: number;
+    fromYear?: number;
+    toYear?: number;
+    page?: number;
+  }): Observable<any[]> {
+    const {
+      minVote = 7,
+      minVotes = 300,
+      fromYear = 1980,
+      toYear = new Date().getFullYear(),
+      page = 1
+    } = options ?? {};
+
+    return this.http.get<any>(`${this.BASE}/discover/tv`, {
+      params: {
+        api_key: this.API_KEY,
+        language: 'it-IT',
+        sort_by: 'vote_average.desc',
+        'vote_average.gte': minVote.toString(),
+        'vote_count.gte': minVotes.toString(),
+        'first_air_date.gte': `${fromYear}-01-01`,
+        'first_air_date.lte': `${toYear}-12-31`,
         page: page.toString()
       }
     }).pipe(
-      map(res => res?.results ?? [])
+      map(res => res?.results ?? []),
+      catchError(() => of([]))
     );
-  }
-  getTvGenres(): Observable<Record<number, string>> {
-    return this.http
-      .get<any>(`${this.BASE}/genre/tv/list`, {
-        params: {
-          api_key: this.API_KEY,
-          language: 'it-IT'
-        }
-      })
-      .pipe(
-        map(res => {
-          const map: Record<number, string> = {};
-          (res.genres ?? []).forEach((g: any) => {
-            map[g.id] = g.name;
-          });
-          return map;
-        })
-      );
   }
 
 

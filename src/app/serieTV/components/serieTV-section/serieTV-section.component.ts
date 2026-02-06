@@ -1,7 +1,8 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SerieTv } from '../../model/serie-tv.model';
 import { SerieTvCardComponent } from '../serieTV-card/serieTV-card.component';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-serie-section',
@@ -10,14 +11,21 @@ import { SerieTvCardComponent } from '../serieTV-card/serieTV-card.component';
   templateUrl: './serieTV-section.component.html',
   styleUrls: ['./serieTV-section.component.css']
 })
-export class SerieSectionComponent implements OnChanges {
 
+export class SerieSectionComponent implements OnChanges, OnInit {
+  constructor(private router: Router) {}
+
+  @Input() seeAllPath!: string;
   @Input() title!: string;
   @Input() series: SerieTv[] = [];
 
-  visibleCount = 5;
+  visibleCount = 5 ;
   startIndex = 0;
   visibleSeries: SerieTv[] = [];
+
+  ngOnInit(): void {
+    this.updateVisibleSeries(); // Aggiungi questa linea
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['series'] && this.series.length > 0) {
@@ -59,5 +67,9 @@ export class SerieSectionComponent implements OnChanges {
     return serie.id;
   }
 
-    protected readonly open = open;
+  openSeeAll() {
+    if(!this.seeAllPath) return;
+    this.router.navigate([this.seeAllPath])
+  }
+
 }

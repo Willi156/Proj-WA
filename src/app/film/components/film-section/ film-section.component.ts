@@ -11,7 +11,7 @@ import {Router} from '@angular/router';
   templateUrl: './film-section.component.html',
   styleUrls: ['./film-section.component.css']
 })
-export class FilmSectionComponent implements OnInit,OnChanges {
+export class FilmSectionComponent implements OnChanges, OnInit {
   @Input() seeAllPath!: string;
   @Input() title!: string;
   @Input() films: Film[] = [];
@@ -48,7 +48,7 @@ export class FilmSectionComponent implements OnInit,OnChanges {
   }
 
   prev() {
-    if (this.startIndex - this.visibleCount >= 0) {
+    if (this.startIndex - this.visibleCount > 0) {
       this.startIndex -= this.visibleCount;
       this.updateVisibleFilms();
     }

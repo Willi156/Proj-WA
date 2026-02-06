@@ -15,17 +15,17 @@ import { map } from 'rxjs/operators';
 })
 export class SeriePageComponent {
   series$!: Observable<{ newReleases: SerieTv[]; upcoming: SerieTv[]; best: SerieTv[] }>;
-
   constructor(private cache: MediaCacheService) {
     this.series$ = this.cache.series$.pipe(
-      map((series: SerieTv[]) => ({
-        newReleases: series.slice(0,5),
-        upcoming:    series.slice(5,10),
-        best:        series.slice(10,15),
+      map(series => ({
+        newReleases: [...series].sort((a, b) => b.id - a.id),
+        upcoming: [...series].sort(
+          (a, b) => (b.annoPubblicazione ?? 0) - (a.annoPubblicazione ?? 0)
+        ),
+        best: [...series]
+          .filter(s => s.mediaVoti != null)
+          .sort((a, b) => (b.mediaVoti ?? 0) - (a.mediaVoti ?? 0)),
       }))
     );
   }
-
-
-
 }

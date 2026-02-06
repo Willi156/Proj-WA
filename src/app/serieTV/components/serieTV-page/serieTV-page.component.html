@@ -99,9 +99,9 @@
   </header>
 
   <ng-container *ngIf="series$ | async as s">
-    <app-serie-section title="New Releases" [series]="s.newReleases"></app-serie-section>
-    <app-serie-section title="Upcoming" [series]="s.upcoming"></app-serie-section>
-    <app-serie-section title="Best Series" [series]="s.best"></app-serie-section>
+    <app-serie-section title="New Releases" [series]="s.newReleases" seeAllPath="/series/released"></app-serie-section>
+    <app-serie-section title="Upcoming" [series]="s.upcoming" seeAllPath="/series/upcoming"></app-serie-section>
+    <app-serie-section title="Best Series" [series]="s.best" seeAllPath="/series/best-series"></app-serie-section>
   </ng-container>
 
 
