@@ -141,6 +141,35 @@
 
         <!-- TRAILER -->
         <section class="trailer">
+           <!-- GAME: mp4 RAWG -->
+            <div class="videoWrap" *ngIf="!trailerLoading && kind === 'GAME' && trailerMp4Url">
+              <video class="video" [src]="trailerMp4Url" controls playsinline></video>
+            </div>
+
+            <!-- GAME: embed YouTube (fallback) -->
+            <div class="videoWrap" *ngIf="!trailerLoading && kind === 'GAME' && !trailerMp4Url && trailerEmbed">
+              <iframe
+                class="video"
+                [src]="trailerEmbed"
+                title="Trailer"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              ></iframe>
+            </div>
+
+            <!-- MOVIE/SERIES: embed -->
+            <div class="videoWrap" *ngIf="!trailerLoading && kind !== 'GAME' && trailerEmbed">
+              <iframe
+                class="video"
+                [src]="trailerEmbed"
+                title="Trailer"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              ></iframe>
+            </div>
+            
           <div class="accBody">
 
             <!-- ✅ se loggato: form normale -->
